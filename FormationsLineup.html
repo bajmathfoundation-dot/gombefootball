@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Professional Lineup Builder | Gombe Football</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #1a56db;
+      --secondary: #3b82f6;
+      --accent: #2563eb;
+      --light: #ffffff;
+      --dark: #1e3a8a;
+      --gradient-start: #f0f7ff;
+      --gradient-end: #dbeafe;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-border: rgba(59, 130, 246, 0.2);
+      --glow: 0 0 15px rgba(37, 99, 235, 0.2);
+      --text-dark: #1f2937;
+      --text-light: #6b7280;
+      --success: #27ae60;
+      --error: #e74c3c;
+      --warning: #f39c12;
+      --pitch-green: #0b6623;
+      --pitch-line: rgba(255, 255, 255, 0.9);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      color: var(--text-dark);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      padding-bottom: 40px;
+    }
+    
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 30%, rgba(37, 99, 235, 0.05) 0%, transparent 40%),
+                  radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.05) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .particle {
+      position: absolute;
+      background: rgba(37, 99, 235, 0.2);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 25px 20px;
+      font-size: 1.8rem;
+      font-weight: 700;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.5rem;
+    }
+    
+    .logo i {
+      color: white;
+    }
+    
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.3s;
+    }
+    
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateX(-3px);
+    }
+    
+    .team-banner {
+      text-align: center;
+      margin: 20px auto;
+      font-size: 1.4rem;
+      max-width: 800px;
+      padding: 15px;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .team-banner::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      animation: glowLine 3s infinite linear;
+    }
+    
+    .team-banner strong {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    
+    .panel {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 25px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      margin-bottom: 30px;
+    }
+    
+    .panel:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1), var(--glow);
+    }
+    
+    .panel::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(37, 99, 235, 0.05), transparent);
+      transition: all 0.5s ease;
+      z-index: -1;
+    }
+    
+    .panel-title {
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+    
+    select {
+      background: white;
+      border: 1px solid #d1d5db;
+      color: var(--text-dark);
+      padding: 12px 15px;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 1rem;
+      transition: all 0.3s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231a56db' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    button {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+      width: 100%;
+      justify-content: center;
+      margin-top: 15px;
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      background: linear-gradient(to right, var(--secondary), var(--primary));
+    }
+    
+    button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .player-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    .player-card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid #e5e7eb;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      text-align: center;
+    }
+    
+    .player-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      border-color: var(--accent);
+    }
+    
+    .player-card.selected {
+      background: rgba(37, 99, 235, 0.05);
+      border-color: var(--accent);
+      box-shadow: 0 0 15px rgba(37, 99, 235, 0.1);
+    }
+    
+    .player-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .player-card.selected::before, .player-card:hover::before {
+      opacity: 1;
+    }
+    
+    .player-name {
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--text-dark);
+    }
+    
+    .player-jersey {
+      background: #f3f4f6;
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: var(--primary);
+      font-weight: bold;
+    }
+    
+    .player-position {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 5px;
+    }
+    
+    .selection-count {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+    }
+    
+    .formation-preview {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 20px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      border: 1px solid #e5e7eb;
+    }
+    
+    /* Update the pitch container and pitch dimensions */
+.pitch-container {
+  width: 100%;
+  max-width: 800px; /* Wider container for horizontal pitch */
+  margin: 0 auto;
+  position: relative;
+}
+
+.pitch {
+  position: relative;
+  width: 100%;
+  padding-bottom: 60%; /* Wider aspect ratio for horizontal pitch */
+  background-color: var(--pitch-green);
+  border: 4px solid white;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  overflow: hidden;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* Rotate all pitch markings 90 degrees */
+.halfway-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: white;
+  transform: translateY(-50%);
+}
+
+.center-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 25%; /* Adjusted for horizontal pitch */
+  height: 15%; /* Adjusted for horizontal pitch */
+  border: 2px solid white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.center-spot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background-color: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.penalty-area {
+  position: absolute;
+  width: 40%; /* Adjusted for horizontal pitch */
+  height: 16%; /* Adjusted for horizontal pitch */
+  border: 2px solid white;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.penalty-area.left {
+  top: 0;
+  border-bottom: none;
+}
+
+.penalty-area.right {
+  bottom: 0;
+  border-top: none;
+}
+
+.goal-box {
+  position: absolute;
+  width: 20%; /* Adjusted for horizontal pitch */
+  height: 8%; /* Adjusted for horizontal pitch */
+  border: 2px solid white;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.goal-box.left {
+  top: 0;
+  border-bottom: none;
+}
+
+.goal-box.right {
+  bottom: 0;
+  border-top: none;
+}
+
+.penalty-spot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: white;
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.penalty-spot.left {
+  top: 12%;
+}
+
+.penalty-spot.right {
+  bottom: 12%;
+}
+
+.penalty-arc {
+  position: absolute;
+  width: 15%; /* Adjusted for horizontal pitch */
+  height: 8%; /* Adjusted for horizontal pitch */
+  border: 2px solid white;
+  border-color: transparent transparent white transparent;
+  border-radius: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.penalty-arc.left {
+  top: 16%;
+}
+
+.penalty-arc.right {
+  bottom: 16%;
+  transform: translateX(-50%) rotate(180deg);
+}
+
+.corner-arc {
+  position: absolute;
+  width: 3%;
+  height: 3%;
+  border: 2px solid white;
+  border-radius: 50%;
+  border-color: transparent transparent transparent white;
+}
+
+.corner-arc.top-left {
+  top: 2%;
+  left: 2%;
+  transform: rotate(45deg);
+}
+
+.corner-arc.top-right {
+  top: 2%;
+  right: 2%;
+  transform: rotate(-45deg);
+}
+
+.corner-arc.bottom-left {
+  bottom: 2%;
+  left: 2%;
+  transform: rotate(135deg);
+}
+
+.corner-arc.bottom-right {
+  bottom: 2%;
+  right: 2%;
+  transform: rotate(-135deg);
+}
+    
+    .player-marker {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.8rem;
+      color: var(--primary);
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+      transform: translate(-50%, -50%);
+      transition: all 0.3s ease;
+      z-index: 10;
+      border: 2px solid #1a56db;
+    }
+    
+    .player-marker:hover {
+      transform: translate(-50%, -50%) scale(1.1);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    }
+    
+    .player-marker.gk {
+      background: #f8c471;
+      color: #34495e;
+    }
+    
+    .player-marker.def {
+      background: #3498db;
+      color: white;
+    }
+    
+    .player-marker.mid {
+      background: #2ecc71;
+      color: white;
+    }
+    
+    .player-marker.fwd {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    
+    .match-detail {
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 3px solid var(--accent);
+    }
+    
+    .match-detail strong {
+      color: var(--primary);
+      margin-right: 8px;
+    }
+    
+    .season-lock {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .lock-icon {
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+    
+    .status-message {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    
+    .status-message.success {
+      background-color: rgba(39, 174, 96, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(39, 174, 96, 0.3);
+    }
+    
+    .status-message.error {
+      background-color: rgba(231, 76, 60, 0.1);
+      color: var(--error);
+      border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+    
+    .status-message.warning {
+      background-color: rgba(243, 156, 18, 0.1);
+      color: var(--warning);
+      border: 1px solid rgba(243, 156, 18, 0.3);
+    }
+    
+    @keyframes glowLine {
+      0% { background-position: -100% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(5deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: var(--primary);
+    }
+    
+    .loading i {
+      font-size: 2rem;
+      animation: spin 1s infinite linear;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .panel {
+        padding: 20px;
+      }
+      
+      .player-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .player-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      header {
+        font-size: 1.5rem;
+        padding: 20px 15px;
+      }
+	  /* Add this to your existing styles */
+#competitionPanel {
+  margin-bottom: 30px;
+}
+
+#competitionSelect {
+  background: white;
+  border: 1px solid #d1d5db;
+  color: var(--text-dark);
+  padding: 12px 15px;
+  border-radius: 8px;
+  width: 100%;
+  font-size: 1rem;
+  transition: all 0.3s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231a56db' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+}
+
+#competitionSelect:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+.season-input {
+  width: 100%;
+  padding: 20px 20px;  /* Increased padding */
+  font-size: 1.1rem;   /* Slightly larger font */
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  transition: all 0.3s;
+  margin-bottom: 8px;   /* Added some space below */
+}
+
+.season-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.input-hint {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: 5px;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-20px); }
+}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <i class="fas fa-futbol"></i>
+      <span>Gombe Football</span>
+    </div>
+    <h1>Professional Lineup Builder</h1>
+    <button class="back-btn" onclick="goToDashboard()">
+      <i class="fas fa-arrow-left"></i> Dashboard
+    </button>
+  </header>
+  
+  <div class="team-banner" id="teamBanner">
+    Loading team information...
+  </div>
+
+  <main>
+    <div class="panel" id="seasonPanel">
+      <div class="form-group">
+        <div class="panel" id="competitionPanel">
+          <h2 class="panel-title"><i class="fas fa-trophy"></i> Select Competition</h2>
+          <div class="form-group">
+            <select id="competitionSelect">
+              <option value="GombeSeason">League</option>
+              <option value="GombeChampionsCupMatchesDemo">Champions Cup</option>
+              <option value="GombeFAcupsMatch">FA Cup</option>
+              <option value="GombeWorriorsCupMatches">Worriors Cup</option>
+            </select>
+          </div>
+        </div>
+        <label for="seasonInput"><i class="fas fa-calendar-alt"></i> Enter Season</label>
+        <input 
+          type="text" 
+          id="seasonInput" 
+          class="season-input" 
+          placeholder="Format: SeasonYYYY-YY (e.g., Season2024-25)"
+          autocomplete="off"
+          value="Season2024-25"
+        >
+        <span class="input-hint">Enter the season in the format shown above</span>
+      </div>
+      
+      <button id="loadSeasonBtn" class="search-btn">
+        <i class="fas fa-search"></i> Load Fixtures
+      </button>
+      
+      <div class="season-lock">
+        <i id="lockIcon" class="fas fa-lock lock-icon"></i>
+        <span>Season locked (click to unlock)</span>
+      </div>
+      
+      <div id="statusMessage" class="status-message"></div>
+    </div>
+
+    <div class="panel" id="fixturePanel" style="display: none;">
+      <h2 class="panel-title"><i class="fas fa-calendar-alt"></i> Select Fixture</h2>
+      <div class="form-group">
+        <select id="fixtureSelect" disabled>
+          <option>Loading fixtures...</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="panel" id="matchDetailsPanel" style="display: none;">
+      <h2 class="panel-title"><i class="fas fa-info-circle"></i> Match Details</h2>
+      <div id="matchDetailsContent">
+        <p>Select a fixture to view details</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title"><i class="fas fa-users"></i> Pick 22-Man Squad <span class="selection-count" id="squadCount">0/22</span></h2>
+      <div id="squadGrid" class="player-grid">
+        <div class="loading">
+          <i class="fas fa-spinner"></i>
+          <p>Loading players...</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title"><i class="fas fa-star"></i> Pick 11 Starters <span class="selection-count" id="starterCount">0/11</span></h2>
+      <div id="starterGrid" class="player-grid">
+        <p>Select players from the squad first</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title"><i class="fas fa-chess-board"></i> Choose Formation</h2>
+      <div class="form-group">
+        <select id="formation">
+          <option value="">-- Choose Formation --</option>
+          <option value="4-4-2">4-4-2 (Classic)</option>
+          <option value="4-3-3">4-3-3 (Attacking)</option>
+          <option value="4-2-3-1">4-2-3-1 (Balanced)</option>
+          <option value="3-5-2">3-5-2 (Midfield Control)</option>
+          <option value="3-4-3">3-4-3 (Wing Play)</option>
+          <option value="5-3-2">5-3-2 (Defensive)</option>
+          <option value="4-1-4-1">4-1-4-1 (Defensive Mid)</option>
+          <option value="4-3-1-2">4-3-1-2 (Diamond)</option>
+          <option value="4-5-1">4-5-1 (Counter Attack)</option>
+          <option value="3-4-1-2">3-4-1-2 (Attacking)</option>
+          <option value="4-4-1-1">4-4-1-1 (Second Striker)</option>
+          <option value="4-3-2-1">4-3-2-1 (Christmas Tree)</option>
+        </select>
+      </div>
+      
+      <div class="pitch-container">
+        <div class="pitch" id="pitchPreview">
+          <div class="halfway-line"></div>
+          <div class="center-circle"></div>
+          <div class="center-spot"></div>
+          <div class="penalty-area left"></div>
+          <div class="penalty-area right"></div>
+          <div class="goal-box left"></div>
+          <div class="goal-box right"></div>
+          <div class="penalty-spot left"></div>
+          <div class="penalty-spot right"></div>
+          <div class="penalty-arc left"></div>
+          <div class="penalty-arc right"></div>
+          <div class="corner-arc top-left"></div>
+          <div class="corner-arc top-right"></div>
+          <div class="corner-arc bottom-left"></div>
+          <div class="corner-arc bottom-right"></div>
+        </div>
+      </div>
+
+      <button id="submitLineupBtn" onclick="submitLineup()">
+        <i class="fas fa-paper-plane"></i> Save Lineup to Match
+      </button>
+    </div>
+  </main>
+  
+  <div class="footer">
+    Gombe Football Management System © 2025 | Professional Lineup Builder
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // Get coach data from sessionStorage
+    const coachTeam = sessionStorage.getItem("teamName");
+    const coachPSN = sessionStorage.getItem("coachPSN");
+    
+    // Update team banner
+    const teamBanner = document.getElementById("teamBanner");
+    if (coachTeam) {
+      teamBanner.innerHTML = `Building lineup for: <strong>${coachTeam}</strong>`;
+    } else {
+      teamBanner.innerHTML = "⚠️ Team information not available";
+    }
+
+    // DOM elements
+    const seasonInput = document.getElementById("seasonInput");
+    const loadSeasonBtn = document.getElementById("loadSeasonBtn");
+    const fixtureSelect = document.getElementById("fixtureSelect");
+    const squadGrid = document.getElementById("squadGrid");
+    const starterGrid = document.getElementById("starterGrid");
+    const squadCount = document.getElementById("squadCount");
+    const starterCount = document.getElementById("starterCount");
+    const pitchPreview = document.getElementById("pitchPreview");
+    const matchDetailsContent = document.getElementById("matchDetailsContent");
+    const statusMessage = document.getElementById("statusMessage");
+    const lockIcon = document.getElementById("lockIcon");
+    const submitLineupBtn = document.getElementById("submitLineupBtn");
+    const competitionSelect = document.getElementById("competitionSelect");
+    
+    let players = [], squadSet = new Set(), starterSet = new Set();
+    let currentSeasonMatches = [];
+    let seasonLocked = false;
+
+    const formationPositions = {
+  "4-4-2": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 20, pos: "LB", cls: "def" },
+    { top: 65, left: 35, pos: "LCB", cls: "def" },
+    { top: 65, left: 65, pos: "RCB", cls: "def" },
+    { top: 65, left: 80, pos: "RB", cls: "def" },
+    { top: 45, left: 15, pos: "LM", cls: "mid" },
+    { top: 45, left: 35, pos: "LCM", cls: "mid" },
+    { top: 45, left: 65, pos: "RCM", cls: "mid" },
+    { top: 45, left: 85, pos: "RM", cls: "mid" },
+    { top: 25, left: 40, pos: "LS", cls: "fwd" },
+    { top: 25, left: 60, pos: "RS", cls: "fwd" }
+  ],
+  "4-3-3": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 20, pos: "LB", cls: "def" },
+    { top: 65, left: 35, pos: "LCB", cls: "def" },
+    { top: 65, left: 65, pos: "RCB", cls: "def" },
+    { top: 65, left: 80, pos: "RB", cls: "def" },
+    { top: 50, left: 30, pos: "CDM", cls: "mid" },
+    { top: 50, left: 50, pos: "CM", cls: "mid" },
+    { top: 50, left: 70, pos: "CAM", cls: "mid" },
+    { top: 30, left: 20, pos: "LW", cls: "fwd" },
+    { top: 30, left: 50, pos: "CF", cls: "fwd" },
+    { top: 30, left: 80, pos: "RW", cls: "fwd" }
+  ],
+  "4-2-3-1": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 20, pos: "LB", cls: "def" },
+    { top: 65, left: 35, pos: "LCB", cls: "def" },
+    { top: 65, left: 65, pos: "RCB", cls: "def" },
+    { top: 65, left: 80, pos: "RB", cls: "def" },
+    { top: 55, left: 35, pos: "LDM", cls: "mid" },
+    { top: 55, left: 65, pos: "RDM", cls: "mid" },
+    { top: 40, left: 25, pos: "LM", cls: "mid" },
+    { top: 40, left: 50, pos: "CAM", cls: "mid" },
+    { top: 40, left: 75, pos: "RM", cls: "mid" },
+    { top: 20, left: 50, pos: "ST", cls: "fwd" }
+  ],
+  "3-5-2": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 30, pos: "LCB", cls: "def" },
+    { top: 65, left: 50, pos: "CB", cls: "def" },
+    { top: 65, left: 70, pos: "RCB", cls: "def" },
+    { top: 45, left: 15, pos: "LWB", cls: "mid" },
+    { top: 45, left: 35, pos: "LCM", cls: "mid" },
+    { top: 45, left: 50, pos: "CM", cls: "mid" },
+    { top: 45, left: 65, pos: "RCM", cls: "mid" },
+    { top: 45, left: 85, pos: "RWB", cls: "mid" },
+    { top: 25, left: 40, pos: "LS", cls: "fwd" },
+    { top: 25, left: 60, pos: "RS", cls: "fwd" }
+  ],
+  "3-4-3": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 30, pos: "LCB", cls: "def" },
+    { top: 65, left: 50, pos: "CB", cls: "def" },
+    { top: 65, left: 70, pos: "RCB", cls: "def" },
+    { top: 50, left: 20, pos: "LWB", cls: "mid" },
+    { top: 50, left: 50, pos: "CM", cls: "mid" },
+    { top: 50, left: 80, pos: "RWB", cls: "mid" },
+    { top: 35, left: 50, pos: "CAM", cls: "mid" },
+    { top: 20, left: 20, pos: "LW", cls: "fwd" },
+    { top: 20, left: 50, pos: "CF", cls: "fwd" },
+    { top: 20, left: 80, pos: "RW", cls: "fwd" }
+  ],
+  "5-3-2": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 15, pos: "LWB", cls: "def" },
+    { top: 65, left: 30, pos: "LCB", cls: "def" },
+    { top: 65, left: 50, pos: "CB", cls: "def" },
+    { top: 65, left: 70, pos: "RCB", cls: "def" },
+    { top: 65, left: 85, pos: "RWB", cls: "def" },
+    { top: 45, left: 35, pos: "LCM", cls: "mid" },
+    { top: 45, left: 50, pos: "CM", cls: "mid" },
+    { top: 45, left: 65, pos: "RCM", cls: "mid" },
+    { top: 25, left: 40, pos: "LS", cls: "fwd" },
+    { top: 25, left: 60, pos: "RS", cls: "fwd" }
+  ],
+  "4-1-4-1": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 20, pos: "LB", cls: "def" },
+    { top: 65, left: 35, pos: "LCB", cls: "def" },
+    { top: 65, left: 65, pos: "RCB", cls: "def" },
+    { top: 65, left: 80, pos: "RB", cls: "def" },
+    { top: 55, left: 50, pos: "CDM", cls: "mid" },
+    { top: 40, left: 20, pos: "LM", cls: "mid" },
+    { top: 40, left: 35, pos: "LCM", cls: "mid" },
+    { top: 40, left: 65, pos: "RCM", cls: "mid" },
+    { top: 40, left: 80, pos: "RM", cls: "mid" },
+    { top: 20, left: 50, pos: "ST", cls: "fwd" }
+  ],
+  "4-3-1-2": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 20, pos: "LB", cls: "def" },
+    { top: 65, left: 35, pos: "LCB", cls: "def" },
+    { top: 65, left: 65, pos: "RCB", cls: "def" },
+    { top: 65, left: 80, pos: "RB", cls: "def" },
+    { top: 50, left: 30, pos: "LCM", cls: "mid" },
+    { top: 50, left: 50, pos: "CM", cls: "mid" },
+    { top: 50, left: 70, pos: "RCM", cls: "mid" },
+    { top: 35, left: 50, pos: "CAM", cls: "mid" },
+    { top: 20, left: 40, pos: "LS", cls: "fwd" },
+    { top: 20, left: 60, pos: "RS", cls: "fwd" }
+  ],
+  "4-5-1": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 20, pos: "LB", cls: "def" },
+    { top: 65, left: 35, pos: "LCB", cls: "def" },
+    { top: 65, left: 65, pos: "RCB", cls: "def" },
+    { top: 65, left: 80, pos: "RB", cls: "def" },
+    { top: 50, left: 15, pos: "LM", cls: "mid" },
+    { top: 50, left: 35, pos: "LCM", cls: "mid" },
+    { top: 50, left: 50, pos: "CM", cls: "mid" },
+    { top: 50, left: 65, pos: "RCM", cls: "mid" },
+    { top: 50, left: 85, pos: "RM", cls: "mid" },
+    { top: 25, left: 50, pos: "ST", cls: "fwd" }
+  ],
+  "3-4-1-2": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 30, pos: "LCB", cls: "def" },
+    { top: 65, left: 50, pos: "CB", cls: "def" },
+    { top: 65, left: 70, pos: "RCB", cls: "def" },
+    { top: 50, left: 20, pos: "LWB", cls: "mid" },
+    { top: 50, left: 50, pos: "CM", cls: "mid" },
+    { top: 50, left: 80, pos: "RWB", cls: "mid" },
+    { top: 35, left: 50, pos: "CAM", cls: "mid" },
+    { top: 20, left: 40, pos: "LS", cls: "fwd" },
+    { top: 20, left: 60, pos: "RS", cls: "fwd" }
+  ],
+  "4-4-1-1": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 20, pos: "LB", cls: "def" },
+    { top: 65, left: 35, pos: "LCB", cls: "def" },
+    { top: 65, left: 65, pos: "RCB", cls: "def" },
+    { top: 65, left: 80, pos: "RB", cls: "def" },
+    { top: 45, left: 20, pos: "LM", cls: "mid" },
+    { top: 45, left: 35, pos: "LCM", cls: "mid" },
+    { top: 45, left: 65, pos: "RCM", cls: "mid" },
+    { top: 45, left: 80, pos: "RM", cls: "mid" },
+    { top: 30, left: 50, pos: "SS", cls: "fwd" },
+    { top: 20, left: 50, pos: "ST", cls: "fwd" }
+  ],
+  "4-3-2-1": [
+    { top: 85, left: 50, pos: "GK", cls: "gk" },
+    { top: 65, left: 20, pos: "LB", cls: "def" },
+    { top: 65, left: 35, pos: "LCB", cls: "def" },
+    { top: 65, left: 65, pos: "RCB", cls: "def" },
+    { top: 65, left: 80, pos: "RB", cls: "def" },
+    { top: 50, left: 30, pos: "LCM", cls: "mid" },
+    { top: 50, left: 50, pos: "CM", cls: "mid" },
+    { top: 50, left: 70, pos: "RCM", cls: "mid" },
+    { top: 30, left: 40, pos: "LAM", cls: "fwd" },
+    { top: 30, left: 60, pos: "RAM", cls: "fwd" },
+    { top: 20, left: 50, pos: "CF", cls: "fwd" }
+  ]
+};
+    // Validate season format
+    function validateSeasonFormat(season) {
+      const pattern = /^Season\d{4}-\d{2}$/;
+      return pattern.test(season);
+    }
+
+    async function loadFixtures() {
+      const season = seasonInput.value.trim();
+      const competition = competitionSelect.value;
+      
+      if (!season) {
+        showStatus("Please enter a season", "error");
+        return;
+      }
+      
+      if (!validateSeasonFormat(season)) {
+        showStatus("Invalid season format. Please use SeasonYYYY-YY (e.g., Season2024-25)", "error");
+        return;
+      }
+      
+      try {
+        fixtureSelect.innerHTML = '<option value="">Loading fixtures...</option>';
+        fixtureSelect.disabled = true;
+        document.getElementById("fixturePanel").style.display = 'block';
+        
+        const competitionRef = db.collection(competition).doc(coachTeam).collection(season);
+        const snapshot = await competitionRef.get();
+        currentSeasonMatches = [];
+        fixtureSelect.innerHTML = '<option value="">-- Select Match --</option>';
+        
+        if (snapshot.empty) {
+          showStatus(`No fixtures found for ${season} in ${competition}`, "error");
+          fixtureSelect.innerHTML = '<option value="">No fixtures available</option>';
+          return;
+        }
+        
+        snapshot.forEach(doc => {
+          const match = doc.data();
+          if (doc.id.startsWith("_") || match.matchCompleted) return;
+          
+          currentSeasonMatches.push({
+            id: doc.id,
+            competition: competition,
+            ...match
+          });
+        });
+        
+        if (currentSeasonMatches.length === 0) {
+          showStatus("No upcoming matches found for this season", "warning");
+          fixtureSelect.innerHTML = '<option value="">No upcoming matches</option>';
+          return;
+        }
+        
+        currentSeasonMatches.sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateA - dateB;
+        });
+        
+        currentSeasonMatches.forEach(match => {
+          const matchDate = new Date(match.date);
+          const formattedDate = matchDate.toLocaleDateString('en-GB', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short'
+          });
+          
+          let label;
+          if (competition === "GombeSeason") {
+            label = `Matchday ${match.matchday}: ${coachTeam} vs ${match.opponent} (${formattedDate})`;
+          } else {
+            label = `${match.matchStatus || 'Cup Match'}: ${coachTeam} vs ${match.opponent} (${formattedDate})`;
+          }
+          
+          fixtureSelect.innerHTML += `<option value="${match.id}">${label}</option>`;
+        });
+        
+        fixtureSelect.disabled = false;
+        showStatus(`Loaded ${currentSeasonMatches.length} upcoming matches`, "success");
+        lockSeason(true);
+        
+      } catch (error) {
+        console.error("Failed to load fixtures:", error);
+        showStatus(`Error loading fixtures: ${error.message}`, "error");
+        fixtureSelect.innerHTML = '<option value="">Error loading fixtures</option>';
+      }
+    }
+
+    // Lock/unlock season selection
+    function lockSeason(locked) {
+      seasonLocked = locked;
+      seasonInput.disabled = locked;
+      loadSeasonBtn.disabled = locked;
+      
+      if (locked) {
+        lockIcon.className = "fas fa-lock lock-icon";
+        lockIcon.nextElementSibling.textContent = "Season locked (click to unlock)";
+      } else {
+        lockIcon.className = "fas fa-lock-open lock-icon";
+        lockIcon.nextElementSibling.textContent = "Season unlocked";
+      }
+    }
+
+    function showMatchDetails(matchId) {
+      const match = currentSeasonMatches.find(m => m.id === matchId);
+      if (!match) {
+        matchDetailsContent.innerHTML = '<p>Match details not available</p>';
+        document.getElementById("matchDetailsPanel").style.display = 'block';
+        return;
+      }
+      
+      const matchDate = new Date(match.date);
+      const formattedDate = matchDate.toLocaleDateString('en-GB', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+      
+      const kickOff = matchDate.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      const matchStageLabel = match.competition === "GombeSeason" ? 
+        `<strong>Matchday:</strong> ${match.matchday}` :
+        `<strong>Match Status:</strong> ${match.matchStatus || 'Cup Match'}`;
+      
+      matchDetailsContent.innerHTML = `
+        <div class="match-detail">
+          ${matchStageLabel}
+        </div>
+        <div class="match-detail">
+          <strong>Date:</strong> ${formattedDate}
+        </div>
+        <div class="match-detail">
+          <strong>Time:</strong> ${kickOff}
+        </div>
+        <div class="match-detail">
+          <strong>Venue:</strong> ${match.venue === 'home' ? 'Home' : 'Away'}
+        </div>
+        <div class="match-detail">
+          <strong>Opponent:</strong> ${match.opponent}
+        </div>
+        <div class="match-detail">
+          <strong>Referee:</strong> ${match.referee || 'Not assigned'}
+        </div>
+      `;
+      
+      document.getElementById("matchDetailsPanel").style.display = 'block';
+    }
+
+    function showStatus(message, type = "") {
+      statusMessage.textContent = message;
+      statusMessage.className = "status-message";
+      if (type) {
+        statusMessage.classList.add(type);
+      }
+      
+      setTimeout(() => {
+        if (statusMessage.textContent === message) {
+          statusMessage.textContent = '';
+          statusMessage.className = 'status-message';
+        }
+      }, 5000);
+    }
+
+    function loadPlayers() {
+      squadGrid.innerHTML = `<div class="loading"><i class="fas fa-spinner"></i><p>Loading players...</p></div>`;
+      
+      db.collection("playerRegistry").where("teamName", "==", coachTeam).get().then(snapshot => {
+        players = [];
+        squadGrid.innerHTML = "";
+        starterGrid.innerHTML = "<p>Select players from the squad first</p>";
+        
+        if (snapshot.empty) {
+          squadGrid.innerHTML = '<div class="player-card"><p>No players found in your squad</p></div>';
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const p = doc.data();
+          p.id = doc.id;
+          players.push(p);
+          
+          const card = document.createElement("div");
+          card.className = "player-card";
+          card.innerHTML = `
+            <div class="player-name">${p.name}</div>
+            <div class="player-jersey">#${p.jerseyNumber}</div>
+            <div class="player-position">${p.position || 'N/A'}</div>
+          `;
+          card.onclick = () => {
+            if (squadSet.has(p.id)) {
+              squadSet.delete(p.id);
+              card.classList.remove("selected");
+              if (starterSet.has(p.id)) {
+                starterSet.delete(p.id);
+                renderStarterGrid();
+              }
+            } else {
+              if (squadSet.size >= 22) {
+                showNotification("Maximum 22 players allowed in squad");
+                return;
+              }
+              squadSet.add(p.id);
+              card.classList.add("selected");
+            }
+            squadCount.textContent = `${squadSet.size}/22`;
+            renderStarterGrid();
+          };
+          squadGrid.appendChild(card);
+        });
+      }).catch(error => {
+        squadGrid.innerHTML = '<div class="player-card"><p>Error loading players</p></div>';
+      });
+    }
+
+    function renderStarterGrid() {
+      starterGrid.innerHTML = "";
+      starterCount.textContent = `${starterSet.size}/11`;
+      
+      if (squadSet.size === 0) {
+        starterGrid.innerHTML = "<p>Select players for the squad first</p>";
+        return;
+      }
+      
+      players.filter(p => squadSet.has(p.id)).forEach(p => {
+        const card = document.createElement("div");
+        card.className = "player-card";
+        if (starterSet.has(p.id)) card.classList.add("selected");
+        card.innerHTML = `
+          <div class="player-name">${p.name}</div>
+          <div class="player-jersey">#${p.jerseyNumber}</div>
+          <div class="player-position">${p.position || 'N/A'}</div>
+        `;
+        card.onclick = () => {
+          if (starterSet.has(p.id)) {
+            starterSet.delete(p.id);
+            card.classList.remove("selected");
+          } else {
+            if (starterSet.size >= 11) {
+              showNotification("Only 11 starters allowed");
+              return;
+            }
+            starterSet.add(p.id);
+            card.classList.add("selected");
+          }
+          starterCount.textContent = `${starterSet.size}/11`;
+        };
+        starterGrid.appendChild(card);
+      });
+    }
+
+    function updateFormationPreview() {
+      const formation = document.getElementById("formation").value;
+      const existingMarkers = document.querySelectorAll('.player-marker');
+      existingMarkers.forEach(marker => marker.remove());
+      
+      if (formation && formationPositions[formation]) {
+        formationPositions[formation].forEach((pos, index) => {
+          const marker = document.createElement("div");
+          marker.className = `player-marker ${pos.cls}`;
+          marker.style.top = `${pos.top}%`;
+          marker.style.left = `${pos.left}%`;
+          marker.textContent = index === 0 ? "GK" : pos.pos;
+          marker.title = `${pos.pos} Position`;
+          pitchPreview.appendChild(marker);
+        });
+      }
+    }
+
+    async function submitLineup() {
+      const matchID = fixtureSelect.value;
+      const formation = document.getElementById("formation").value;
+      const match = currentSeasonMatches.find(m => m.id === matchID);
+      
+      if (!matchID || !match) {
+        showNotification("Please select a valid fixture");
+        return;
+      }
+      
+      if (!formation) {
+        showNotification("Please select a formation");
+        return;
+      }
+      
+      if (squadSet.size !== 22) {
+        showNotification("Please select exactly 22 players for the squad");
+        return;
+      }
+      
+      if (starterSet.size !== 11) {
+        showNotification("Please select exactly 11 starters");
+        return;
+      }
+
+      try {
+        submitLineupBtn.disabled = true;
+        submitLineupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+        const lineupData = {
+          lineup: {
+            squad: Array.from(squadSet),
+            starters: Array.from(starterSet),
+            formation,
+            submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            submittedBy: coachPSN,
+            competition: match.competition
+          }
+        };
+
+        await db.collection(match.competition)
+                .doc(coachTeam)
+                .collection(seasonInput.value.trim())
+                .doc(matchID)
+                .update(lineupData);
+        
+        showStatus("✅ Lineup saved successfully!", "success");
+        showNotification("Lineup saved successfully!", "success");
+        
+        // Reset selections
+        squadSet.clear();
+        starterSet.clear();
+        squadCount.textContent = "0/22";
+        starterCount.textContent = "0/11";
+        document.querySelectorAll(".player-card.selected").forEach(card => {
+          card.classList.remove("selected");
+        });
+        
+      } catch (err) {
+        console.error("Submission error:", err);
+        showStatus("❌ Failed to save lineup: " + (err.message || "Please try again later"), "error");
+        showNotification("Failed to save lineup", "error");
+      } finally {
+        submitLineupBtn.disabled = false;
+        submitLineupBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Save Lineup to Match';
+      }
+    }
+
+    function showNotification(message, type = "info") {
+      const notification = document.createElement("div");
+      notification.textContent = message;
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        z-index: 1000;
+        animation: fadeIn 0.3s ease-out;
+        background: ${type === "success" ? "var(--success)" : 
+                    type === "error" ? "var(--error)" : "var(--primary)"};
+        color: white;
+      `;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 300);
+      }, 3000);
+    }
+    
+    function goToDashboard() {
+      document.body.style.opacity = "0.7";
+      document.body.style.transform = "scale(0.98)";
+      document.body.style.transition = "all 0.3s ease";
+      
+      setTimeout(() => {
+        window.location.href = "CoachProfile.html";
+      }, 300);
+    }
+
+    // Event listeners
+    loadSeasonBtn.addEventListener('click', loadFixtures);
+    lockIcon.addEventListener('click', () => lockSeason(!seasonLocked));
+    document.getElementById("formation").addEventListener('change', updateFormationPreview);
+    
+    seasonInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        loadFixtures();
+      }
+    });
+
+    fixtureSelect.addEventListener("change", function() {
+      const matchId = this.value;
+      if (matchId) {
+        showMatchDetails(matchId);
+      } else {
+        document.getElementById("matchDetailsPanel").style.display = 'none';
+      }
+    });
+
+    // Initialize the page
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.href = "CoachLogin.html";
+      } else {
+        if (coachTeam) {
+          loadPlayers();
+        } else {
+          teamBanner.innerHTML = "⚠️ Team information not found. Please return to dashboard.";
+        }
+      }
+    });
+  </script>
+</body>
+</html>

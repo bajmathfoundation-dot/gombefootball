@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kakaglobal Mega cup - Round of 16</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e9 100%);
+            color: #2e7d32;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FFD700, #C0C0C0, #CD7F32);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .tournament-progress {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .progress-step {
+            padding: 12px 24px;
+            background: #e8f5e9;
+            border-radius: 30px;
+            color: #1b5e20;
+            font-weight: 500;
+            position: relative;
+            text-align: center;
+            flex: 1;
+            max-width: 200px;
+            min-width: 160px;
+            margin: 5px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.completed {
+            background: #c8e6c9;
+        }
+
+        .progress-step.active {
+            background: #4caf50;
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .progress-step:not(:last-child):after {
+            content: "→";
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e7d32;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #c8e6c9;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #1b5e20;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #c8e6c9;
+            font-weight: 500;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .groups-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .group-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #c8e6c9;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .group-card:hover {
+            border-color: #4caf50;
+            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.15);
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e8f5e9;
+        }
+
+        .group-badge {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #4caf50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .group-name {
+            font-size: 1.5rem;
+            color: #1b5e20;
+            font-weight: 600;
+        }
+
+        .teams-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .teams-table th {
+            background: #e8f5e9;
+            color: #1b5e20;
+            padding: 12px;
+            text-align: center;
+            font-weight: 500;
+            border-bottom: 2px solid #c8e6c9;
+        }
+
+        .teams-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .teams-table tr:nth-child(even) {
+            background: #f9fdf9;
+        }
+
+        .teams-table tr:hover {
+            background: #e8f5e9;
+        }
+
+        .select-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: #f5f5f5;
+            border: 1px solid #c8e6c9;
+            color: #2e7d32;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .select-btn.selected {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+
+        .select-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            color: white;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #388e3c 0%, #1b5e20 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .secondary-btn {
+            background: #f5f5f5;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .secondary-btn:hover:not(:disabled) {
+            background: #e8f5e9;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(46, 125, 50, 0.3);
+            border-radius: 50%;
+            border-top-color: #2e7d32;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 25px;
+            color: #2e7d32;
+            font-size: 1rem;
+            background: #e8f5e9;
+            border-radius: 15px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .status-container {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-weight: 500;
+            padding: 15px;
+            border-radius: 8px;
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            font-size: 1rem;
+        }
+
+        .success {
+            color: #1b5e20;
+            font-weight: 500;
+            padding: 15px;
+            border-radius: 8px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            font-size: 1rem;
+        }
+
+        .selection-summary {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .qualified-team {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .position-badge {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #4caf50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .tournament-progress {
+                flex-wrap: wrap;
+            }
+            
+            .progress-step {
+                max-width: 45%;
+            }
+            
+            .progress-step:not(:last-child):after {
+                display: none;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-trophy"></i> Kakaglobal Mega cup</h1>
+            <p>Round of 16 - Qualifiers Selection</p>
+        </header>
+        
+        <div class="tournament-progress">
+            <div class="progress-step">Group Stage</div>
+            <div class="progress-step active">Round of 16</div>
+            <div class="progress-step">Quarterfinals</div>
+            <div class="progress-step">Semifinals</div>
+            <div class="progress-step">Finals</div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-users"></i> Select Round of 16 Qualifiers</h2>
+            <p style="text-align: center; margin-bottom: 25px; color: #2e7d32;">
+                Select the top two teams from each group to advance to the knockout stage
+            </p>
+            
+            <div class="groups-container" id="groupsContainer">
+                <!-- Groups will be loaded here -->
+                <div style="text-align: center; grid-column: 1/-1; padding: 40px;">
+                    <div class="loader" style="width: 50px; height: 50px; margin: 0 auto 20px;"></div>
+                    <h3>Loading Groups...</h3>
+                    <p>Please wait while we load the group stage data</p>
+                </div>
+            </div>
+            
+            <div class="selection-summary" id="selectionSummary" style="display: none;">
+                <h3 style="text-align: center; margin-bottom: 15px; color: #1b5e20;">
+                    <i class="fas fa-check-circle"></i> Selected Qualifiers
+                </h3>
+                <div class="summary-grid" id="summaryGrid"></div>
+            </div>
+            
+            <div class="button-container">
+                <button id="saveBtn" class="primary-btn" disabled>
+                    <i class="fas fa-save"></i> Save Qualifiers
+                    <span id="saveLoader" class="loader" style="display: none;"></span>
+                </button>
+                <button id="resetBtn" class="secondary-btn">
+                    <i class="fas fa-redo"></i> Reset Selection
+                </button>
+            </div>
+        </div>
+        
+        <div class="status-container" id="statusMessage" style="display: none;"></div>
+        
+        <footer>
+            <p>Gombe Football Ecosystem &copy; 2025 | Champions Cup Tournament</p>
+        </footer>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // DOM elements
+        const groupsContainer = document.getElementById('groupsContainer');
+        const saveBtn = document.getElementById('saveBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const saveLoader = document.getElementById('saveLoader');
+        const selectionSummary = document.getElementById('selectionSummary');
+        const summaryGrid = document.getElementById('summaryGrid');
+        
+        // App state
+        let groups = [];
+        let selectedTeams = {};
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', loadGroups);
+        
+        // Load all groups from Firestore
+        async function loadGroups() {
+            try {
+                groupsContainer.innerHTML = `
+                    <div style="text-align: center; grid-column: 1/-1; padding: 40px;">
+                        <div class="loader" style="width: 50px; height: 50px; margin: 0 auto 20px;"></div>
+                        <h3>Loading Groups...</h3>
+                        <p>Please wait while we load the group stage data</p>
+                    </div>
+                `;
+                
+                // Get all groups from Firestore
+                const groupsSnapshot = await db.collection('GombeChampionsCupDemo/Groupstage/Groups').get();
+                
+                if (groupsSnapshot.empty) {
+                    throw new Error('No groups found in the database!');
+                }
+                
+                groups = [];
+                groupsSnapshot.forEach(doc => {
+                    const groupData = doc.data();
+                    groups.push({
+                        id: groupData.groupId,
+                        teams: groupData.teams
+                    });
+                });
+                
+                // Sort groups by ID (A-H)
+                groups.sort((a, b) => a.id.localeCompare(b.id));
+                
+                // Render groups
+                renderGroups();
+                
+            } catch (error) {
+                console.error('Error loading groups:', error);
+                groupsContainer.innerHTML = `
+                    <div style="text-align: center; grid-column: 1/-1; padding: 40px;">
+                        <div class="error" style="margin: 0 auto;">
+                            <i class="fas fa-exclamation-triangle"></i> ${error.message}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Render groups in the UI
+        function renderGroups() {
+            groupsContainer.innerHTML = '';
+            
+            groups.forEach(group => {
+                const groupCard = document.createElement('div');
+                groupCard.className = 'group-card';
+                
+                // Sort teams by points (descending)
+                const sortedTeams = [...group.teams].sort((a, b) => b.points - a.points);
+                
+                groupCard.innerHTML = `
+                    <div class="group-header">
+                        <div class="group-badge">${group.id}</div>
+                        <div class="group-name">Group ${group.id}</div>
+                    </div>
+                    <table class="teams-table">
+                        <thead>
+                            <tr>
+                                <th>Pos</th>
+                                <th>Team</th>
+                                <th>Pts</th>
+                                <th>Select</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${sortedTeams.map((team, index) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${team.name}</td>
+                                    <td>${team.points}</td>
+                                    <td>
+                                        <button class="select-btn" 
+                                                data-group="${group.id}" 
+                                                data-team="${team.name}"
+                                                data-position="${index + 1}">
+                                            Select
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                groupsContainer.appendChild(groupCard);
+            });
+            
+            // Add event listeners to select buttons
+            document.querySelectorAll('.select-btn').forEach(btn => {
+                btn.addEventListener('click', handleTeamSelection);
+            });
+        }
+        
+        // Handle team selection
+        function handleTeamSelection(event) {
+            const button = event.target;
+            const groupId = button.dataset.group;
+            const teamName = button.dataset.team;
+            const position = button.dataset.position;
+            
+            // Initialize group selection if not exists
+            if (!selectedTeams[groupId]) {
+                selectedTeams[groupId] = {};
+            }
+            
+            // Toggle selection
+            if (button.classList.contains('selected')) {
+                button.classList.remove('selected');
+                button.textContent = 'Select';
+                delete selectedTeams[groupId][position];
+            } else {
+                // Check if we already have 2 selections for this group
+                if (Object.keys(selectedTeams[groupId]).length >= 2) {
+                    showStatus(`You can only select 2 teams per group!`, 'error');
+                    return;
+                }
+                
+                button.classList.add('selected');
+                button.textContent = 'Selected';
+                selectedTeams[groupId][position] = teamName;
+            }
+            
+            // Update selection summary
+            updateSelectionSummary();
+            
+            // Check if all groups have 2 selections
+            const allGroupsComplete = groups.every(group => 
+                selectedTeams[group.id] && Object.keys(selectedTeams[group.id]).length === 2
+            );
+            
+            // Enable save button if all groups are complete
+            saveBtn.disabled = !allGroupsComplete;
+        }
+        
+        // Update selection summary
+        function updateSelectionSummary() {
+            summaryGrid.innerHTML = '';
+            let totalSelected = 0;
+            
+            groups.forEach(group => {
+                const groupSelections = selectedTeams[group.id] || {};
+                const positions = Object.keys(groupSelections).sort();
+                
+                positions.forEach(position => {
+                    const teamName = groupSelections[position];
+                    const teamCard = document.createElement('div');
+                    teamCard.className = 'qualified-team';
+                    teamCard.innerHTML = `
+                        <div class="position-badge">${position}</div>
+                        <div>
+                            <div style="font-weight: 500;">${teamName}</div>
+                            <div style="font-size: 0.9rem; color: #757575;">Group ${group.id}</div>
+                        </div>
+                    `;
+                    summaryGrid.appendChild(teamCard);
+                    totalSelected++;
+                });
+            });
+            
+            if (totalSelected > 0) {
+                selectionSummary.style.display = 'block';
+            } else {
+                selectionSummary.style.display = 'none';
+            }
+        }
+        
+        // Save qualifiers to Firestore
+        async function saveQualifiers() {
+            try {
+                // Show loading state
+                saveLoader.style.display = 'inline-block';
+                saveBtn.disabled = true;
+                
+                // Prepare qualifiers data
+                const qualifiers = [];
+                groups.forEach(group => {
+                    const groupSelections = selectedTeams[group.id] || {};
+                    Object.entries(groupSelections).forEach(([position, team]) => {
+                        qualifiers.push({
+                            groupId: group.id,
+                            position: position,
+                            team: team
+                        });
+                    });
+                });
+                
+                // Save to Firestore at the correct path
+                await db.collection('GombeChampionsCupDemo').doc('RoundOf16').set({
+                    qualifiers: qualifiers,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showStatus('Round of 16 qualifiers saved successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error saving qualifiers:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+            } finally {
+                // Reset button state
+                saveLoader.style.display = 'none';
+                saveBtn.disabled = false;
+            }
+        }
+        
+        // Reset selection
+        function resetSelection() {
+            selectedTeams = {};
+            
+            // Reset UI buttons
+            document.querySelectorAll('.select-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                btn.textContent = 'Select';
+            });
+            
+            // Hide summary
+            selectionSummary.style.display = 'none';
+            saveBtn.disabled = true;
+            statusMessage.style.display = 'none';
+            
+            showStatus('Selection has been reset', 'success');
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.style.display = 'block';
+            statusMessage.innerHTML = `
+                <div class="${type}">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            
+            // Auto hide after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Event listeners
+        saveBtn.addEventListener('click', saveQualifiers);
+        resetBtn.addEventListener('click', resetSelection);
+    </script>
+</body>
+</html>

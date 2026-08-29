@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe FA Cup - Quarterfinals Selection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f9f0, #e0f2e1);
+            color: #2e7d32;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 20px;
+            background: #2e7d32;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        header p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .tournament-progress {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .progress-step {
+            padding: 12px 25px;
+            background: #e8f5e9;
+            border-radius: 30px;
+            color: #1b5e20;
+            font-weight: 500;
+            position: relative;
+            text-align: center;
+            flex: 1;
+            max-width: 200px;
+            min-width: 160px;
+            margin: 5px;
+        }
+
+        .progress-step.active {
+            background: #4caf50;
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+            transform: scale(1.05);
+        }
+
+        .progress-step.completed {
+            background: #a5d6a7;
+        }
+
+        .progress-step:not(:last-child):after {
+            content: "→";
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e7d32;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #c8e6c9;
+        }
+
+        .card h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #1b5e20;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #c8e6c9;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 15px;
+            font-weight: 500;
+            font-size: 1.2rem;
+            color: #2e7d32;
+            text-align: center;
+        }
+
+        select {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 10px;
+            border: 2px solid #c8e6c9;
+            background: white;
+            font-size: 1.1rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            color: #2e7d32;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232e7d32' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+            background-size: 1.2em;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
+        }
+
+        .teams-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 25px;
+            max-height: 450px;
+            overflow-y: auto;
+            padding: 25px;
+            background: #f1f8e9;
+            border-radius: 12px;
+            border: 1px solid #e8f5e9;
+        }
+
+        .team-item {
+            padding: 16px;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid #e8f5e9;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-item:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: transparent;
+            transition: background 0.3s ease;
+        }
+
+        .team-item:hover {
+            background: #e8f5e9;
+            transform: translateY(-5px);
+        }
+
+        .team-item:hover:before {
+            background: #4caf50;
+        }
+
+        .team-item.selected {
+            background: #c8e6c9;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .team-item.selected:before {
+            background: #2e7d32;
+        }
+
+        .team-item input {
+            cursor: pointer;
+            width: 22px;
+            height: 22px;
+            accent-color: #4caf50;
+        }
+
+        .team-item label {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .team-count {
+            font-size: 1.2rem;
+            color: #1b5e20;
+            margin-top: 25px;
+            text-align: center;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 35px;
+            gap: 25px;
+        }
+
+        button {
+            padding: 16px 45px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .primary-btn {
+            background: linear-gradient(to right, #4caf50, #2e7d32);
+            color: white;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background: linear-gradient(to right, #388e3c, #1b5e20);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .secondary-btn {
+            background: #f5f5f5;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .secondary-btn:hover:not(:disabled) {
+            background: #e8f5e9;
+            transform: translateY(-3px);
+        }
+
+        .status-container {
+            margin-top: 35px;
+            text-align: center;
+            padding: 30px;
+            border-radius: 12px;
+            background: #e8f5e9;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .summary-section {
+            padding: 30px;
+            background: #f1f8e9;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .summary-section h3 {
+            color: #1b5e20;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: 500;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #c8e6c9;
+        }
+
+        .team-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e8f5e9;
+        }
+
+        .team-list div {
+            padding: 14px 20px;
+            margin-bottom: 12px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 4px solid #4caf50;
+            font-size: 1.1rem;
+            font-weight: 500;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.03);
+        }
+
+        .loader {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 4px solid rgba(46, 125, 50, 0.3);
+            border-radius: 50%;
+            border-top-color: #2e7d32;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 25px;
+            color: #388e3c;
+            font-size: 1.1rem;
+            border-top: 1px solid #c8e6c9;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-weight: 500;
+            padding: 18px;
+            border-radius: 10px;
+            margin: 15px 0;
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 900px) {
+            .tournament-progress {
+                flex-wrap: wrap;
+            }
+            
+            .progress-step {
+                max-width: 45%;
+            }
+            
+            .progress-step:not(:last-child):after {
+                display: none;
+            }
+            
+            .teams-container {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+            
+            .tournament-progress {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .progress-step {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .teams-container {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gombe FA Cup Quarterfinals</h1>
+            <p>Select a zone and choose 8 teams from the Third Round to advance to the Quarterfinals</p>
+        </header>
+        
+        <div class="tournament-progress">
+            <div class="progress-step completed">Round One</div>
+            <div class="progress-step completed">Round Two</div>
+            <div class="progress-step completed">Third Round</div>
+            <div class="progress-step active">Quarterfinals</div>
+            <div class="progress-step">Semi Finals</div>
+            <div class="progress-step">Final</div>
+        </div>
+        
+        <main>
+            <div class="card">
+                <h2>Quarterfinals Team Selection</h2>
+                <div class="form-group">
+                    <label for="zoneSelect">Select Football Zone:</label>
+                    <select id="zoneSelect">
+                        <option value="">-- Choose a zone --</option>
+                        <option value="central-zone">Central Zone</option>
+                        <option value="northern-zone">Northern Zone</option>
+                        <option value="southern-zone">Southern Zone</option>
+                        <option value="eastern-zone">Eastern Zone</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <h3>Third Round Teams (16 Teams)</h3>
+                    <p>Select 8 teams to advance to the Quarterfinals</p>
+                    <div class="teams-container" id="thirdRoundTeams">
+                        <p>Select a zone to load teams</p>
+                    </div>
+                    <div class="team-count">
+                        Selected: <span id="selectedCount">0</span> of 8
+                    </div>
+                </div>
+                
+                <div class="button-container">
+                    <button id="saveBtn" class="primary-btn" disabled>
+                        <span id="saveText">Advance to Quarterfinals</span>
+                        <span id="saveLoader" class="loader" style="display: none;"></span>
+                    </button>
+                    <button id="resetBtn" class="secondary-btn">Reset Selection</button>
+                </div>
+            </div>
+            
+            <div class="card" id="summaryCard" style="display: none;">
+                <h2>Tournament Summary</h2>
+                <div class="summary">
+                    <div class="summary-section">
+                        <h3>Selected Quarterfinalists</h3>
+                        <div class="team-list" id="selectedTeamsList"></div>
+                    </div>
+                    <div class="summary-section">
+                        <h3>Quarterfinals Teams</h3>
+                        <div class="team-list" id="quarterfinalsList"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status-container" id="statusMessage" style="display: none;"></div>
+        </main>
+        
+        <footer>
+            <p>Gombe Football Association &copy; 2025 | Tournament Management System</p>
+        </footer>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // DOM elements
+        const zoneSelect = document.getElementById('zoneSelect');
+        const thirdRoundTeams = document.getElementById('thirdRoundTeams');
+        const selectedCount = document.getElementById('selectedCount');
+        const saveBtn = document.getElementById('saveBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const selectedTeamsList = document.getElementById('selectedTeamsList');
+        const quarterfinalsList = document.getElementById('quarterfinalsList');
+        const summaryCard = document.getElementById('summaryCard');
+        const statusMessage = document.getElementById('statusMessage');
+        const saveText = document.getElementById('saveText');
+        const saveLoader = document.getElementById('saveLoader');
+        
+        // App state
+        let selectedZone = '';
+        let thirdRoundTeamsList = [];
+        let selectedTeams = [];
+        
+        // Event listeners
+        zoneSelect.addEventListener('change', loadTeamsForZone);
+        saveBtn.addEventListener('click', saveSelection);
+        resetBtn.addEventListener('click', resetSelection);
+        
+        // Load teams for selected zone
+        async function loadTeamsForZone() {
+            selectedZone = zoneSelect.value;
+            
+            if (!selectedZone) {
+                resetSelection();
+                return;
+            }
+            
+            // Show loading state
+            thirdRoundTeams.innerHTML = '<p>Loading teams... <span class="loader"></span></p>';
+            
+            try {
+                // Format zone ID for Firebase
+                const formattedZoneId = selectedZone.charAt(0).toUpperCase() + selectedZone.slice(1).replace('-zone', ' Zone');
+                
+                // Get Third Round teams from Firestore
+                const thirdRoundQuery = await db.collection('GombeFAcups')
+                    .doc(formattedZoneId)
+                    .collection('ThirdRound')
+                    .orderBy('timestamp', 'desc')
+                    .limit(1)
+                    .get();
+                
+                if (thirdRoundQuery.empty) {
+                    throw new Error('No Third Round teams found for this zone!');
+                }
+                
+                const thirdRoundDoc = thirdRoundQuery.docs[0];
+                thirdRoundTeamsList = thirdRoundDoc.data().teams || [];
+                
+                // Reset selected teams
+                selectedTeams = [];
+                
+                // Render teams
+                renderTeams();
+                
+            } catch (error) {
+                console.error('Error loading teams:', error);
+                thirdRoundTeams.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Render teams in the UI
+        function renderTeams() {
+            // Render Third Round teams
+            if (thirdRoundTeamsList.length === 0) {
+                thirdRoundTeams.innerHTML = '<p class="error">No teams found in Third Round for this zone</p>';
+            } else {
+                thirdRoundTeams.innerHTML = '';
+                thirdRoundTeamsList.forEach(team => {
+                    const isSelected = selectedTeams.includes(team);
+                    const teamEl = document.createElement('div');
+                    teamEl.className = `team-item ${isSelected ? 'selected' : ''}`;
+                    teamEl.innerHTML = `
+                        <input type="checkbox" id="team-${team}" ${isSelected ? 'checked' : ''}>
+                        <label for="team-${team}">${team}</label>
+                    `;
+                    teamEl.querySelector('input').addEventListener('change', () => toggleTeamSelection(team));
+                    thirdRoundTeams.appendChild(teamEl);
+                });
+            }
+            
+            // Update selected count
+            updateSelectedCount();
+        }
+        
+        // Toggle team selection
+        function toggleTeamSelection(team) {
+            const index = selectedTeams.indexOf(team);
+            
+            if (index === -1) {
+                // Don't allow more than 8 selections
+                if (selectedTeams.length >= 8) {
+                    alert('You can only select 8 teams to advance to the Quarterfinals');
+                    return;
+                }
+                selectedTeams.push(team);
+            } else {
+                selectedTeams.splice(index, 1);
+            }
+            
+            // Re-render teams to update selection state
+            renderTeams();
+        }
+        
+        // Update selected team count
+        function updateSelectedCount() {
+            selectedCount.textContent = selectedTeams.length;
+            saveBtn.disabled = selectedTeams.length !== 8;
+        }
+        
+        // Save selection to Firebase
+        async function saveSelection() {
+            if (selectedTeams.length !== 8) {
+                alert('Please select exactly 8 teams to advance to the Quarterfinals');
+                return;
+            }
+            
+            try {
+                // Show loading state
+                saveText.innerHTML = 'Saving...';
+                saveLoader.style.display = 'inline-block';
+                saveBtn.disabled = true;
+                
+                // Format zone ID for Firebase
+                const formattedZoneId = selectedZone.charAt(0).toUpperCase() + selectedZone.slice(1).replace('-zone', ' Zone');
+                
+                // Save to Quarterfinals collection
+                await db.collection('GombeFAcups')
+                    .doc(formattedZoneId)
+                    .collection('Quarterfinals')
+                    .add({
+                        teams: selectedTeams,
+                        zone: formattedZoneId,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                
+                // Update summary display
+                showSummary();
+                
+                // Show success message
+                statusMessage.style.display = 'block';
+                statusMessage.innerHTML = `
+                    <div style="color: #1b5e20; font-weight: 600; font-size: 1.5rem; margin-bottom: 20px;">
+                        ✅ Teams advanced to Quarterfinals!
+                    </div>
+                    <p><strong>Zone:</strong> ${formattedZoneId}</p>
+                    <p><strong>Teams Advanced:</strong> ${selectedTeams.length}</p>
+                `;
+                
+            } catch (error) {
+                console.error('Error saving selection:', error);
+                statusMessage.style.display = 'block';
+                statusMessage.innerHTML = `
+                    <div style="color: #d32f2f; font-weight: 600; font-size: 1.5rem; margin-bottom: 20px;">
+                        ❌ Error saving selection
+                    </div>
+                    <p class="error">${error.message}</p>
+                `;
+            } finally {
+                // Reset button state
+                saveText.innerHTML = 'Advance to Quarterfinals';
+                saveLoader.style.display = 'none';
+            }
+        }
+        
+        // Show summary after save
+        function showSummary() {
+            // Update selected teams list
+            selectedTeamsList.innerHTML = '';
+            selectedTeams.forEach(team => {
+                const teamEl = document.createElement('div');
+                teamEl.textContent = team;
+                selectedTeamsList.appendChild(teamEl);
+            });
+            
+            // Update Quarterfinals list
+            quarterfinalsList.innerHTML = '';
+            selectedTeams.forEach(team => {
+                const teamEl = document.createElement('div');
+                teamEl.textContent = team;
+                quarterfinalsList.appendChild(teamEl);
+            });
+            
+            // Show summary card
+            summaryCard.style.display = 'block';
+            
+            // Scroll to summary
+            summaryCard.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Reset selection
+        function resetSelection() {
+            selectedZone = '';
+            thirdRoundTeamsList = [];
+            selectedTeams = [];
+            
+            thirdRoundTeams.innerHTML = '<p>Select a zone to load teams</p>';
+            zoneSelect.value = '';
+            
+            selectedCount.textContent = '0';
+            saveBtn.disabled = true;
+            summaryCard.style.display = 'none';
+            statusMessage.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

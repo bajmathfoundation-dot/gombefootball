@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coach Management | Gombe Football</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #1a2a6c;
+            --secondary: #3494e6;
+            --accent: #fdbb2d;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f5ff, #e6f0ff);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Security notification */
+        .security-notification {
+            background: #ff5252;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        /* Access denied message */
+        .access-denied {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            margin-top: 50px;
+        }
+        .access-denied i {
+            font-size: 4rem;
+            color: var(--danger);
+            margin-bottom: 20px;
+        }
+        .access-denied h2 {
+            color: var(--danger);
+            margin-bottom: 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: 0;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header-content h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-header h2 {
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        /* Coach Cards */
+        .coaches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .coach-card {
+            display: flex;
+            padding: 15px;
+            border-radius: 10px;
+            background: var(--light);
+            margin-bottom: 0;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+        }
+        
+        .coach-card:hover {
+            background: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+        
+        .coach-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            margin-right: 15px;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .coach-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .coach-info {
+            flex-grow: 1;
+        }
+        
+        .coach-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .coach-role {
+            font-size: 0.95rem;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+        
+        .coach-details {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--dark);
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        /* Current Coach Section */
+        .current-coach {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .current-coach-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .current-coach-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .current-coach-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--primary);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .current-coach-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .current-coach-details {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        
+        .current-coach-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .current-coach-role {
+            font-size: 1.1rem;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+        
+        .current-coach-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            margin-bottom: 8px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .info-value {
+            color: var(--dark);
+            word-break: break-word;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+        
+        .modal-coach-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .modal-coach-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-coach-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+        
+        .modal-coach-info h3 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 1.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .modal-coach-info p {
+            margin: 5px 0 0;
+            color: var(--gray);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray);
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .coach-basic-info {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .coach-basic-info div {
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .coach-basic-info strong {
+            min-width: 120px;
+            color: var(--gray);
+        }
+        
+        .coach-basic-info span {
+            color: var(--dark);
+            word-break: break-word;
+        }
+        
+        .coach-qualifications {
+            margin-top: 20px;
+        }
+        
+        .qualification-item {
+            background: var(--light);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+        
+        .coach-contacts {
+            margin-top: 20px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .contact-icon {
+            color: var(--secondary);
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .contact-value {
+            word-break: break-all;
+        }
+        
+        /* Contract Duration Selector */
+        .contract-duration {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .contract-duration h4 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .duration-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .duration-selector select {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            font-size: 1rem;
+        }
+        
+        .contract-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--light-gray);
+        }
+        
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .header-content {
+                text-align: center;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .current-coach-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .current-coach-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .modal-coach-avatar {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .duration-selector {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .coach-details {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Security Notification -->
+    <div class="security-notification" id="securityNotification">
+        <i class="fas fa-shield-alt"></i> Security verification in progress...
+    </div>
+
+    <!-- Access Denied Message (Hidden by default) -->
+    <div class="access-denied" id="accessDenied" style="display: none;">
+        <i class="fas fa-ban"></i>
+        <h2>Access Denied</h2>
+        <p>You don't have permission to access coach management.</p>
+        <p>Please contact the administrator if you believe this is an error.</p>
+        <button id="backToDashboard" class="btn btn-primary" style="margin-top: 20px;">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </button>
+    </div>
+
+    <div class="container" id="mainContent" style="display: none;">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <h1><i class="fas fa-user-tie"></i> Coach Management</h1>
+                <p id="welcome-message">Manage your team's coaching staff</p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="window.history.back()"><i class="fas fa-arrow-left"></i> Back</button>
+                <button class="btn btn-secondary" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </header>
+        
+        <!-- Current Coach Section -->
+        <div class="current-coach">
+            <div class="current-coach-header">
+                <h2><i class="fas fa-user-tie"></i> Current Head Coach</h2>
+                <button class="btn btn-danger" id="sackCoachBtn" disabled><i class="fas fa-user-slash"></i> Sack Coach</button>
+            </div>
+            <div class="current-coach-content" id="currentCoachContainer">
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading current coach information...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Available Coaches Section -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-search"></i> Available Coaches</h2>
+            </div>
+            <div class="card-body">
+                <div class="coaches-grid" id="availableCoachesGrid">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading available coaches...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign Coach Modal Template -->
+    <template id="signCoachModalTemplate">
+        <div class="modal-overlay" id="signCoachModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-coach-avatar">
+                        <img id="modalCoachAvatar" src="" alt="Coach Avatar" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-user-tie\'></i>';">
+                    </div>
+                    <div class="modal-coach-info">
+                        <h3 id="modalCoachName"></h3>
+                        <p id="modalCoachRole"></p>
+                    </div>
+                    <button class="modal-close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="coach-basic-info">
+                        <div><strong>License:</strong> <span id="modalCoachLicense"></span></div>
+                        <div><strong>Specialty:</strong> <span id="modalCoachSpecialty"></span></div>
+                        <div><strong>Rating:</strong> <span id="modalCoachRating"></span></div>
+                        <div><strong>Salary Expectation:</strong> <span id="modalCoachSalary"></span></div>
+                    </div>
+                    
+                    <div class="contract-duration">
+                        <h4><i class="fas fa-file-contract"></i> Contract Duration</h4>
+                        <div class="duration-selector">
+                            <label for="contractYears">Select contract length:</label>
+                            <select id="contractYears">
+                                <option value="1">1 Year</option>
+                                <option value="2" selected>2 Years</option>
+                                <option value="3">3 Years</option>
+                                <option value="4">4 Years</option>
+                                <option value="5">5 Years</option>
+                            </select>
+                        </div>
+                        <div class="contract-info">
+                            Contract will end on: <span id="contractEndDate"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="coach-contacts">
+                        <h4><i class="fas fa-address-book"></i> Contact Information</h4>
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                            <div class="contact-value" id="modalCoachPhone"></div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="contact-value" id="modalCoachEmail"></div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-success" id="confirmSignBtn" style="width: 100%; margin-top: 20px;">
+                        <i class="fas fa-file-signature"></i> Sign Contract
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        // DOM Elements
+        const welcomeMessage = document.getElementById('welcome-message');
+        const currentCoachContainer = document.getElementById('currentCoachContainer');
+        const availableCoachesGrid = document.getElementById('availableCoachesGrid');
+        const sackCoachBtn = document.getElementById('sackCoachBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const securityNotification = document.getElementById('securityNotification');
+        const accessDenied = document.getElementById('accessDenied');
+        const mainContent = document.getElementById('mainContent');
+        const backToDashboard = document.getElementById('backToDashboard');
+        
+        // Security variables
+        let accessGranted = false;
+        let verificationAttempts = 0;
+        const MAX_VERIFICATION_ATTEMPTS = 3;
+        
+        // Get team ID from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentTeamId = urlParams.get('teamId');
+        let currentTeamName = '';
+        let currentCoachId = '';
+        let selectedCoachId = '';
+        let selectedCoachData = null;
+        
+        // Initialize the page with security checks
+        document.addEventListener('DOMContentLoaded', function() {
+            initPage();
+        });
+
+        // Back to dashboard button
+        backToDashboard.addEventListener('click', function() {
+            if (currentTeamId) {
+                window.location.href = `ManagerProfile.html?teamId=${currentTeamId}`;
+            } else {
+                window.location.href = 'ManagerLogin.html';
+            }
+        });
+        
+        // Logout function
+        logoutBtn.addEventListener('click', () => {
+            if (confirm("Are you sure you want to logout?")) {
+                // Clear any session data
+                sessionStorage.clear();
+                window.location.href = 'ManagerLogin.html';
+            }
+        });
+        
+        async function initPage() {
+            // Show security notification
+            securityNotification.style.display = 'block';
+            
+            try {
+                // First verify authentication
+                const isAuthenticated = await verifyAuthentication();
+                
+                if (!isAuthenticated) {
+                    showAccessDenied("Authentication failed. Please log in again.");
+                    return;
+                }
+
+                // Then verify authorization
+                const isAuthorized = await verifyAuthorization();
+                
+                if (!isAuthorized) {
+                    showAccessDenied("You are not authorized to access coach management.");
+                    return;
+                }
+
+                // If both checks pass, show content
+                accessGranted = true;
+                securityNotification.style.display = 'none';
+                mainContent.style.display = 'block';
+                
+                // Initialize dashboard
+                fetchTeamData();
+                
+            } catch (error) {
+                console.error("Security verification error:", error);
+                showAccessDenied("Security verification failed. Please try again later.");
+            }
+        }
+        
+        async function verifyAuthentication() {
+            return new Promise((resolve) => {
+                // Check if user is logged in
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        // User is signed in
+                        resolve(true);
+                    } else {
+                        // No user is signed in
+                        resolve(false);
+                    }
+                });
+                
+                // Timeout for authentication check
+                setTimeout(() => {
+                    resolve(false);
+                }, 5000);
+            });
+        }
+        
+        async function verifyAuthorization() {
+            verificationAttempts++;
+            
+            if (verificationAttempts > MAX_VERIFICATION_ATTEMPTS) {
+                console.error("Too many verification attempts");
+                return false;
+            }
+
+            if (!currentTeamId) {
+                console.error("No team identifier provided");
+                return false;
+            }
+
+            try {
+                // Verify the current user has access to this team
+                const teamDoc = await db.collection("GombeTeams").doc(currentTeamId).get();
+                if (!teamDoc.exists) {
+                    console.error("Team not found");
+                    return false;
+                }
+                
+                // Additional authorization checks can be added here
+                // For example, check if the current user is the manager of this team
+                
+                return true;
+            } catch (error) {
+                console.error("Authorization verification error:", error);
+                return false;
+            }
+        }
+        
+        function showAccessDenied(message) {
+            securityNotification.style.display = 'block';
+            securityNotification.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            securityNotification.style.background = '#dc3545';
+            
+            accessDenied.style.display = 'block';
+            mainContent.style.display = 'none';
+        }
+        
+        // HTML sanitization function
+        function sanitizeHTML(str) {
+            if (!str) return '';
+            
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+        
+        // Fetch team data
+        function fetchTeamData() {
+            welcomeMessage.innerHTML = `<span class="spinner"></span> Loading team information...`;
+            
+            db.collection("GombeTeams").doc(currentTeamId).get()
+                .then(doc => {
+                    if (!doc.exists) {
+                        throw new Error("Team not found!");
+                    }
+                    
+                    const teamData = doc.data();
+                    currentTeamName = teamData.teamName || teamData.name || teamData.team || "";
+                    
+                    welcomeMessage.textContent = `Manage coaching staff for ${currentTeamName}`;
+                    
+                    // Fetch current coach
+                    fetchCurrentCoach();
+                    
+                    // Fetch available coaches
+                    fetchAvailableCoaches();
+                })
+                .catch(error => {
+                    console.error("Error loading team:", error);
+                    welcomeMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message || "Error loading team"}`;
+                });
+        }
+        
+        // Fetch current coach
+        function fetchCurrentCoach() {
+            currentCoachContainer.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading current coach...</p></div>';
+            
+            // First try by teamId (primary method)
+            db.collection("GombeCoaches")
+                .where("teamId", "==", currentTeamId)
+                .limit(1)
+                .get()
+                .then(querySnapshot => {
+                    if (!querySnapshot.empty) {
+                        const coachDoc = querySnapshot.docs[0];
+                        currentCoachId = coachDoc.id;
+                        const coachData = coachDoc.data();
+                        displayCurrentCoach(coachData);
+                        return;
+                    }
+                    
+                    // If no results by teamId, try by teamName (fallback method)
+                    if (currentTeamName) {
+                        return db.collection("GombeCoaches")
+                            .where("teamName", "==", currentTeamName)
+                            .limit(1)
+                            .get()
+                            .then(nameQuerySnapshot => {
+                                if (!nameQuerySnapshot.empty) {
+                                    const coachDoc = nameQuerySnapshot.docs[0];
+                                    currentCoachId = coachDoc.id;
+                                    const coachData = coachDoc.data();
+                                    displayCurrentCoach(coachData);
+                                    return;
+                                }
+                                throw new Error("No coach found with teamId or teamName");
+                            });
+                    }
+                    throw new Error("No team identifier available");
+                })
+                .catch(error => {
+                    console.error("Error fetching current coach:", error);
+                    currentCoachContainer.innerHTML = '<div class="empty-state"><i class="fas fa-user-tie"></i><p>No head coach assigned</p></div>';
+                    sackCoachBtn.disabled = true;
+                });
+        }
+        
+        // Display current coach
+        function displayCurrentCoach(coach) {
+            // Format contract end date if available
+            let contractInfo = '';
+            if (coach.contractEnd) {
+                const endDate = new Date(coach.contractEnd);
+                contractInfo = `<div class="info-item">
+                    <div class="info-label">Contract Ends:</div>
+                    <div class="info-value">${endDate.toLocaleDateString()}</div>
+                </div>`;
+            } else if (coach.hireDate) {
+                contractInfo = `<div class="info-item">
+                    <div class="info-label">Since:</div>
+                    <div class="info-value">${coach.hireDate}</div>
+                </div>`;
+            }
+            
+            currentCoachContainer.innerHTML = `
+                <div class="current-coach-avatar">
+                    ${coach.imageUrl ? `<img src="${coach.imageUrl}" alt="${coach.name}">` : `<i class="fas fa-user-tie"></i>`}
+                </div>
+                <div class="current-coach-details">
+                    <div class="current-coach-name">${coach.name || "Unknown Coach"}</div>
+                    <div class="current-coach-role">${coach.role || "Head Coach"}</div>
+                    
+                    <div class="current-coach-info">
+                        <div class="info-item">
+                            <div class="info-label">License:</div>
+                            <div class="info-value">${coach.license || "N/A"}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Phone:</div>
+                            <div class="info-value">${coach.phone || "N/A"}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Email:</div>
+                            <div class="info-value">${coach.email || "N/A"}</div>
+                        </div>
+                        ${contractInfo}
+                    </div>
+                </div>
+            `;
+            
+            sackCoachBtn.disabled = false;
+			sackCoachBtn.addEventListener('click', sackCurrentCoach);
+        }
+        
+        // Sack current coach
+        function sackCurrentCoach() {
+            if (!currentCoachId) return;
+            
+            if (!confirm(`Are you sure you want to sack your current head coach?`)) {
+                return;
+            }
+            
+            sackCoachBtn.innerHTML = '<span class="spinner"></span> Processing...';
+            sackCoachBtn.disabled = true;
+            
+            // Update coach document to make them a free agent
+            db.collection("GombeCoaches").doc(currentCoachId).update({
+                teamId: "",
+                teamName: "Free Agent",
+                isHeadCoach: false,
+                contractStart: null,
+                contractEnd: null,
+                contractPeriod: null
+            })
+            .then(() => {
+                alert("Coach has been sacked and is now a free agent");
+                currentCoachId = '';
+                fetchCurrentCoach();
+                fetchAvailableCoaches();
+            })
+            .catch(error => {
+                console.error("Error sacking coach:", error);
+                alert("Failed to sack coach. Please try again.");
+            })
+            .finally(() => {
+                sackCoachBtn.innerHTML = '<i class="fas fa-user-slash"></i> Sack Coach';
+                sackCoachBtn.disabled = false;
+            });
+        }
+        
+        // Fetch available coaches (Free Agents)
+        function fetchAvailableCoaches() {
+            availableCoachesGrid.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading available coaches...</p></div>';
+            
+            // Get all coaches who are either Free Agents or not assigned to any team
+            db.collection("GombeCoaches")
+                .where("teamName", "in", ["Free Agent", "", null])
+                .get()
+                .then(querySnapshot => {
+                    if (querySnapshot.empty) {
+                        availableCoachesGrid.innerHTML = '<div class="empty-state"><i class="fas fa-user-tie"></i><p>No available coaches</p></div>';
+                        return;
+                    }
+                    
+                    availableCoachesGrid.innerHTML = '';
+                    
+                    querySnapshot.forEach(doc => {
+                        const coach = doc.data();
+                        // Only show coaches that aren't already assigned to this team
+                        if (coach.teamId !== currentTeamId && (!coach.teamName || coach.teamName !== currentTeamName)) {
+                            createAvailableCoachCard(coach, doc.id);
+                        }
+                    });
+                    
+                    // If no available coaches after filtering
+                    if (availableCoachesGrid.innerHTML === '') {
+                        availableCoachesGrid.innerHTML = '<div class="empty-state"><i class="fas fa-user-tie"></i><p>No available coaches</p></div>';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching available coaches:", error);
+                    availableCoachesGrid.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error loading coaches</p></div>';
+                });
+        }
+        
+        // Create available coach card
+        function createAvailableCoachCard(coach, coachId) {
+            const coachCard = document.createElement('div');
+            coachCard.className = 'coach-card';
+            coachCard.setAttribute('data-coach-id', coachId);
+            coachCard.innerHTML = `
+                <div class="coach-avatar">
+                    ${coach.imageUrl ? `<img src="${coach.imageUrl}" alt="${coach.name}">` : `<i class="fas fa-user-tie"></i>`}
+                </div>
+                <div class="coach-info">
+                    <div class="coach-name">${coach.name || "Unknown Coach"}</div>
+                    <div class="coach-role">${coach.role || "Coach"} | ${coach.license || "No license"}</div>
+                    <div class="coach-details">
+                        <div class="stat-item">
+                            <i class="fas fa-star"></i>
+                            Rating: <span class="stat-value">${coach.rating || "N/A"}</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Salary: <span class="stat-value">${coach.salary ? `₦${coach.salary.toLocaleString()}` : "N/A"}</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" style="margin-top: 10px; width: 100%;" data-coach-id="${coachId}">
+                        <i class="fas fa-user-plus"></i> Sign Coach
+                    </button>
+                </div>
+            `;
+            
+            // Add click event to show coach details modal
+            coachCard.querySelector('.coach-info').addEventListener('click', (e) => {
+                if (!e.target.closest('button')) { // Don't trigger if clicking the sign button
+                    showCoachModal(coach, coachId);
+                }
+            });
+            
+            // Add click event to sign coach button
+            const signButton = coachCard.querySelector('button');
+            signButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showSignCoachModal(coachId, coach);
+            });
+            
+            availableCoachesGrid.appendChild(coachCard);
+        }
+        
+        // Show sign coach modal with contract duration selection
+        function showSignCoachModal(coachId, coachData) {
+            selectedCoachId = coachId;
+            selectedCoachData = coachData;
+            
+            // Create modal from template
+            const modalTemplate = document.getElementById('signCoachModalTemplate');
+            const modalContent = modalTemplate.content.cloneNode(true);
+            
+            // Populate modal with coach data
+            const modalCoachAvatar = modalContent.getElementById('modalCoachAvatar');
+            if (coachData.imageUrl) {
+                modalCoachAvatar.src = coachData.imageUrl;
+            } else {
+                modalCoachAvatar.parentElement.innerHTML = '<i class="fas fa-user-tie"></i>';
+            }
+            
+            modalContent.getElementById('modalCoachName').textContent = coachData.name || "Unknown Coach";
+            modalContent.getElementById('modalCoachRole').textContent = `${coachData.role || "Coach"} | Free Agent`;
+            modalContent.getElementById('modalCoachLicense').textContent = coachData.license || "N/A";
+            modalContent.getElementById('modalCoachSpecialty').textContent = coachData.specialty || "N/A";
+            modalContent.getElementById('modalCoachRating').textContent = coachData.rating || "N/A";
+            modalContent.getElementById('modalCoachSalary').textContent = coachData.salary ? `₦${coachData.salary.toLocaleString()}` : "N/A";
+            modalContent.getElementById('modalCoachPhone').textContent = coachData.phone || "Not provided";
+            modalContent.getElementById('modalCoachEmail').textContent = coachData.email || "Not provided";
+            
+            // Calculate and display initial contract end date
+            updateContractEndDate(modalContent);
+            
+            // Add event listener for contract duration change
+            const contractYears = modalContent.getElementById('contractYears');
+            contractYears.addEventListener('change', () => {
+                updateContractEndDate(modalContent);
+            });
+            
+            // Add event listener for confirm button
+            const confirmBtn = modalContent.getElementById('confirmSignBtn');
+            confirmBtn.addEventListener('click', () => {
+                signCoach(selectedCoachId, selectedCoachData, parseInt(contractYears.value));
+                document.body.removeChild(modal);
+            });
+            
+            // Add event listener for close button
+            const closeBtn = modalContent.querySelector('.modal-close');
+            const modal = modalContent.getElementById('signCoachModal');
+            closeBtn.addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            // Add modal to document
+            document.body.appendChild(modalContent);
+            
+            // Close modal when clicking outside content
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            });
+        }
+        
+        // Update contract end date based on selected duration
+        function updateContractEndDate(modalContent) {
+            const contractYears = modalContent.getElementById('contractYears');
+            const contractEndDate = modalContent.getElementById('contractEndDate');
+            
+            const years = parseInt(contractYears.value);
+            const startDate = new Date();
+            const endDate = new Date();
+            endDate.setFullYear(startDate.getFullYear() + years);
+            
+            contractEndDate.textContent = endDate.toLocaleDateString();
+        }
+        
+        // Sign a new coach with contract duration
+        function signCoach(coachId, coachData, contractYears) {
+            if (!confirm(`Sign ${coachData.name} as your new head coach for ${contractYears} year${contractYears > 1 ? 's' : ''}?`)) {
+                return;
+            }
+            
+            // Calculate contract dates
+            const contractStart = new Date();
+            const contractEnd = new Date();
+            contractEnd.setFullYear(contractStart.getFullYear() + contractYears);
+            
+            // Format dates for Firestore
+            const contractStartStr = contractStart.toISOString().split('T')[0];
+            const contractEndStr = contractEnd.toISOString().split('T')[0];
+            
+            const signButton = document.querySelector(`button[data-coach-id="${coachId}"]`);
+            if (signButton) {
+                signButton.innerHTML = '<span class="spinner"></span> Signing...';
+                signButton.disabled = true;
+            }
+            
+            // First sack current coach if one exists
+            const sackPromise = currentCoachId 
+                ? db.collection("GombeCoaches").doc(currentCoachId).update({
+                    teamId: "",
+                    teamName: "Free Agent",
+                    isHeadCoach: false,
+                    contractStart: null,
+                    contractEnd: null,
+                    contractPeriod: null
+                })
+                : Promise.resolve();
+            
+            // Then sign new coach with contract details
+            sackPromise.then(() => {
+                return db.collection("GombeCoaches").doc(coachId).update({
+                    teamId: currentTeamId,
+                    teamName: currentTeamName,
+                    isHeadCoach: true,
+                    hireDate: contractStartStr,
+                    contractStart: contractStartStr,
+                    contractEnd: contractEndStr,
+                    contractPeriod: contractYears
+                });
+            })
+            .then(() => {
+                alert(`${coachData.name} has been signed as your new head coach for ${contractYears} year${contractYears > 1 ? 's' : ''}!`);
+                currentCoachId = coachId;
+                fetchCurrentCoach();
+                fetchAvailableCoaches();
+            })
+            .catch(error => {
+                console.error("Error signing coach:", error);
+                alert("Failed to sign coach. Please try again.");
+            })
+            .finally(() => {
+                if (signButton) {
+                    signButton.innerHTML = '<i class="fas fa-user-plus"></i> Sign Coach';
+                    signButton.disabled = false;
+                }
+            });
+        }
+        
+        // Function to show coach details modal
+        function showCoachModal(coach, coachId) {
+            // This would show a modal with detailed coach information
+            // For simplicity, we'll just log the coach data
+            console.log("Coach details:", coach);
+        }
+        
+        // Logout function
+        logoutBtn.addEventListener('click', () => {
+            if (confirm("Are you sure you want to logout?")) {
+                window.location.href = 'TeamManagerLogin.html';
+            }
+        });
+    </script>
+</body>
+</html>

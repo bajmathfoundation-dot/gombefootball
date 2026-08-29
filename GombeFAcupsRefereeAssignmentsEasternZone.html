@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FA Cup - Match Officials Assignment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f8fff8;
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 20px;
+            background: #2e7d32;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        header h1 i {
+            margin-right: 15px;
+        }
+
+        header p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #c8e6c9;
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #1b5e20;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #c8e6c9;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            color: #2e7d32;
+            text-align: left;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 8px;
+            border: 2px solid #c8e6c9;
+            background: white;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            color: #2e7d32;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232e7d32' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .primary-btn {
+            background: #4caf50;
+            color: white;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background: #388e3c;
+            transform: translateY(-2px);
+        }
+
+        .secondary-btn {
+            background: #f5f5f5;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .secondary-btn:hover:not(:disabled) {
+            background: #e8f5e9;
+            transform: translateY(-2px);
+        }
+
+        .status-container {
+            margin-top: 25px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: #e8f5e9;
+        }
+
+        .fixtures-container {
+            margin-top: 25px;
+            display: none;
+        }
+
+        .fixtures-container h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1b5e20;
+            font-size: 1.5rem;
+        }
+
+        .fixtures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .fixture-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #c8e6c9;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .fixture-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #c8e6c9;
+        }
+
+        .match-number {
+            background: #4caf50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        .teams-display {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .team-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .team-row.home {
+            background: #e8f5e9;
+        }
+
+        .team-row.away {
+            background: #f1f8e9;
+        }
+
+        .vs {
+            text-align: center;
+            font-weight: 700;
+            margin: 5px 0;
+            color: #2e7d32;
+        }
+
+        .team-badge {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #4caf50;
+            color: white;
+            font-weight: bold;
+        }
+
+        .officials-assignment {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .official-field {
+            margin-bottom: 15px;
+        }
+
+        .official-field label {
+            display: block;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: #2e7d32;
+            font-weight: 500;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(46, 125, 50, 0.3);
+            border-radius: 50%;
+            border-top-color: #2e7d32;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #388e3c;
+            font-size: 1rem;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-weight: 500;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            text-align: center;
+        }
+
+        .success {
+            color: #1b5e20;
+            font-weight: 500;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            text-align: center;
+        }
+
+        /* Array field styles */
+        .array-field {
+            margin-bottom: 15px;
+        }
+
+        .array-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .array-item select {
+            flex: 1;
+        }
+
+        .add-item-btn {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .remove-item-btn {
+            background: none;
+            border: none;
+            color: #d32f2f;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .save-match-btn {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+
+        .error-field {
+            color: #d32f2f;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .has-error {
+            border-color: #d32f2f !important;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .fixtures-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-whistle"></i> FA Cup Officials Assignment</h1>
+            <p>Load fixtures from a round and assign referees, linesmen, and netmen</p>
+        </header>
+        
+        <main>
+            <div class="card">
+                <h2><i class="fas fa-search"></i> Load Fixtures</h2>
+                
+                <div class="form-group">
+                    <label for="zoneSelect"><i class="fas fa-map-marker-alt"></i> Select Football Zone:</label>
+                    <select id="zoneSelect">
+                        <option value="">-- Choose a zone --</option>
+                         <!--<option value="central-zone">Central Zone</option>-->
+                        <!--<option value="northern-zone">Northern Zone</option> -->
+                         <!-- <option value="southern-zone">Southern Zone</option> -->
+                        <option value="eastern-zone">Eastern Zone</option> 
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="roundSelect"><i class="fas fa-trophy"></i> Select Tournament Round:</label>
+                    <select id="roundSelect">
+                        <option value="">-- Choose a round --</option>
+                        <option value="RoundOne">Round One</option>
+                        <option value="RoundTwo">Round Two</option>
+                        <option value="ThirdRound">Third Round</option>
+                        <option value="Quarterfinals">Quarterfinals</option>
+                        <option value="Semifinals">Semifinals</option>
+                        <option value="Finals">Finals</option>
+                    </select>
+                </div>
+                
+                <div class="button-container">
+                    <button id="loadFixturesBtn" class="primary-btn">
+                        <i class="fas fa-download"></i> Load Fixtures
+                        <span id="loadLoader" class="loader" style="display: none;"></span>
+                    </button>
+                    <button id="resetBtn" class="secondary-btn">
+                        <i class="fas fa-redo"></i> Reset Selection
+                    </button>
+                </div>
+            </div>
+            
+            <div class="fixtures-container" id="fixturesContainer">
+                <h3><i class="fas fa-list-ol"></i> Fixtures for <span id="roundTitle"></span></h3>
+                <div class="fixtures-grid" id="fixturesGrid"></div>
+                
+                <div class="button-container">
+                    <button id="saveAssignmentsBtn" class="primary-btn">
+                        <i class="fas fa-save"></i> Save All Assignments
+                        <span id="saveLoader" class="loader" style="display: none;"></span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="status-container" id="statusMessage"></div>
+        </main>
+        
+        <footer>
+            <p>Gombe Football Association &copy; 2025 | Match Officials Assignment System</p>
+        </footer>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        
+        // DOM elements
+        const zoneSelect = document.getElementById('zoneSelect');
+        const roundSelect = document.getElementById('roundSelect');
+        const loadFixturesBtn = document.getElementById('loadFixturesBtn');
+        const saveAssignmentsBtn = document.getElementById('saveAssignmentsBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const fixturesContainer = document.getElementById('fixturesContainer');
+        const fixturesGrid = document.getElementById('fixturesGrid');
+        const statusMessage = document.getElementById('statusMessage');
+        const loadLoader = document.getElementById('loadLoader');
+        const saveLoader = document.getElementById('saveLoader');
+        const roundTitle = document.getElementById('roundTitle');
+        
+        // App state
+        let selectedZone = '';
+        let selectedRound = '';
+        let fixtures = [];
+        let referees = [];
+        let linesmen = [];
+        let netmen = [];
+        
+        // Event listeners
+        loadFixturesBtn.addEventListener('click', loadFixtures);
+        saveAssignmentsBtn.addEventListener('click', saveAssignments);
+        resetBtn.addEventListener('click', resetSelection);
+        
+        // Load fixtures from Firestore
+        async function loadFixtures() {
+            selectedZone = zoneSelect.value;
+            selectedRound = roundSelect.value;
+            
+            if (!selectedZone || !selectedRound) {
+                showStatus('Please select both a zone and a round', 'error');
+                return;
+            }
+            
+            // Show loading state
+            loadLoader.style.display = 'inline-block';
+            loadFixturesBtn.disabled = true;
+            
+            try {
+                // Format zone ID for Firebase
+                const formattedZoneId = selectedZone.charAt(0).toUpperCase() + selectedZone.slice(1).replace('-zone', ' Zone');
+                
+                // Get fixtures from Firestore
+                const fixturesQuery = await db.collection('GombeFAcups')
+                    .doc(formattedZoneId)
+                    .collection('fixtures')
+                    .doc(selectedRound)
+                    .get();
+                
+                if (!fixturesQuery.exists) {
+                    throw new Error(`No fixtures found for ${selectedRound} in this zone!`);
+                }
+                
+                fixtures = fixturesQuery.data().fixtures || [];
+                
+                // Load officials for this zone from MatchReferees collection
+                const officialsSnapshot = await db.collection('MatchReferees')
+                    .where('zone', '==', formattedZoneId)
+                    .get();
+                
+                // Filter officials by role
+                referees = officialsSnapshot.docs
+                    .filter(doc => doc.data().role === 'main')
+                    .map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                
+                linesmen = officialsSnapshot.docs
+                    .filter(doc => doc.data().role === 'lineman')
+                    .map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                
+                netmen = officialsSnapshot.docs
+                    .filter(doc => doc.data().role === 'netman')
+                    .map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                
+                // Render fixtures
+                renderFixtures();
+                
+                // Show fixtures container
+                fixturesContainer.style.display = 'block';
+                roundTitle.textContent = selectedRound;
+                
+                showStatus(`Successfully loaded ${fixtures.length} fixtures and officials`, 'success');
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+                fixturesGrid.innerHTML = `<p class="error">${error.message}</p>`;
+            } finally {
+                // Reset button state
+                loadLoader.style.display = 'none';
+                loadFixturesBtn.disabled = false;
+            }
+        }
+        
+        // Render fixtures in the UI with official assignment controls
+        function renderFixtures() {
+            fixturesGrid.innerHTML = '';
+            
+            fixtures.forEach(fixture => {
+                const fixtureEl = document.createElement('div');
+                fixtureEl.className = 'fixture-card';
+                
+                fixtureEl.innerHTML = `
+                    <div class="fixture-header">
+                        <div class="match-number">Match #${fixture.matchId}</div>
+                        <button class="save-match-btn secondary-btn" data-match-id="${fixture.matchId}">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                    </div>
+                    <div class="teams-display">
+                        <div class="team-row home">
+                            <div class="team-badge">${fixture.homeTeam.charAt(0)}</div>
+                            <span>${fixture.homeTeam}</span>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="team-row away">
+                            <div class="team-badge">${fixture.awayTeam.charAt(0)}</div>
+                            <span>${fixture.awayTeam}</span>
+                        </div>
+                    </div>
+                    <div class="officials-assignment">
+                        <div class="official-field">
+                            <label><i class="fas fa-whistle"></i> Referee:</label>
+                            <select class="referee-select" data-match-id="${fixture.matchId}">
+                                <option value="">-- Select Referee --</option>
+                                ${referees.map(r => `
+                                    <option value="${r.id}" ${fixture.referee === r.id ? 'selected' : ''}>${r.name} (${r.psn})</option>
+                                `).join('')}
+                            </select>
+                            <div class="error-field referee-error" data-match-id="${fixture.matchId}"></div>
+                        </div>
+                        
+                        <div class="array-field">
+                            <label><i class="fas fa-flag"></i> Linesmen (max 2):</label>
+                            <div class="linesmen-container" data-match-id="${fixture.matchId}">
+                                ${renderArrayField('linesmen', fixture.linesmen || [], linesmen)}
+                            </div>
+                            <div class="error-field linesmen-error" data-match-id="${fixture.matchId}"></div>
+                            <button class="add-item-btn add-linesman" data-match-id="${fixture.matchId}">
+                                <i class="fas fa-plus"></i> Add Linesman
+                            </button>
+                        </div>
+                        
+                        <div class="array-field">
+                            <label><i class="fas fa-flag"></i> Netmen (max 2):</label>
+                            <div class="netmen-container" data-match-id="${fixture.matchId}">
+                                ${renderArrayField('netmen', fixture.netmen || [], netmen)}
+                            </div>
+                            <div class="error-field netmen-error" data-match-id="${fixture.matchId}"></div>
+                            <button class="add-item-btn add-netman" data-match-id="${fixture.matchId}">
+                                <i class="fas fa-plus"></i> Add Netman
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                fixturesGrid.appendChild(fixtureEl);
+                
+                // Add event listeners for this fixture
+                const saveBtn = fixtureEl.querySelector('.save-match-btn');
+                saveBtn.addEventListener('click', () => saveSingleFixture(fixture.matchId));
+                
+                const refereeSelect = fixtureEl.querySelector('.referee-select');
+                refereeSelect.addEventListener('change', () => validateFixture(fixture.matchId));
+            });
+            
+            // Add event listeners for dynamic fields
+            document.querySelectorAll('.add-linesman').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const matchId = btn.getAttribute('data-match-id');
+                    addArrayItem(btn, 'linesmen', linesmen);
+                    validateFixture(matchId);
+                });
+            });
+            
+            document.querySelectorAll('.add-netman').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const matchId = btn.getAttribute('data-match-id');
+                    addArrayItem(btn, 'netmen', netmen);
+                    validateFixture(matchId);
+                });
+            });
+        }
+        
+        // Render array field (for linesmen and netmen)
+        function renderArrayField(type, currentValues, officials) {
+            if (currentValues.length === 0) {
+                return '';
+            }
+            
+            return currentValues.map((officialId, index) => {
+                const official = officials.find(o => o.id === officialId);
+                return `
+                    <div class="array-item">
+                        <select class="${type}-select" data-index="${index}" data-match-id="${type}">
+                            <option value="">-- Select ${type.charAt(0).toUpperCase() + type.slice(1)} --</option>
+                            ${officials.map(o => `
+                                <option value="${o.id}" ${officialId === o.id ? 'selected' : ''}>${o.name} (${o.psn})</option>
+                            `).join('')}
+                        </select>
+                        <button class="remove-item-btn remove-${type}" data-index="${index}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Add item to array field (linesman or netman)
+        function addArrayItem(button, type, officials) {
+            const matchId = button.getAttribute('data-match-id');
+            const container = button.parentElement.querySelector(`.${type}-container`);
+            
+            // Count existing items
+            const currentItems = container.querySelectorAll('.array-item');
+            if (currentItems.length >= 2) {
+                return;
+            }
+            
+            // Create new item
+            const newItem = document.createElement('div');
+            newItem.className = 'array-item';
+            newItem.innerHTML = `
+                <select class="${type}-select" data-index="${currentItems.length}" data-match-id="${type}">
+                    <option value="">-- Select ${type.charAt(0).toUpperCase() + type.slice(1)} --</option>
+                    ${officials.map(o => `
+                        <option value="${o.id}">${o.name} (${o.psn})</option>
+                    `).join('')}
+                </select>
+                <button class="remove-item-btn remove-${type}" data-index="${currentItems.length}">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            container.appendChild(newItem);
+            
+            // Add event listener to remove button
+            newItem.querySelector(`.remove-${type}`).addEventListener('click', () => {
+                newItem.remove();
+                
+                // Update data-index for remaining items
+                container.querySelectorAll('.array-item').forEach((item, idx) => {
+                    item.querySelector('select').setAttribute('data-index', idx);
+                    item.querySelector('button').setAttribute('data-index', idx);
+                });
+                
+                validateFixture(matchId);
+            });
+            
+            // Add change listener for validation
+            newItem.querySelector('select').addEventListener('change', () => validateFixture(matchId));
+        }
+        
+        // Validate a single fixture
+        function validateFixture(matchId) {
+            const fixture = fixtures.find(f => f.matchId === matchId);
+            if (!fixture) return false;
+            
+            const card = document.querySelector(`.fixture-card:nth-child(${fixtures.indexOf(fixture) + 1})`);
+            if (!card) return false;
+            
+            let isValid = true;
+            
+            // Validate referee
+            const refereeSelect = card.querySelector('.referee-select');
+            const refereeError = card.querySelector('.referee-error');
+            
+            if (!refereeSelect.value) {
+                refereeError.textContent = "Please select a referee";
+                refereeError.style.display = 'block';
+                refereeSelect.classList.add('has-error');
+                isValid = false;
+            } else {
+                refereeError.style.display = 'none';
+                refereeSelect.classList.remove('has-error');
+            }
+            
+            // Validate linesmen (at least 1 required)
+            const linesmenItems = card.querySelectorAll('.linesmen-select');
+            const linesmenError = card.querySelector('.linesmen-error');
+            const linesmenValues = Array.from(linesmenItems).map(select => select.value).filter(Boolean);
+            
+            if (linesmenValues.length === 0) {
+                linesmenError.textContent = "Please select at least one linesman";
+                linesmenError.style.display = 'block';
+                linesmenItems.forEach(select => select.classList.add('has-error'));
+                isValid = false;
+            } else {
+                linesmenError.style.display = 'none';
+                linesmenItems.forEach(select => select.classList.remove('has-error'));
+            }
+            
+            // Validate netmen (at least 1 required)
+            const netmenItems = card.querySelectorAll('.netmen-select');
+            const netmenError = card.querySelector('.netmen-error');
+            const netmenValues = Array.from(netmenItems).map(select => select.value).filter(Boolean);
+            
+            if (netmenValues.length === 0) {
+                netmenError.textContent = "Please select at least one netman";
+                netmenError.style.display = 'block';
+                netmenItems.forEach(select => select.classList.add('has-error'));
+                isValid = false;
+            } else {
+                netmenError.style.display = 'none';
+                netmenItems.forEach(select => select.classList.remove('has-error'));
+            }
+            
+            return isValid;
+        }
+        
+        // Save a single fixture's assignments
+        async function saveSingleFixture(matchId) {
+            const fixture = fixtures.find(f => f.matchId === matchId);
+            if (!fixture) return;
+            
+            // Validate first
+            if (!validateFixture(matchId)) {
+                showStatus('Please fix the validation errors before saving', 'error');
+                return;
+            }
+            
+            const card = document.querySelector(`.fixture-card:nth-child(${fixtures.indexOf(fixture) + 1})`);
+            if (!card) return;
+            
+            // Get selected officials
+            const refereeSelect = card.querySelector('.referee-select');
+            const referee = refereeSelect ? refereeSelect.value : '';
+            
+            // Get linesmen
+            const linesmenItems = card.querySelectorAll('.linesmen-select');
+            const linesmen = Array.from(linesmenItems).map(select => select.value).filter(Boolean);
+            
+            // Get netmen
+            const netmenItems = card.querySelectorAll('.netmen-select');
+            const netmen = Array.from(netmenItems).map(select => select.value).filter(Boolean);
+            
+            // Update button state
+            const saveBtn = card.querySelector('.save-match-btn');
+            const originalHTML = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving';
+            saveBtn.disabled = true;
+            
+            try {
+                // Format zone ID for Firebase
+                const formattedZoneId = selectedZone.charAt(0).toUpperCase() + selectedZone.slice(1).replace('-zone', ' Zone');
+                const currentTimestamp = new Date().toISOString();
+                
+                // Create batch for atomic writes
+                const batch = db.batch();
+                
+                // Update fixture in fixtures collection
+                const fixtureRef = db.collection('GombeFAcups')
+                    .doc(formattedZoneId)
+                    .collection('fixtures')
+                    .doc(selectedRound);
+                
+                // Find this fixture in the array and update it
+                const updatedFixtures = fixtures.map(f => {
+                    if (f.matchId === fixture.matchId) {
+                        return {
+                            ...f,
+                            referee,
+                            linesmen: linesmen.length > 0 ? linesmen : null,
+                            netmen: netmen.length > 0 ? netmen : null
+                        };
+                    }
+                    return f;
+                });
+                
+                batch.update(fixtureRef, {
+                    fixtures: updatedFixtures
+                });
+                
+                // Determine season from match date
+                const matchDate = new Date(fixture.date || currentTimestamp);
+                const matchYear = matchDate.getFullYear();
+                const matchSeason = `Season${matchYear}-${(matchYear + 1).toString().slice(2)}`;
+                const matchIdStr = `FMatch${fixture.matchId.toString().padStart(2, '0')}`;
+                
+                // Update home team record
+                const homeTeamRef = db.collection("GombeFAcupsMatch")
+                    .doc(fixture.homeTeam)
+                    .collection(matchSeason)
+                    .doc(matchIdStr);
+                
+                batch.update(homeTeamRef, {
+                    referee,
+                    linesmen: linesmen.length > 0 ? linesmen : firebase.firestore.FieldValue.delete(),
+                    netmen: netmen.length > 0 ? netmen : firebase.firestore.FieldValue.delete(),
+                    lastUpdated: currentTimestamp
+                });
+                
+                // Update away team record
+                const awayTeamRef = db.collection("GombeFAcupsMatch")
+                    .doc(fixture.awayTeam)
+                    .collection(matchSeason)
+                    .doc(matchIdStr);
+                
+                batch.update(awayTeamRef, {
+                    referee,
+                    linesmen: linesmen.length > 0 ? linesmen : firebase.firestore.FieldValue.delete(),
+                    netmen: netmen.length > 0 ? netmen : firebase.firestore.FieldValue.delete(),
+                    lastUpdated: currentTimestamp
+                });
+                
+                // Commit all writes at once
+                await batch.commit();
+                
+                // Update button state
+                saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved';
+                setTimeout(() => {
+                    saveBtn.innerHTML = originalHTML;
+                    saveBtn.disabled = false;
+                }, 2000);
+                
+                showStatus(`Officials assignments saved successfully for Match #${fixture.matchId}!`, 'success');
+                
+            } catch (error) {
+                console.error('Error saving assignments:', error);
+                showStatus(`Error saving Match #${fixture.matchId}: ${error.message}`, 'error');
+                saveBtn.innerHTML = originalHTML;
+                saveBtn.disabled = false;
+            }
+        }
+        
+        // Save all assignments to Firestore
+        async function saveAssignments() {
+            try {
+                // Validate all fixtures first
+                let allValid = true;
+                fixtures.forEach(fixture => {
+                    if (!validateFixture(fixture.matchId)) {
+                        allValid = false;
+                    }
+                });
+                
+                if (!allValid) {
+                    showStatus('Please fix validation errors before saving all assignments', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                saveLoader.style.display = 'inline-block';
+                saveAssignmentsBtn.disabled = true;
+                
+                // Format zone ID for Firebase
+                const formattedZoneId = selectedZone.charAt(0).toUpperCase() + selectedZone.slice(1).replace('-zone', ' Zone');
+                
+                // Create batch for atomic writes
+                const batch = db.batch();
+                const currentTimestamp = new Date().toISOString();
+                
+                // Update each fixture with official assignments
+                for (const fixture of fixtures) {
+                    const card = document.querySelector(`.fixture-card:nth-child(${fixtures.indexOf(fixture) + 1})`);
+                    if (!card) continue;
+                    
+                    // Get selected officials
+                    const refereeSelect = card.querySelector('.referee-select');
+                    const referee = refereeSelect ? refereeSelect.value : '';
+                    
+                    // Get linesmen
+                    const linesmenItems = card.querySelectorAll('.linesmen-select');
+                    const linesmen = Array.from(linesmenItems).map(select => select.value).filter(Boolean);
+                    
+                    // Get netmen
+                    const netmenItems = card.querySelectorAll('.netmen-select');
+                    const netmen = Array.from(netmenItems).map(select => select.value).filter(Boolean);
+                    
+                    // Update fixture in fixtures collection
+                    const fixtureRef = db.collection('GombeFAcups')
+                        .doc(formattedZoneId)
+                        .collection('fixtures')
+                        .doc(selectedRound);
+                    
+                    // Find this fixture in the array and update it
+                    const updatedFixtures = fixtures.map(f => {
+                        if (f.matchId === fixture.matchId) {
+                            return {
+                                ...f,
+                                referee,
+                                linesmen: linesmen.length > 0 ? linesmen : null,
+                                netmen: netmen.length > 0 ? netmen : null
+                            };
+                        }
+                        return f;
+                    });
+                    
+                    batch.update(fixtureRef, {
+                        fixtures: updatedFixtures
+                    });
+                    
+                    // Determine season from match date
+                    const matchDate = new Date(fixture.date || currentTimestamp);
+                    const matchYear = matchDate.getFullYear();
+                    const matchSeason = `Season${matchYear}-${(matchYear + 1).toString().slice(2)}`;
+                    const matchId = `FMatch${fixture.matchId.toString().padStart(2, '0')}`;
+                    
+                    // Update home team record
+                    const homeTeamRef = db.collection("GombeFAcupsMatch")
+                        .doc(fixture.homeTeam)
+                        .collection(matchSeason)
+                        .doc(matchId);
+                    
+                    batch.update(homeTeamRef, {
+                        referee,
+                        linesmen: linesmen.length > 0 ? linesmen : firebase.firestore.FieldValue.delete(),
+                        netmen: netmen.length > 0 ? netmen : firebase.firestore.FieldValue.delete(),
+                        lastUpdated: currentTimestamp
+                    });
+                    
+                    // Update away team record
+                    const awayTeamRef = db.collection("GombeFAcupsMatch")
+                        .doc(fixture.awayTeam)
+                        .collection(matchSeason)
+                        .doc(matchId);
+                    
+                    batch.update(awayTeamRef, {
+                        referee,
+                        linesmen: linesmen.length > 0 ? linesmen : firebase.firestore.FieldValue.delete(),
+                        netmen: netmen.length > 0 ? netmen : firebase.firestore.FieldValue.delete(),
+                        lastUpdated: currentTimestamp
+                    });
+                }
+                
+                // Commit all writes at once
+                await batch.commit();
+                
+                showStatus(`Officials assignments saved successfully for ${selectedRound}!`, 'success');
+                
+            } catch (error) {
+                console.error('Error saving assignments:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+            } finally {
+                // Reset button state
+                saveLoader.style.display = 'none';
+                saveAssignmentsBtn.disabled = false;
+            }
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.innerHTML = `<div class="${type}">${message}</div>`;
+            statusMessage.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Reset selection
+        function resetSelection() {
+            zoneSelect.value = '';
+            roundSelect.value = '';
+            fixtures = [];
+            referees = [];
+            linesmen = [];
+            netmen = [];
+            
+            fixturesGrid.innerHTML = '';
+            fixturesContainer.style.display = 'none';
+            statusMessage.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

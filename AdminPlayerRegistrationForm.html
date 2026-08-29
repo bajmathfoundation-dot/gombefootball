@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gombe Football Player Registration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f4f7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #014421;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+    form {
+      background: white;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    form label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+    }
+    form input,
+    form select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #014421;
+      color: white;
+      padding: 12px 18px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #02743a;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <header>Gombe Football Player Registration</header>
+
+  <form id="playerForm">
+    <label for="name">Player Name</label>
+    <input type="text" id="name" required />
+
+    <label for="LGAs">Local Government Area</label>
+    <select id="LGAs" required>
+      <option value="">-- Select LGA --</option>
+      <option>Akko</option><option>Balanga</option><option>Billiri</option><option>Dukku</option>
+      <option>Funakaye</option><option>Gombe</option><option>Kaltungo</option><option>Kwami</option>
+      <option>Nafada</option><option>Shongom</option><option>Yamaltu/Deba</option>
+    </select>
+
+    <label for="position">Position</label>
+    <select id="position" required>
+      <option value="">-- Select Position --</option>
+      <option>Goalkeeper</option><option>Right Back (RB)</option><option>Left Back (LB)</option>
+      <option>Center Back (CB)</option><option>Wing Back (WB)</option><option>Sweeper (SW)</option>
+      <option>Defensive Midfielder (CDM)</option><option>Central Midfielder (CM)</option>
+      <option>Attacking Midfielder (CAM)</option><option>Right Midfielder (RM)</option>
+      <option>Left Midfielder (LM)</option><option>Wide Midfielder</option>
+      <option>Striker (ST)</option><option>Center Forward (CF)</option>
+      <option>Second Striker (SS)</option><option>Right Winger (RW)</option><option>Left Winger (LW)</option>
+    </select>
+
+    <label for="DOB">Date of Birth</label>
+    <input type="date" id="DOB" required />
+
+    <label for="teamName">Team</label>
+    <select id="teamName" required>
+      <option value="">-- Loading Teams... --</option>
+    </select>
+
+    <label for="jerseyNumber">Jersey Number</label>
+    <select id="jerseyNumber" required>
+      <option value="">-- Select a team first --</option>
+    </select>
+
+    <label for="imageFile">Player Image (future-ready)</label>
+    <input type="file" id="imageFile" accept="image/*" />
+
+    <button type="submit">Register Player</button>
+  </form>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball",
+      storageBucket: "gombefootball.appspot.com"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const teamDropdown = document.getElementById("teamName");
+    const jerseyDropdown = document.getElementById("jerseyNumber");
+
+    // Load team names
+    db.collection("leaguezones").get().then(snapshot => {
+      let teams = [];
+      snapshot.forEach(doc => {
+        const arr = doc.data().teams;
+        if (Array.isArray(arr)) teams.push(...arr);
+      });
+      teams.sort();
+      teamDropdown.innerHTML = '<option value="">-- Select Team --</option>';
+      teams.forEach(team => {
+        const opt = document.createElement("option");
+        opt.value = team;
+        opt.textContent = team;
+        teamDropdown.appendChild(opt);
+      });
+    });
+
+    // Update jersey options per team
+    teamDropdown.addEventListener("change", async function () {
+      const selectedTeam = this.value;
+      jerseyDropdown.innerHTML = '<option>Loading...</option>';
+      const taken = new Set();
+
+      const snap = await db.collection("playerRegistry")
+        .where("teamName", "==", selectedTeam).get();
+      snap.forEach(doc => {
+        const jersey = doc.data().jerseyNumber;
+        if (typeof jersey === "number") taken.add(jersey);
+      });
+
+      jerseyDropdown.innerHTML = '<option value="">-- Select Jersey Number --</option>';
+      for (let i = 1; i <= 99; i++) {
+        if (!taken.has(i)) {
+          const opt = document.createElement("option");
+          opt.value = i;
+          opt.textContent = i;
+          jerseyDropdown.appendChild(opt);
+        }
+      }
+
+      if (taken.size >= 99) {
+        jerseyDropdown.innerHTML = '<option value="">All jersey numbers taken</option>';
+      }
+    });
+
+    // Handle form submit
+    document.getElementById("playerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const LGAs = document.getElementById("LGAs").value;
+      const position = document.getElementById("position").value;
+      const DOB = document.getElementById("DOB").value;
+      const teamName = document.getElementById("teamName").value;
+      const jerseyNumber = parseInt(document.getElementById("jerseyNumber").value);
+      const imageFile = document.getElementById("imageFile").files[0];
+
+      // Enforce 33-player limit
+      const teamPlayers = await db.collection("playerRegistry")
+        .where("teamName", "==", teamName).get();
+      if (teamPlayers.size >= 33) {
+        alert("❌ This team already has 33 registered players.");
+        return;
+      }
+
+      const counterRef = db.collection("counters").doc("playerPSN");
+
+      try {
+        await db.runTransaction(async tx => {
+          const doc = await tx.get(counterRef);
+          const latest = doc.exists ? doc.data().latestPSN || 0 : 0;
+          const next = latest + 1;
+          const psn = next.toString().padStart(6, "0");
+          const teamID = `${psn}_${teamName}`;
+
+          const playerData = {
+            name, LGAs, position, DOB, teamName, jerseyNumber, teamID,
+            imageUrl: "https://via.placeholder.com/150?text=Player"
+          };
+
+          // 📸 Future imageFile upload goes here
+
+          tx.set(db.collection("playerRegistry").doc(psn), playerData);
+          tx.set(counterRef, { latestPSN: next }, { merge: true });
+
+          alert(`✅ Player "${name}" registered with PSN: ${psn}`);
+          document.getElementById("playerForm").reset();
+          jerseyDropdown.innerHTML = '<option value="">-- Select a team first --</option>';
+        });
+      } catch (err) {
+        console.error("❌ Registration error:", err);
+        alert("Something went wrong—check the console.");
+      }
+    });
+  </script>
+</body>
+</html>

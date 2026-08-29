@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Coach Settings | Gombe Football</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    :root {
+      --primary: #1a2a6c;
+      --secondary: #3494e6;
+      --accent: #fdbb2d;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+      --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f0f5ff, #e6f0ff);
+      color: #333;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    /* Header Styles */
+    header {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    header::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+      z-index: 0;
+    }
+    
+    .header-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .coach-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+    }
+    
+    .header-text h1 {
+      font-size: 2.2rem;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .header-text p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 15px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .btn {
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: white;
+      color: var(--primary);
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+    
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Card Styles */
+    .card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      margin-bottom: 30px;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+    
+    .card-header {
+      background: linear-gradient(to right, var(--secondary), var(--primary));
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .card-header h2 {
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .card-body {
+      padding: 25px;
+    }
+    
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--light-gray);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(52, 148, 230, 0.2);
+      outline: none;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .form-col {
+      flex: 1;
+    }
+    
+    /* Avatar Upload */
+    .avatar-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .avatar-preview {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--light-gray);
+    }
+    
+    .avatar-upload-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    /* Password Toggle */
+    .password-toggle {
+      position: relative;
+    }
+    
+    .password-toggle-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--gray);
+    }
+    
+    /* Alert Styles */
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .alert-success {
+      background-color: rgba(39, 174, 96, 0.1);
+      border: 1px solid rgba(39, 174, 96, 0.2);
+      color: var(--success);
+    }
+    
+    .alert-danger {
+      background-color: rgba(231, 76, 60, 0.1);
+      border: 1px solid rgba(231, 76, 60, 0.2);
+      color: var(--danger);
+    }
+
+    /* Password Requirements */
+    .password-requirements {
+      margin-top: 5px;
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+
+    .password-requirements.valid {
+      color: var(--success);
+    }
+
+    .password-requirements.invalid {
+      color: var(--danger);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+      }
+      
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .header-actions {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="header-content">
+        <img id="coachAvatar" src="" alt="Coach Avatar" class="coach-avatar">
+        <div class="header-text">
+          <h1><i class="fas fa-user-cog"></i> <span id="coachName">Coach Settings</span></h1>
+          <p>Manage your account information</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="btn btn-primary" id="backBtn"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+      </div>
+    </header>
+    
+    <!-- Settings Form -->
+    <div class="card">
+      <div class="card-header">
+        <h2><i class="fas fa-user-edit"></i> Profile Settings</h2>
+      </div>
+      <div class="card-body">
+        <div id="alertContainer"></div>
+        
+        <div class="avatar-upload">
+          <img id="avatarPreview" src="" alt="Avatar Preview" class="avatar-preview">
+          <div class="avatar-upload-actions">
+            <button class="btn btn-secondary" id="uploadBtn"><i class="fas fa-upload"></i> Upload Image</button>
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+            <button class="btn btn-danger" id="removeImageBtn"><i class="fas fa-trash"></i> Remove</button>
+          </div>
+        </div>
+        
+        <form id="settingsForm">
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" class="form-control" required>
+              </div>
+            </div>
+            <div class="form-col">
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" class="form-control" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="bio">Bio/Description</label>
+            <textarea id="bio" class="form-control" rows="4"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="currentPassword">Current Password (required for password change)</label>
+            <div class="password-toggle">
+              <input type="password" id="currentPassword" class="form-control" placeholder="Enter current password">
+              <i class="fas fa-eye password-toggle-icon" id="toggleCurrentPassword"></i>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="newPassword">New Password</label>
+                <div class="password-toggle">
+                  <input type="password" id="newPassword" class="form-control" placeholder="At least 8 characters with uppercase and number">
+                  <i class="fas fa-eye password-toggle-icon" id="toggleNewPassword"></i>
+                </div>
+                <div id="passwordRequirements" class="password-requirements">
+                  <small>Password must contain: at least 8 characters, one uppercase letter, one number</small>
+                </div>
+              </div>
+            </div>
+            <div class="form-col">
+              <div class="form-group">
+                <label for="confirmPassword">Confirm New Password</label>
+                <div class="password-toggle">
+                  <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm your new password">
+                  <i class="fas fa-eye password-toggle-icon" id="toggleConfirmPassword"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group" style="margin-top: 30px;">
+            <button type="submit" class="btn btn-success" style="padding: 15px 25px;">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage-compat.js"></script>
+  
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball",
+      storageBucket: "gombefootball.appspot.com"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const storage = firebase.storage();
+
+    // DOM Elements
+    const coachName = document.getElementById('coachName');
+    const coachAvatar = document.getElementById('coachAvatar');
+    const backBtn = document.getElementById('backBtn');
+    const settingsForm = document.getElementById('settingsForm');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const imageUpload = document.getElementById('imageUpload');
+    const removeImageBtn = document.getElementById('removeImageBtn');
+    const alertContainer = document.getElementById('alertContainer');
+    const toggleCurrentPassword = document.getElementById('toggleCurrentPassword');
+    const toggleNewPassword = document.getElementById('toggleNewPassword');
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    const currentPassword = document.getElementById('currentPassword');
+    const newPassword = document.getElementById('newPassword');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const passwordRequirements = document.getElementById('passwordRequirements');
+
+    // Get coach ID from URL or localStorage
+    function getCoachId() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('coachId') || localStorage.getItem('coachPSN');
+    }
+
+    // Show alert message
+    function showAlert(message, type = 'success') {
+      alertContainer.innerHTML = `
+        <div class="alert alert-${type}">
+          <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+          ${message}
+        </div>
+      `;
+      
+      // Remove alert after 5 seconds
+      setTimeout(() => {
+        alertContainer.innerHTML = '';
+      }, 5000);
+    }
+
+    // Toggle password visibility
+    function setupPasswordToggle(toggleElement, inputElement) {
+      toggleElement.addEventListener('click', () => {
+        const type = inputElement.getAttribute('type') === 'password' ? 'text' : 'password';
+        inputElement.setAttribute('type', type);
+        toggleElement.classList.toggle('fa-eye');
+        toggleElement.classList.toggle('fa-eye-slash');
+      });
+    }
+
+    // Validate password requirements
+    function validatePassword(password) {
+      const minLength = 8;
+      const hasUpperCase = /[A-Z]/.test(password);
+      const hasNumber = /[0-9]/.test(password);
+      
+      return {
+        isValid: password.length >= minLength && hasUpperCase && hasNumber,
+        requirements: {
+          minLength,
+          hasUpperCase,
+          hasNumber
+        }
+      };
+    }
+
+    // Show password requirements feedback
+    function showPasswordRequirements(requirements) {
+      const messages = [];
+      if (requirements.minLength) messages.push(`at least ${requirements.minLength} characters`);
+      if (requirements.hasUpperCase) messages.push(`one uppercase letter`);
+      if (requirements.hasNumber) messages.push(`one number`);
+      
+      return `Password must contain: ${messages.join(', ')}`;
+    }
+
+    // Upload image to Firebase Storage
+    async function uploadImage(file, coachPSN) {
+      try {
+        // Create storage reference
+        const storageRef = storage.ref();
+        const filePath = `coach_avatars/${coachPSN}/${file.name}`;
+        const fileRef = storageRef.child(filePath);
+        
+        // Upload file
+        const snapshot = await fileRef.put(file);
+        
+        // Get download URL
+        const downloadURL = await snapshot.ref.getDownloadURL();
+        
+        return downloadURL;
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        throw error;
+      }
+    }
+
+    // Secure password update handler
+    async function handlePasswordChange(currentPwd, newPwd, confirmPwd) {
+      try {
+        // Validate new password
+        const validation = validatePassword(newPwd);
+        if (!validation.isValid) {
+          throw new Error(showPasswordRequirements(validation.requirements));
+        }
+        
+        if (newPwd !== confirmPwd) {
+          throw new Error("New passwords don't match");
+        }
+        
+        // Get current user
+        const user = auth.currentUser;
+        const coachPSN = getCoachId();
+        
+        if (!user) {
+          // If not authenticated, get coach email and sign in first
+          const coachDoc = await db.collection("GombeCoaches").doc(coachPSN).get();
+          if (!coachDoc.exists) throw new Error("Coach not found");
+          
+          const coachData = coachDoc.data();
+          if (!coachData.email) throw new Error("No email associated with this account");
+          
+          // Re-authenticate user
+          await auth.signInWithEmailAndPassword(coachData.email, currentPwd);
+        } else {
+          // For already authenticated users, reauthenticate before changing password
+          const credential = firebase.auth.EmailAuthProvider.credential(
+            user.email, 
+            currentPwd
+          );
+          await user.reauthenticateWithCredential(credential);
+        }
+        
+        // Update password
+        await auth.currentUser.updatePassword(newPwd);
+        return true;
+        
+      } catch (error) {
+        console.error("Password change error:", error);
+        throw error;
+      }
+    }
+
+    // Update coach profile in Firestore
+    async function updateCoachProfile(coachPSN, updates) {
+      try {
+        await db.collection("GombeCoaches").doc(coachPSN).update(updates);
+        return true;
+      } catch (error) {
+        console.error("Error updating coach profile:", error);
+        throw error;
+      }
+    }
+
+    // Load coach data
+    async function loadCoachData() {
+      const coachPSN = getCoachId();
+      
+      if (!coachPSN) {
+        showAlert('No coach ID found. Please login again.', 'danger');
+        return;
+      }
+
+      try {
+        const coachDoc = await db.collection("GombeCoaches").doc(coachPSN).get();
+        
+        if (!coachDoc.exists) {
+          showAlert('Coach profile not found.', 'danger');
+          return;
+        }
+
+        const coachData = coachDoc.data();
+        
+        // Populate form fields
+        document.getElementById('name').value = coachData.name || '';
+        document.getElementById('phone').value = coachData.phone || '';
+        document.getElementById('bio').value = coachData.bio || '';
+        
+        // Set avatar
+        if (coachData.imageURL) {
+          avatarPreview.src = coachData.imageURL;
+          coachAvatar.src = coachData.imageURL;
+        } else {
+          avatarPreview.src = 'https://via.placeholder.com/150?text=COACH';
+          coachAvatar.src = 'https://via.placeholder.com/80?text=COACH';
+        }
+        
+        coachName.textContent = coachData.name || 'Coach';
+        
+      } catch (error) {
+        console.error("Error loading coach data:", error);
+        showAlert('Error loading coach profile.', 'danger');
+      }
+    }
+
+    // Handle form submission
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      const coachPSN = getCoachId();
+      if (!coachPSN) {
+        showAlert('No coach ID found. Please login again.', 'danger');
+        return;
+      }
+      
+      // Get form values
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const bio = document.getElementById('bio').value.trim();
+      const currentPwd = currentPassword.value;
+      const newPwd = newPassword.value;
+      const confirmPwd = confirmPassword.value;
+      
+      // Basic validation
+      if (!name || !phone) {
+        showAlert('Name and phone number are required.', 'danger');
+        return;
+      }
+      
+      try {
+        // Prepare updates object
+        const updates = {
+          name,
+          phone,
+          bio: bio || null,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        // Handle image upload if new image selected
+        if (imageUpload.files[0]) {
+          const imageUrl = await uploadImage(imageUpload.files[0], coachPSN);
+          updates.imageURL = imageUrl;
+          avatarPreview.src = imageUrl;
+          coachAvatar.src = imageUrl;
+        } else if (removeImageBtn.dataset.removed === 'true') {
+          updates.imageURL = null;
+          avatarPreview.src = 'https://via.placeholder.com/150?text=COACH';
+          coachAvatar.src = 'https://via.placeholder.com/80?text=COACH';
+        }
+        
+        // Handle password change if requested
+        if (currentPwd || newPwd || confirmPwd) {
+          if (!currentPwd || !newPwd || !confirmPwd) {
+            throw new Error("All password fields are required to change password");
+          }
+          
+          await handlePasswordChange(currentPwd, newPwd, confirmPwd);
+          showAlert('Password updated successfully!', 'success');
+          
+          // Clear password fields
+          currentPassword.value = '';
+          newPassword.value = '';
+          confirmPassword.value = '';
+        }
+        
+        // Update profile in Firestore
+        await updateCoachProfile(coachPSN, updates);
+        showAlert('Profile updated successfully!', 'success');
+        
+        // Update local storage
+        localStorage.setItem("coachPSN", coachPSN);
+        localStorage.setItem("coachPhone", phone);
+        
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        showAlert(`Error: ${error.message}`, 'danger');
+      }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      // Load coach data
+      loadCoachData();
+      
+      // Setup back button
+      const coachPSN = getCoachId();
+      const teamId = localStorage.getItem("teamId");
+      const baseHref = `${teamId ? `?coachId=${coachPSN}&teamId=${teamId}` : `?coachId=${coachPSN}`}`;
+      backBtn.onclick = () => {
+        window.location.href = `CoachProfile.html${baseHref}`;
+      };
+      
+      // Setup image upload
+      uploadBtn.addEventListener('click', () => {
+        imageUpload.click();
+      });
+      
+      imageUpload.addEventListener('change', (e) => {
+        if (e.target.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            avatarPreview.src = event.target.result;
+          };
+          reader.readAsDataURL(e.target.files[0]);
+          
+          // Reset remove flag if new image selected
+          removeImageBtn.dataset.removed = 'false';
+        }
+      });
+      
+      // Setup image removal
+      removeImageBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        avatarPreview.src = 'https://via.placeholder.com/150?text=COACH';
+        removeImageBtn.dataset.removed = 'true';
+      });
+      
+      // Setup password toggles
+      setupPasswordToggle(toggleCurrentPassword, currentPassword);
+      setupPasswordToggle(toggleNewPassword, newPassword);
+      setupPasswordToggle(toggleConfirmPassword, confirmPassword);
+      
+      // Real-time password validation
+      newPassword.addEventListener('input', function() {
+        const password = this.value;
+        const validation = validatePassword(password);
+        
+        if (password.length === 0) {
+          passwordRequirements.className = 'password-requirements';
+          passwordRequirements.innerHTML = '<small>Password must contain: at least 8 characters, one uppercase letter, one number</small>';
+          return;
+        }
+        
+        passwordRequirements.className = validation.isValid ? 
+          'password-requirements valid' : 
+          'password-requirements invalid';
+        
+        if (!validation.isValid) {
+          passwordRequirements.innerHTML = `<small>${showPasswordRequirements(validation.requirements)}</small>`;
+        } else {
+          passwordRequirements.innerHTML = '<small>Password meets all requirements</small>';
+        }
+      });
+      
+      // Form submission
+      settingsForm.addEventListener('submit', handleFormSubmit);
+    });
+  </script>
+</body>
+</html>

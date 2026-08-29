@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe State Champions Cup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .stage-selector {
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .stage-btn {
+            padding: 15px 40px;
+            margin: 0 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .group-stage {
+            background: linear-gradient(to right, #1a2a6c, #2c3e50);
+            color: white;
+        }
+        
+        .knockout-stage {
+            background: linear-gradient(to right, #b21f1f, #c0392b);
+            color: white;
+        }
+        
+        .stage-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .content-area {
+            padding: 30px;
+            min-height: 500px;
+        }
+        
+        .stage-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .stage-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        h2 {
+            color: #1a2a6c;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #b21f1f;
+            text-align: center;
+        }
+        
+        .media-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #b21f1f;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            font-size: 1.3rem;
+        }
+        
+        .images-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .image-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            background: #f8f9fa;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .image-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .image-placeholder {
+            height: 180px;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            overflow: hidden;
+        }
+        
+        .image-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .image-info {
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .image-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #1a2a6c;
+        }
+        
+        .image-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .videos-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .video-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .video-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, #b21f1f, #fdbb2d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-placeholder iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            z-index: 2;
+        }
+        
+        .video-info {
+            padding: 15px;
+        }
+        
+        .video-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #1a2a6c;
+        }
+        
+        .video-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #1a2a6c;
+            color: white;
+            margin-top: 30px;
+        }
+        
+        .lightbox-image {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .lightbox-image:hover {
+            transform: scale(1.03);
+        }
+        
+        @media (max-width: 768px) {
+            .stage-btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+                margin: 5px;
+            }
+            
+            .images-container, .videos-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gombe State Champions Cup</h1>
+            <div class="subtitle">Football Tournament</div>
+        </header>
+        
+        <div class="stage-selector">
+            <a href="GombeChampionsCupGroupTables.html" class="stage-btn group-stage">
+                <i class="fas fa-table"></i> Group Stage
+            </a>
+            <a href="GombeChampionsCupKnockoutStage.html" class="stage-btn knockout-stage">
+                <i class="fas fa-trophy"></i> Knockout Stage
+            </a>
+        </div>
+        
+        <div class="content-area">
+            <div id="group-stage" class="stage-content active">
+                <h2>Group Stage Highlights</h2>
+                
+                <div class="media-section">
+                    <div class="section-title">
+                        <i class="fas fa-images"></i> Group Stage Images
+                    </div>
+                    <div class="images-container">
+                        <div class="image-card">
+                            <div class="image-placeholder">
+                                <a href="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" data-lightbox="group-stage" data-title="Team Lineups - Official team photos from the group stage">
+                                    <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Team Lineups" class="lightbox-image">
+                                </a>
+                            </div>
+                            <div class="image-info">
+                                <div class="image-title">Team Lineups</div>
+                                <div class="image-desc">Official team photos from the group stage</div>
+                            </div>
+                        </div>
+                        
+                        <div class="image-card">
+                            <div class="image-placeholder">
+                                <a href="https://images.unsplash.com/photo-1598880940083-ef0d5d9c59a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" data-lightbox="group-stage" data-title="Action Shots - Exciting moments from group matches">
+                                    <img src="https://images.unsplash.com/photo-1598880940083-ef0d5d9c59a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Action Shots" class="lightbox-image">
+                                </a>
+                            </div>
+                            <div class="image-info">
+                                <div class="image-title">Action Shots</div>
+                                <div class="image-desc">Exciting moments from group matches</div>
+                            </div>
+                        </div>
+                        
+                        <div class="image-card">
+                            <div class="image-placeholder">
+                                <a href="https://images.unsplash.com/photo-1516466723877-e4ec1d736c8a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" data-lightbox="group-stage" data-title="Group Winners - Teams that topped their groups">
+                                    <img src="https://images.unsplash.com/photo-1516466723877-e4ec1d736c8a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Group Winners" class="lightbox-image">
+                                </a>
+                            </div>
+                            <div class="image-info">
+                                <div class="image-title">Group Winners</div>
+                                <div class="image-desc">Teams that topped their groups</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="media-section">
+                    <div class="section-title">
+                        <i class="fas fa-video"></i> Group Stage Videos
+                    </div>
+                    <div class="videos-container">
+                        <div class="video-card">
+                            <div class="video-placeholder">
+                                <iframe src="https://www.youtube.com/@GombeFootballEcosystem" allowfullscreen></iframe>
+                            </div>
+                            <div class="video-info">
+                                <div class="video-title">Group Stage Highlights</div>
+                                <div class="video-desc">Best moments from all group matches</div>
+                                <div class="video-meta">
+                                    <span><i class="far fa-clock"></i> 5:24</span>
+                                    <span><i class="far fa-eye"></i> 12.5K views</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="video-card">
+                            <div class="video-placeholder">
+                                <iframe src="https://www.youtube.com/@GombeFootballEcosystem" allowfullscreen></iframe>
+                            </div>
+                            <div class="video-info">
+                                <div class="video-title">Top Goals - Group Stage</div>
+                                <div class="video-desc">Amazing goals scored in the group phase</div>
+                                <div class="video-meta">
+                                    <span><i class="far fa-clock"></i> 7:42</span>
+                                    <span><i class="far fa-eye"></i> 18.3K views</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="video-card">
+                            <div class="video-placeholder">
+                                <iframe src="https://www.youtube.com/@GombeFootballEcosystem" allowfullscreen></iframe>
+                            </div>
+                            <div class="video-info">
+                                <div class="video-title">Team Reactions</div>
+                                <div class="video-desc">Post-match interviews with players and coaches</div>
+                                <div class="video-meta">
+                                    <span><i class="far fa-clock"></i> 4:15</span>
+                                    <span><i class="far fa-eye"></i> 8.7K views</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="knockout-stage" class="stage-content">
+                <h2>Knockout Stage Highlights</h2>
+                
+                <div class="media-section">
+                    <div class="section-title">
+                        <i class="fas fa-images"></i> Knockout Stage Images
+                    </div>
+                    <div class="images-container">
+                        <div class="image-card">
+                            <div class="image-placeholder">
+                                <a href="https://images.unsplash.com/photo-1599669454699-248893623440?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" data-lightbox="knockout-stage" data-title="Quarter Finals - Intense moments from the quarter finals">
+                                    <img src="https://images.unsplash.com/photo-1599669454699-248893623440?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Quarter Finals" class="lightbox-image">
+                                </a>
+                            </div>
+                            <div class="image-info">
+                                <div class="image-title">Quarter Finals</div>
+                                <div class="image-desc">Intense moments from the quarter finals</div>
+                            </div>
+                        </div>
+                        
+                        <div class="image-card">
+                            <div class="image-placeholder">
+                                <a href="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" data-lightbox="knockout-stage" data-title="Semi Finals - Teams battling for a spot in the final">
+                                    <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Semi Finals" class="lightbox-image">
+                                </a>
+                            </div>
+                            <div class="image-info">
+                                <div class="image-title">Semi Finals</div>
+                                <div class="image-desc">Teams battling for a spot in the final</div>
+                            </div>
+                        </div>
+                        
+                        <div class="image-card">
+                            <div class="image-placeholder">
+                                <a href="https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" data-lightbox="knockout-stage" data-title="The Final - The championship match and celebrations">
+                                    <img src="https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="The Final" class="lightbox-image">
+                                </a>
+                            </div>
+                            <div class="image-info">
+                                <div class="image-title">The Final</div>
+                                <div class="image-desc">The championship match and celebrations</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="media-section">
+                    <div class="section-title">
+                        <i class="fas fa-video"></i> Knockout Stage Videos
+                    </div>
+                    <div class="videos-container">
+                        <div class="video-card">
+                            <div class="video-placeholder">
+                                <iframe src="https://www.youtube.com/embed/fJz4BjUQEPw" allowfullscreen></iframe>
+                            </div>
+                            <div class="video-info">
+                                <div class="video-title">Quarter Finals Highlights</div>
+                                <div class="video-desc">Best moments from the quarter final matches</div>
+                                <div class="video-meta">
+                                    <span><i class="far fa-clock"></i> 6:18</span>
+                                    <span><i class="far fa-eye"></i> 15.2K views</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="video-card">
+                            <div class="video-placeholder">
+                                <iframe src="https://www.youtube.com/embed/OUKGsb8CpF8" allowfullscreen></iframe>
+                            </div>
+                            <div class="video-info">
+                                <div class="video-title">Semi Finals Drama</div>
+                                <div class="video-desc">The most exciting semi final moments</div>
+                                <div class="video-meta">
+                                    <span><i class="far fa-clock"></i> 8:05</span>
+                                    <span><i class="far fa-eye"></i> 22.7K views</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="video-card">
+                            <div class="video-placeholder">
+                                <iframe src="https://www.youtube.com/embed/4Tr0otuiQuU" allowfullscreen></iframe>
+                            </div>
+                            <div class="video-info">
+                                <div class="video-title">Final Match Extended Highlights</div>
+                                <div class="video-desc">Complete coverage of the championship match</div>
+                                <div class="video-meta">
+                                    <span><i class="far fa-clock"></i> 12:45</span>
+                                    <span><i class="far fa-eye"></i> 35.8K views</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Gombe State Football Ecosystem &copy; 2025</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox-plus-jquery.min.js"></script>
+    <script>
+        // Configure lightbox
+        lightbox.option({
+            'resizeDuration': 200,
+            'wrapAround': true,
+            'imageFadeDuration': 300,
+            'positionFromTop': 100,
+            'showImageNumberLabel': true
+        });
+    </script>
+</body>
+</html>

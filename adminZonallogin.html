@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Zone Selection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            padding: 35px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .description {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .zone-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .zone-option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background: #f9f9f9;
+        }
+        
+        .zone-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .zone-option.selected {
+            border-color: #3498db;
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        .zone-option i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #3498db;
+        }
+        
+        .zone-option h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .login-container {
+            display: none;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .success-message {
+            color: #27ae60;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .zone-display {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .zone-display i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .back-button {
+            background: #95a5a6;
+            margin-top: 10px;
+        }
+        
+        .back-button:hover {
+            background: #7f8c8d;
+        }
+        
+        .logo {
+            margin-bottom: 20px;
+        }
+        
+        .logo svg {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .redirect-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e8f4fc;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .redirect-info i {
+            color: #3498db;
+            margin-right: 8px;
+        }
+        
+        @media (max-width: 500px) {
+            .zone-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="zone-selection-container">
+        <div class="logo">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#3498db" />
+                <path d="M50 30 L75 75 L25 75 Z" fill="white" />
+            </svg>
+        </div>
+        <h1>Admin Portal</h1>
+        <p class="description">Please select your zone before proceeding to login</p>
+        
+        <div class="zone-options">
+            <div class="zone-option" data-zone="northern" data-redirect="LeagueManagementHandleZonalNorthernZone.html">
+                <i class="fas fa-mountain"></i>
+                <h3>Northern Zone</h3>
+            </div>
+            <div class="zone-option" data-zone="southern" data-redirect="LeagueManagementHandleZonalSouthernZone.html">
+                <i class="fas fa-sun"></i>
+                <h3>Southern Zone</h3>
+            </div>
+            <div class="zone-option" data-zone="central" data-redirect="LeagueManagementHandleZonalCentralZone.html">
+                <i class="fas fa-city"></i>
+                <h3>Central Zone</h3>
+            </div>
+            <div class="zone-option" data-zone="eastern" data-redirect="LeagueManagementHandleZonalEasternZone.html">
+                <i class="fas fa-water"></i>
+                <h3>Eastern Zone</h3>
+            </div>
+        </div>
+        
+        <button id="proceed-button">Proceed to Login</button>
+        
+        <div class="error-message" id="zone-error">Please select a zone to proceed</div>
+    </div>
+    
+    <div class="container login-container" id="login-container">
+        <div class="logo">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#3498db" />
+                <path d="M50 30 L75 75 L25 75 Z" fill="white" />
+            </svg>
+        </div>
+        <h1>Admin Login</h1>
+        
+        <div class="zone-display">
+            <i class="fas fa-map-marker-alt"></i>
+            <span id="selected-zone">No zone selected</span>
+        </div>
+        
+        <div class="redirect-info">
+            <i class="fas fa-info-circle"></i>
+            After login, you will be redirected to: <strong id="redirect-url">None</strong>
+        </div>
+        
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter your username">
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter your password">
+        </div>
+        
+        <button id="login-button">Login</button>
+        <button class="back-button" id="back-button">Back to Zone Selection</button>
+        
+        <div class="error-message" id="login-error">Please enter both username and password</div>
+        <div class="success-message" id="login-success">Login successful! Redirecting...</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const zoneOptions = document.querySelectorAll('.zone-option');
+            const proceedButton = document.getElementById('proceed-button');
+            const zoneError = document.getElementById('zone-error');
+            const zoneSelectionContainer = document.getElementById('zone-selection-container');
+            const loginContainer = document.getElementById('login-container');
+            const selectedZoneSpan = document.getElementById('selected-zone');
+            const redirectUrlSpan = document.getElementById('redirect-url');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const loginButton = document.getElementById('login-button');
+            const backButton = document.getElementById('back-button');
+            const loginError = document.getElementById('login-error');
+            const loginSuccess = document.getElementById('login-success');
+            
+            let selectedZone = '';
+            let redirectUrl = '';
+            
+            // Hardcoded credentials for each zone
+            const credentials = {
+                'Northern Zone': { username: 'Admin', password: 'admin123' },
+                'Southern Zone': { username: 'Admin', password: 'admin123' },
+                'Central Zone': { username: 'Admin', password: 'admin123' },
+                'Eastern Zone': { username: 'Admin', password: 'admin123' }
+            };
+            
+            // Zone selection
+            zoneOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    zoneOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedZone = this.querySelector('h3').textContent;
+                    redirectUrl = this.getAttribute('data-redirect');
+                    zoneError.style.display = 'none';
+                });
+            });
+            
+            // Proceed to login after zone selection
+            proceedButton.addEventListener('click', function() {
+                if (selectedZone && redirectUrl) {
+                    selectedZoneSpan.textContent = selectedZone;
+                    redirectUrlSpan.textContent = selectedZone; // Show zone name instead of HTML file
+                    zoneSelectionContainer.style.display = 'none';
+                    loginContainer.style.display = 'block';
+                    zoneError.style.display = 'none';
+                    
+                    // Clear previous inputs
+                    usernameInput.value = '';
+                    passwordInput.value = '';
+                    loginError.style.display = 'none';
+                    loginSuccess.style.display = 'none';
+                } else {
+                    zoneError.style.display = 'block';
+                }
+            });
+            
+            // Go back to zone selection
+            backButton.addEventListener('click', function() {
+                loginContainer.style.display = 'none';
+                zoneSelectionContainer.style.display = 'block';
+                loginError.style.display = 'none';
+                loginSuccess.style.display = 'none';
+                usernameInput.value = '';
+                passwordInput.value = '';
+                
+                // Reset zone selection
+                zoneOptions.forEach(opt => opt.classList.remove('selected'));
+                selectedZone = '';
+                redirectUrl = '';
+            });
+            
+            // Login functionality
+            loginButton.addEventListener('click', function() {
+                const username = usernameInput.value;
+                const password = passwordInput.value;
+                
+                if (username && password) {
+                    // Check credentials for the selected zone
+                    const zoneCreds = credentials[selectedZone];
+                    
+                    if (zoneCreds && username === zoneCreds.username && password === zoneCreds.password) {
+                        // Successful login
+                        loginError.style.display = 'none';
+                        loginSuccess.style.display = 'block';
+                        
+                        // Redirect after successful login
+                        setTimeout(function() {
+                            window.location.href = redirectUrl;
+                        }, 1500);
+                    } else {
+                        // Invalid credentials
+                        loginError.textContent = 'Invalid username or password for this zone';
+                        loginError.style.display = 'block';
+                        loginSuccess.style.display = 'none';
+                    }
+                } else {
+                    loginError.textContent = 'Please enter both username and password';
+                    loginError.style.display = 'block';
+                    loginSuccess.style.display = 'none';
+                }
+            });
+            
+            // Allow pressing Enter to login
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loginButton.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

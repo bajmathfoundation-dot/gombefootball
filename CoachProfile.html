@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Coach Dashboard | Gombe Football</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    :root {
+      --primary: #1a2a6c;
+      --secondary: #3494e6;
+      --accent: #fdbb2d;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+      --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f0f5ff, #e6f0ff);
+      color: #333;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    /* Header Styles */
+    header {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    header::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+      z-index: 0;
+    }
+    
+    .header-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .coach-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+    }
+    
+    .header-text h1 {
+      font-size: 2.2rem;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .header-text p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 15px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .btn {
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: white;
+      color: var(--primary);
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+    
+    .card-header {
+      background: linear-gradient(to right, var(--secondary), var(--primary));
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .card-header h2 {
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .card-body {
+      padding: 25px;
+    }
+    
+    /* Profile Info Styles */
+    .profile-section {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    
+    .profile-details {
+      flex: 1;
+    }
+    
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr));
+      gap: 20px;
+    }
+    
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
+      background: var(--light-gray);
+      border-radius: 10px;
+    }
+    
+    .detail-label {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-bottom: 5px;
+    }
+    
+    .detail-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    /* Team Info Styles */
+    .team-info {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .team-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+    
+    .team-logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: var(--light-gray);
+      padding: 5px;
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .stat-icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: var(--secondary);
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+    
+    .stat-label {
+      font-size: 1.1rem;
+      color: var(--gray);
+    }
+    
+    /* Quick Actions Grid */
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    
+    /* Card Link Styles */
+    .stat-card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      height: 100%;
+    }
+    
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--gray);
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: var(--light-gray);
+    }
+    
+    .empty-state p {
+      font-size: 1.1rem;
+    }
+    
+    /* Records Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+    
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--gray);
+    }
+    
+    .records-list {
+      margin-top: 20px;
+    }
+    
+    .record-item {
+      padding: 15px;
+      border-bottom: 1px solid var(--light-gray);
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .record-item:last-child {
+      border-bottom: none;
+    }
+    
+    .record-date {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .record-details {
+      flex: 1;
+      margin-left: 20px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+      }
+      
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .header-actions {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .profile-section {
+        flex-direction: column;
+      }
+      
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .modal-content {
+        width: 95%;
+        margin: 2% auto;
+        padding: 20px;
+      }
+	  .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card-small {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
+}
+
+.stat-card-small:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.record-item {
+  padding: 20px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 20px;
+}
+
+.record-details h3 {
+  color: var(--primary);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--light-gray);
+}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="header-content">
+        <img id="coachAvatar" src="" alt="Coach Avatar" class="coach-avatar">
+        <div class="header-text">
+          <h1><i class="fas fa-user-tie"></i> <span id="coachName">Loading...</span></h1>
+          <p id="welcome-message">Loading your information...</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="btn btn-primary" id="settingsBtn"><i class="fas fa-cog"></i> Settings</button>
+        <button class="btn btn-secondary" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </header>
+    
+    <!-- Team Stats -->
+    <div class="stats-grid">
+      <a href="#" id="squadLink" class="stat-card stat-card-link">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div class="stat-number">Manage</div>
+        <div class="stat-label">Squad</div>
+      </a>
+      
+      <a href="#" id="formationsLink" class="stat-card stat-card-link">
+        <div class="stat-icon"><i class="fas fa-chalkboard"></i></div>
+        <div class="stat-number">Setup</div>
+        <div class="stat-label">Formations</div>
+      </a>
+      
+      <a href="#" id="fixturesLink" class="stat-card stat-card-link">
+        <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+        <div class="stat-number">View</div>
+        <div class="stat-label">Fixtures</div>
+      </a>
+      
+      <a href="#" id="historyLink" class="stat-card stat-card-link">
+        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+        <div class="stat-number">Team</div>
+        <div class="stat-label">History</div>
+      </a>
+    </div>
+    
+    <!-- Dashboard Content -->
+    <div class="dashboard-grid">
+      <!-- Profile Information Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-user-tie"></i> Coach Profile</h2>
+        </div>
+        <div class="card-body" id="profileInfoContainer">
+          <div class="empty-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading profile information...</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Team Information Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2><i class="fas fa-shield-alt"></i> Team Information</h2>
+        </div>
+        <div class="card-body" id="teamInfoContainer">
+          <div class="empty-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading team information...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Actions Card -->
+    <div class="card">
+      <div class="card-header">
+        <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+      </div>
+      <div class="card-body">
+        <div class="quick-actions-grid">
+          <div id="recordsBtn" class="stat-card">
+            <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
+            <div class="stat-number">My</div>
+            <div class="stat-label">Records</div>
+          </div>
+          
+          <a href="#" id="resultsLink" class="stat-card stat-card-link">
+            <div class="stat-icon"><i class="fas fa-futbol"></i></div>
+            <div class="stat-number">Match</div>
+            <div class="stat-label">Results</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Records Modal -->
+  <div id="recordsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2><i class="fas fa-user-tie"></i> My Coaching Records</h2>
+      <div id="recordsList" class="records-list">
+        <div class="empty-state">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading records...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-check-compat.js"></script>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    
+    // Initialize App Check
+    const appCheck = firebase.appCheck();
+    appCheck.activate('YOUR_RECAPTCHA_SITE_KEY', {
+      isTokenAutoRefreshEnabled: true
+    });
+
+    // Session timeout (30 minutes)
+    let inactivityTimer;
+    function resetTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        auth.signOut();
+        sessionStorage.clear();
+        window.location.href = "CoachLogin.html";
+      }, 30 * 60 * 1000); // 30 minutes
+    }
+
+    // DOM Elements
+    const coachName = document.getElementById('coachName');
+    const coachAvatar = document.getElementById('coachAvatar');
+    const welcomeMessage = document.getElementById('welcome-message');
+    const profileInfoContainer = document.getElementById('profileInfoContainer');
+    const teamInfoContainer = document.getElementById('teamInfoContainer');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const squadLink = document.getElementById('squadLink');
+    const formationsLink = document.getElementById('formationsLink');
+    const fixturesLink = document.getElementById('fixturesLink');
+    const historyLink = document.getElementById('historyLink');
+    const resultsLink = document.getElementById('resultsLink');
+    const recordsBtn = document.getElementById('recordsBtn');
+    const recordsModal = document.getElementById('recordsModal');
+    const closeModal = document.querySelector('.close-modal');
+    const recordsList = document.getElementById('recordsList');
+
+    // Security: Sanitize input to prevent XSS
+    function sanitize(input) {
+      const div = document.createElement("div");
+      div.textContent = input;
+      return div.innerHTML;
+    }
+
+    // Get coach ID from URL or sessionStorage
+    function getCoachId() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('coachId') || sessionStorage.getItem('coachPSN');
+    }
+
+    // Fetch team by name
+    async function fetchTeamByName(teamName) {
+      try {
+        const snapshot = await db.collection("GombeTeams")
+          .where("name", "==", teamName)
+          .limit(1)
+          .get();
+        
+        if (!snapshot.empty) {
+          return {
+            data: snapshot.docs[0].data(),
+            id: snapshot.docs[0].id
+          };
+        }
+        return null;
+      } catch (error) {
+        console.error("Error fetching team by name:", error);
+        return null;
+      }
+    }
+
+    // Display loading state
+    function showLoading(element) {
+      element.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading data...</p>
+        </div>
+      `;
+    }
+
+    // Display error state
+    function showError(element, message) {
+      element.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-exclamation-circle"></i>
+          <p>${sanitize(message)}</p>
+        </div>
+      `;
+    }
+
+    // Update links with coach and team IDs
+    function updateLinks(coachPSN, teamId) {
+      if (coachPSN) {
+        const baseHref = `${teamId ? `?coachId=${coachPSN}&teamId=${teamId}` : `?coachId=${coachPSN}`}`;
+        squadLink.href = `SquadsManagement.html${baseHref}`;
+        formationsLink.href = `FormationsLineup.html${baseHref}`;
+        fixturesLink.href = `viewFixtures.html${baseHref}`;
+        historyLink.href = `teamhistory.html${baseHref}`;
+        resultsLink.href = `MatchResults.html${baseHref}`;
+        settingsBtn.onclick = () => {
+          window.location.href = `CoachSettings.html${baseHref}`;
+        };
+      }
+    }
+
+   // Fetch coach records from the main document
+async function fetchCoachRecords(coachId) {
+  try {
+    showLoading(recordsList);
+    
+    // Get the coach document directly
+    const coachDoc = await db.collection("GombeCoaches").doc(coachId).get();
+    
+    if (coachDoc.exists) {
+      const coachData = coachDoc.data();
+      recordsList.innerHTML = '';
+      
+      // Create record item with all the requested fields
+      const recordItem = document.createElement('div');
+      recordItem.className = 'record-item';
+      
+      recordItem.innerHTML = `
+        <div class="record-details">
+          <h3>Coaching Statistics</h3>
+          <div class="stats-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
+            <div class="stat-card-small" style="background: #e8f5e8; padding: 15px; border-radius: 10px; text-align: center;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #27ae60;">${coachData.wins || 0}</div>
+              <div style="color: #666;">Wins</div>
+            </div>
+            <div class="stat-card-small" style="background: #ffe8e8; padding: 15px; border-radius: 10px; text-align: center;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #e74c3c;">${coachData.losses || 0}</div>
+              <div style="color: #666;">Losses</div>
+            </div>
+            <div class="stat-card-small" style="background: #f0f0f0; padding: 15px; border-radius: 10px; text-align: center;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #7f8c8d;">${coachData.draws || 0}</div>
+              <div style="color: #666;">Draws</div>
+            </div>
+            <div class="stat-card-small" style="background: #e8f4fd; padding: 15px; border-radius: 10px; text-align: center;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #3498db;">${coachData.matches || 0}</div>
+              <div style="color: #666;">Matches</div>
+            </div>
+            <div class="stat-card-small" style="background: #fff3cd; padding: 15px; border-radius: 10px; text-align: center;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #f39c12;">${coachData.yellowCards || 0}</div>
+              <div style="color: #666;">Yellow Cards</div>
+            </div>
+            <div class="stat-card-small" style="background: #fdecea; padding: 15px; border-radius: 10px; text-align: center;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #c0392b;">${coachData.redCards || 0}</div>
+              <div style="color: #666;">Red Cards</div>
+            </div>
+            <div class="stat-card-small" style="background: #e6f7ff; padding: 15px; border-radius: 10px; text-align: center; grid-column: span 2;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #2980b9;">${coachData.goalsFor || 0}</div>
+              <div style="color: #666;">Goals For</div>
+            </div>
+            <div class="stat-card-small" style="background: #ffe6e6; padding: 15px; border-radius: 10px; text-align: center; grid-column: span 2;">
+              <div style="font-size: 1.8rem; font-weight: bold; color: #c0392b;">${coachData.goalsAgainst || 0}</div>
+              <div style="color: #666;">Goals Against</div>
+            </div>
+          </div>
+          
+          ${coachData.wins !== undefined && coachData.matches ? `
+            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>Win Percentage:</span>
+                <span style="font-weight: bold;">${Math.round((coachData.wins / coachData.matches) * 100)}%</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Goal Difference:</span>
+                <span style="font-weight: bold; color: ${(coachData.goalsFor || 0) - (coachData.goalsAgainst || 0) >= 0 ? '#27ae60' : '#e74c3c'}">
+                  ${(coachData.goalsFor || 0) - (coachData.goalsAgainst || 0)}
+                </span>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+      
+      recordsList.appendChild(recordItem);
+    } else {
+      recordsList.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-info-circle"></i>
+          <p>No records found for this coach</p>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error("Error loading records:", error);
+    recordsList.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Error loading records: ${error.message}</p>
+      </div>
+    `;
+  }
+}
+
+    // Fetch coach and team data with error handling
+    async function fetchCoachData() {
+      const coachPSN = getCoachId();
+      
+      if (!coachPSN) {
+        window.location.href = "CoachLogin.html";
+        return;
+      }
+
+      showLoading(profileInfoContainer);
+      showLoading(teamInfoContainer);
+      welcomeMessage.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Loading data...`;
+
+      try {
+        const coachDoc = await db.collection("GombeCoaches").doc(coachPSN).get();
+        
+        if (!coachDoc.exists) {
+          throw new Error("Coach document not found");
+        }
+
+        const coachData = coachDoc.data();
+        displayCoachInfo(coachData, coachPSN);
+        displayProfileInfo(coachData);
+
+        if (coachData.teamName) {
+          try {
+            const teamResult = await fetchTeamByName(coachData.teamName);
+            
+            if (teamResult) {
+              displayTeamInfo(teamResult.data);
+              updateLinks(coachPSN, teamResult.id);
+              sessionStorage.setItem("teamId", teamResult.id);
+              sessionStorage.setItem("teamName", coachData.teamName);
+            } else {
+              showError(teamInfoContainer, "Team not found");
+              updateLinks(coachPSN, null);
+            }
+          } catch (teamError) {
+            console.error("Team fetch error:", teamError);
+            showError(teamInfoContainer, "Error loading team information");
+            updateLinks(coachPSN, null);
+          }
+        } else {
+          showError(teamInfoContainer, "No team assigned to this coach");
+          updateLinks(coachPSN, null);
+        }
+      } catch (coachError) {
+        console.error("Coach fetch error:", coachError);
+        showError(profileInfoContainer, "Error loading coach profile. <button onclick='fetchCoachData()' class='btn btn-primary'>Retry</button>");
+        showError(teamInfoContainer, "Cannot load team without coach data");
+      }
+    }
+
+    // Display coach information
+    function displayCoachInfo(coachData, coachPSN) {
+      coachName.textContent = sanitize(coachData.name || "Coach");
+      welcomeMessage.textContent = `Welcome back, ${sanitize(coachData.name || "Coach")}!`;
+      
+      coachAvatar.src = coachData.imageURL || "https://via.placeholder.com/80?text=COACH";
+      
+      if (coachPSN) sessionStorage.setItem("coachPSN", coachPSN);
+      if (coachData.phone) sessionStorage.setItem("coachPhone", coachData.phone);
+      if (coachData.teamName) sessionStorage.setItem("teamName", coachData.teamName);
+    }
+
+    // Display profile information
+    function displayProfileInfo(coachData) {
+      if (!coachData) {
+        showError(profileInfoContainer, "No coach data available");
+        return;
+      }
+      
+      profileInfoContainer.innerHTML = `
+        <div class="profile-section">
+          <img src="${coachData.imageURL || 'https://via.placeholder.com/150?text=COACH'}" 
+               alt="Coach Photo" 
+               style="width: 150px; height: 150px; border-radius: 10px; object-fit: cover;">
+          <div class="profile-details">
+            <div class="detail-grid">
+              <div class="detail-item">
+                <div class="detail-label">Full Name:</div>
+                <div class="detail-value">${sanitize(coachData.name || "N/A")}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Phone:</div>
+                <div class="detail-value">${sanitize(coachData.phone || "N/A")}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Team:</div>
+                <div class="detail-value">${sanitize(coachData.teamName || "N/A")}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Display team information
+    function displayTeamInfo(teamData) {
+      teamInfoContainer.innerHTML = `
+        <div class="team-info">
+          <div class="team-header">
+            <img src="${teamData.logo || 'https://via.placeholder.com/80?text=TEAM'}" 
+                 alt="${sanitize(teamData.name || 'Team')} Logo" 
+                 class="team-logo">
+            <h3>${sanitize(teamData.name || "N/A")}</h3>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <div class="detail-label">Tier:</div>
+              <div class="detail-value">${sanitize(teamData.tier || "N/A")}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">State Competition:</div>
+              <div class="detail-value">${sanitize(teamData.StateWideCompetition || "N/A")}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Zone:</div>
+              <div class="detail-value">${sanitize(teamData.zone || "N/A")}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Ward:</div>
+              <div class="detail-value">${sanitize(teamData.ward || "N/A")}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Year Founded:</div>
+              <div class="detail-value">${sanitize(teamData.year || "N/A")}</div>
+            </div>
+			<div class="detail-item">
+              <div class="detail-label">Location:</div>
+              <div class="detail-value">${sanitize(teamData.Location || "N/A")}</div>
+            </div>
+			<div class="detail-item">
+              <div class="detail-label">Stadium:</div>
+              <div class="detail-value">${sanitize(teamData.Stadium || "N/A")}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check authentication state first
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          window.location.href = "CoachLogin.html";
+        } else {
+          fetchCoachData();
+          resetTimer(); // Start inactivity timer
+        }
+      });
+      
+      // Logout functionality
+      logoutBtn.addEventListener('click', () => {
+        auth.signOut();
+        sessionStorage.clear();
+        window.location.href = "Coachlogin.html";
+      });
+      
+      // Records button click handler
+      recordsBtn.addEventListener('click', () => {
+        const coachId = getCoachId();
+        if (coachId) {
+          recordsModal.style.display = 'block';
+          fetchCoachRecords(coachId);
+        } else {
+          alert('No coach ID found');
+        }
+      });
+      
+      // Close modal when clicking X
+      closeModal.addEventListener('click', () => {
+        recordsModal.style.display = 'none';
+      });
+      
+      // Close modal when clicking outside
+      window.addEventListener('click', (event) => {
+        if (event.target === recordsModal) {
+          recordsModal.style.display = 'none';
+        }
+      });
+      
+      // Reset timer on user activity
+      window.onload = resetTimer;
+      document.onmousemove = resetTimer;
+      document.onkeypress = resetTimer;
+    });
+  </script>
+</body>
+</html>

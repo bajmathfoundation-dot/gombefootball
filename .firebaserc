@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "gombefootball"
+  },
+  "targets": {
+    "gombefootball": {
+      "hosting": {
+        "gombefootball": [
+          "gombefootball"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

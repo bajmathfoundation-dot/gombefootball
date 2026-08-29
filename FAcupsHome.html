@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe Football FA cups</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #343a40;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+	     header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        .admin-panel {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .sidebar h3 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-item:hover {
+            background-color: #e9f7ff;
+        }
+        
+     
+        .nav-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .content-header h2 {
+            font-size: 1.8rem;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #219653, #27ae60);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #3498db, #2e86c1);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #2c81ba, #2874a6);
+            transform: translateY(-2px);
+        }
+        
+        
+    </style>
+    
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            setDoc,
+            doc,
+            getDoc,
+            getDocs,
+            updateDoc,
+            deleteDoc,
+            arrayUnion,
+            serverTimestamp,
+            query,
+            where,
+            orderBy,
+            limit,
+            writeBatch
+        } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            databaseURL: "https://gombefootball-default-rtdb.firebaseio.com",
+            projectId: "gombefootball",
+            storageBucket: "gombefootball.firebasestorage.app",
+            messagingSenderId: "120731655706",
+            appId: "1:120731655706:web:9c99d6831aca3df563bba3",
+            measurementId: "G-8SCVPBSKPG"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Make Firebase available to the main script
+        window.firebase = {
+            db,
+            collection,
+            addDoc,
+            setDoc,
+            doc,
+            getDoc,
+            getDocs,
+            updateDoc,
+            deleteDoc,
+            arrayUnion,
+            serverTimestamp,
+            query,
+            where,
+            orderBy,
+            limit,
+            writeBatch
+        };
+        
+        // Start main application after Firebase is ready
+        document.addEventListener('DOMContentLoaded', main);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-trophy"></i> Gombe Football officials</h1>
+            <p>FA cups Management across Gombe State Football</p>
+        </header>
+        
+        <div class="admin-panel">
+            <div class="sidebar">
+                <h3>FA cups</h3>
+                <div class="nav-item" data-target="Round-One" onclick="window.location.href='GombeFAcupsRoundOneDraw.html';">
+                    <i class="fas fa-map-marked-alt"></i> Round One
+                </div>
+                <div class="nav-item" data-target="Round-One" onclick="window.location.href='GombeFAcupsRoundTwoDraw.html';">
+                    <i class="fas fa-map-marked-alt"></i> Round Two
+                </div>
+				<div class="nav-item" data-target="Third-Round" onclick="window.location.href='GombeFAcupsThirdRoundDraw.html';">
+                    <i class="fas fa-map-marked-alt"></i> Third Round
+                </div>
+                <div class="nav-item" data-target="Quarterfinals" onclick="window.location.href='GombeFAcupsQuarterfinalsDraw.html';">
+                    <i class="fas fa-map-marked-alt"></i> Quarterfinals
+                </div>
+				<div class="nav-item" data-target="Semifinals" onclick="window.location.href='GombeFAcupsSemifinalsDraw.html';">
+                    <i class="fas fa-map-marked-alt"></i> Semifinals
+                </div>
+                <div class="nav-item" data-target="Finl" onclick="window.location.href='GombeFAcupsFinal.html';">
+                    <i class="fas fa-map-marked-alt"></i> Final
+                </div>
+				<div class="nav-item" data-target="Winner-Record" onclick="window.location.href='GombeFAcupsWinner.html';">
+                    <i class="fas fa-map-marked-alt"></i> Winner
+                </div>
+				<div class="nav-item" data-target="Round-Fixtures" onclick="window.location.href='GombeFAcupsFixtures.html';">
+                    <i class="fas fa-calendar-alt"></i>Round Fixtures
+                </div>
+				<div class="nav-item" data-target="Referee-Assignments" onclick="window.location.href='GombeFAcupsRefereeAssignments.html';">
+                    <i class="fas fa-calendar-alt"></i>FAcups Referee Assignments
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="content-header">
+                    <p>This section allow total control of FA cups competitions across all zonal football system from  gombe football pyramid system,</p>
+                  </div> 
+				  <div><p> This competition maintain relationship between divisions and help create the foundation and quality of the system</P></div>
+                  <br>
+				  <div><p>Each FA cup can be named base on the locality of the area or culture(for example cattle,DAm cup etc) as sugested in the project papers</p></div>
+    </br>
+	<div>
+ </body>
+ </html> 

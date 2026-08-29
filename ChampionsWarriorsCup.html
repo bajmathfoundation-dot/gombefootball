@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe Cup Competitions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header:before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        header:after {
+            content: "";
+            position: absolute;
+            bottom: -80px;
+            left: -50px;
+            width: 250px;
+            height: 250px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .subtitle {
+            font-size: 1.6rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            font-weight: 300;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .trophy-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .trophy {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255,255,255,0.15);
+            padding: 20px 30px;
+            border-radius: 12px;
+            width: 220px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .trophy:hover {
+            transform: translateY(-8px);
+            background: rgba(255,255,255,0.25);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .trophy i {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+        
+        .trophy h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .trophy p {
+            font-size: 0.95rem;
+            text-align: center;
+            opacity: 0.9;
+        }
+        
+        .competition-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .cup-card {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            transition: transform 0.3s ease;
+        }
+        
+        .cup-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .cup-header {
+            padding: 25px;
+            color: white;
+        }
+        
+        .champions-header {
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+        }
+        
+        .warriors-header {
+            background: linear-gradient(90deg, #c21500, #ffc500);
+        }
+        
+        .cup-header h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .cup-header h2 i {
+            font-size: 2.2rem;
+        }
+        
+        .cup-body {
+            padding: 30px;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: #1e3c72;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .qualification {
+            background: #eef7ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #4a9df7;
+        }
+        
+        .format {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .rules {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            margin-top: 25px;
+        }
+        
+        .rules h3 {
+            color: #c21500;
+            border-bottom: none;
+            margin-bottom: 15px;
+        }
+        
+        ul {
+            padding-left: 25px;
+            margin-bottom: 20px;
+        }
+        
+        li {
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        li:before {
+            content: "•";
+            color: #2a5298;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.4rem;
+        }
+        
+        .prize {
+            background: linear-gradient(135deg, #fff9e6, #fff3cc);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px dashed #ffc107;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .prize h4 {
+            font-size: 1.4rem;
+            color: #c21500;
+            margin-bottom: 10px;
+        }
+        
+        .prize p {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .visual-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .visual {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        
+        .visual h3 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .tournament-vis {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        
+        .group-stage {
+            background: #eef7ff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            text-align: center;
+            border: 2px solid #a5d8ff;
+        }
+        
+        .knockout-stages {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+        
+        .round {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .round-box {
+            background: #fff9e6;
+            padding: 15px 25px;
+            border-radius: 8px;
+            border: 2px solid #ffd43b;
+            margin-bottom: 15px;
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .connector {
+            width: 30px;
+            height: 3px;
+            background: #adb5bd;
+            margin: 0 10px;
+        }
+        
+        .vertical-connector {
+            height: 30px;
+            width: 3px;
+            background: #adb5bd;
+            margin: 10px 0;
+        }
+        
+        .team-count {
+            display: inline-block;
+            background: #1e3c72;
+            color: white;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .warriors-vis {
+            text-align: center;
+        }
+        
+        .bracket {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffecb3, #ffd54f);
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid #ffc107;
+            position: relative;
+        }
+        
+        .bracket:before {
+            content: "Random Draw";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #c21500;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .bracket i {
+            font-size: 4rem;
+            color: #c21500;
+            margin-bottom: 20px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .format-note {
+            text-align: center;
+            font-style: italic;
+            margin-top: 15px;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            .trophy-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .knockout-stages {
+                flex-wrap: wrap;
+            }
+            
+            .round {
+                margin-bottom: 20px;
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-around;
+            }
+            
+            .round-box {
+                margin-bottom: 0;
+                min-width: 100px;
+            }
+            
+            .vertical-connector {
+                height: 3px;
+                width: 20px;
+            }
+            
+            .competition-section {
+                gap: 20px;
+            }
+            
+            .cup-card {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header {
+                padding: 30px 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .trophy {
+                width: 100%;
+                max-width: 220px;
+            }
+            
+            .cup-body {
+                padding: 20px;
+            }
+            
+            .visual {
+                padding: 20px;
+            }
+            
+            .round {
+                flex-direction: column;
+            }
+            
+            .vertical-connector {
+                height: 20px;
+                width: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gombe Cup Competitions</h1>
+            <div class="subtitle">Champions Cup & Warriors Cup</div>
+            
+            <div class="trophy-container">
+                <div class="trophy">
+                    <i class="fas fa-trophy"></i>
+                    <h3>Champions Cup</h3>
+                    <p>Elite club competition</p>
+                </div>
+                <div class="trophy">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Warriors Cup</h3>
+                    <p>Pathway to Champions Cup</p>
+                </div>
+            </div>
+        </header>
+        
+        <div class="competition-section">
+            <div class="cup-card">
+                <div class="cup-header champions-header">
+                    <h2><i class="fas fa-crown"></i> Gombe Champions Cup</h2>
+                    <p>Premier competition for top-performing clubs</p>
+                </div>
+                <div class="cup-body">
+                    <div class="qualification">
+                        <h3>Qualification</h3>
+                        <ul>
+                            <li>Top 8 clubs from each zonal Premier League</li>
+                            <li>Total of 32 qualifying teams (4 zones × 8 teams)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="format">
+                        <h3>Competition Format</h3>
+                        <ul>
+                            <li><strong>Group Stage:</strong> 
+                                <ul>
+                                    <li>32 teams divided into 8 groups of 4 teams each</li>
+                                    <li>One club per zone in each group</li>
+                                    <li>Round-robin format with home and away matches</li>
+                                </ul>
+                            </li>
+                            <li><strong>Knockout Stage:</strong>
+                                <ul>
+                                    <li>Round of 16: Top 2 teams from each group advance</li>
+                                    <li>Quarterfinals: 8 teams compete</li>
+                                    <li>Semifinals: 4 remaining teams</li>
+                                    <li>Final: Single match to determine champion</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="prize">
+                        <h4><i class="fas fa-award"></i> Champions Prize</h4>
+                        <p>Prestigious trophy, prize money, and Automatic qualification</p>
+                    </div>
+					<div class="rules">
+                        <h3><i class="fas fa-gavel"></i> Qualification Rules</h3>
+                        <ul>
+                            <li>Only top 8 teams automatically qualify for next year's Champions Cup</li>
+                            <li>If the winner finishes outside their zonal Top 8:
+                                <ul>
+                                    <li>They replace the 8th-placed team in their zone</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cup-card">
+                <div class="cup-header warriors-header">
+                    <h2><i class="fas fa-helmet-battle"></i> Gombe Warriors Cup</h2>
+                    <p>Competition for FA Cup winners and mid-table clubs</p>
+                </div>
+                <div class="cup-body">
+                    <div class="qualification">
+                        <h3>Qualification</h3>
+                        <ul>
+                            <li>Winners of each zonal FA Cup:
+                                <ul>
+                                    <li>Cattle Cup, Hills Cup, Dam Cup, Farmers Cup</li>
+                                </ul>
+                            </li>
+                            <li>Clubs ranked 9th–16th in each zonal Premier League</li>
+                            <li>Total of 32 teams (4 FA Cup winners + 28 league qualifiers)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="format">
+                        <h3>Competition Format</h3>
+                        <ul>
+                            <li><strong>Group Stage:</strong> 
+                                <ul>
+                                    <li>32 teams divided into 8 groups of 4 teams each</li>
+                                    <li>One club per zone in each group</li>
+                                    <li>Round-robin format with home and away matches</li>
+                                </ul>
+                            </li>
+                            <li><strong>Knockout Stage:</strong>
+                                <ul>
+                                    <li>Round of 16: Top 2 teams from each group advance</li>
+                                    <li>Quarterfinals: 8 teams compete</li>
+                                    <li>Semifinals: 4 remaining teams</li>
+                                    <li>Final: Single match to determine champion</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="prize">
+                        <h4><i class="fas fa-ticket-alt"></i> Warriors Prize</h4>
+                        <p>Winner qualifies for the following season's Gombe Champions Cup</p>
+                    </div>
+                    
+                    <div class="rules">
+                        <h3><i class="fas fa-gavel"></i> Qualification Rules</h3>
+                        <ul>
+                            <li>Warriors Cup winner automatically qualifies for next year's Champions Cup</li>
+                            <li>If the winner finishes outside their zonal Top 8:
+                                <ul>
+                                    <li>They replace the 8th-placed team in their zone</li>
+                                </ul>
+                            </li>
+                            <li>Warriors Cup winner replaces the 16th-placed team if outside middle 8 (9th-16th)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="visual-container">
+            <div class="visual">
+                <h3><i class="fas fa-sitemap"></i> Champions Cup Format</h3>
+                <div class="tournament-vis">
+                    <div class="stage">
+                        <div class="group-stage">
+                            <h4>Group Stage</h4>
+                            <p>8 groups × 4 teams</p>
+                            <div class="team-count">32 Teams</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vertical-connector"></div>
+                    
+                    <div class="knockout-stages">
+                        <div class="round">
+                            <div class="round-box">
+                                <h4>Round of 16</h4>
+                                <div class="team-count">16 Teams</div>
+                            </div>
+                            <div class="vertical-connector"></div>
+                            <div class="round-box">
+                                <h4>Quarterfinals</h4>
+                                <div class="team-count">8 Teams</div>
+                            </div>
+                            <div class="vertical-connector"></div>
+                            <div class="round-box">
+                                <h4>Semifinals</h4>
+                                <div class="team-count">4 Teams</div>
+                            </div>
+                            <div class="vertical-connector"></div>
+                            <div class="round-box">
+                                <h4>Final</h4>
+                                <div class="team-count">2 Teams</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="format-note">Both competitions follow the same tournament format</p>
+            </div>
+            
+            <div class="visual">
+                <h3><i class="fas fa-sitemap"></i> Warriors Cup Format</h3>
+                <div class="tournament-vis">
+                    <div class="stage">
+                        <div class="group-stage">
+                            <h4>Group Stage</h4>
+                            <p>8 groups × 4 teams</p>
+                            <div class="team-count">32 Teams</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vertical-connector"></div>
+                    
+                    <div class="knockout-stages">
+                        <div class="round">
+                            <div class="round-box">
+                                <h4>Round of 16</h4>
+                                <div class="team-count">16 Teams</div>
+                            </div>
+                            <div class="vertical-connector"></div>
+                            <div class="round-box">
+                                <h4>Quarterfinals</h4>
+                                <div class="team-count">8 Teams</div>
+                            </div>
+                            <div class="vertical-connector"></div>
+                            <div class="round-box">
+                                <h4>Semifinals</h4>
+                                <div class="team-count">4 Teams</div>
+                            </div>
+                            <div class="vertical-connector"></div>
+                            <div class="round-box">
+                                <h4>Final</h4>
+                                <div class="team-count">2 Teams</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="format-note">Both competitions follow the same tournament format</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Gombe Cup Competitions Official Structure | Champions Cup & Warriors Cup</p>
+            <p>© 2025 Gombe Football Association | All rights reserved</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe Football Initiatives - Coming Soon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #1a2a6c;
+            --secondary: #3494e6;
+            --accent: #fdbb2d;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-bottom: 5px solid var(--accent);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .coming-soon {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin: 40px 0;
+        }
+        
+        .icon-container {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        .icon-container i {
+            font-size: 50px;
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(52, 148, 230, 0.4);
+            }
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 15px rgba(52, 148, 230, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(52, 148, 230, 0);
+            }
+        }
+        
+        .coming-soon h2 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .coming-soon p {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 50px 0;
+        }
+        
+        .feature {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .feature-desc {
+            color: #555;
+        }
+        
+        .countdown {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .countdown-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+        }
+        
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .countdown-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 100px;
+        }
+        
+        .countdown-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .countdown-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .newsletter {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin: 40px 0;
+        }
+        
+        .newsletter-title {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .newsletter-desc {
+            color: #555;
+            margin-bottom: 25px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .newsletter-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .newsletter-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px 0 0 50px;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .newsletter-button {
+            background: var(--accent);
+            color: var(--dark);
+            border: none;
+            padding: 0 25px;
+            border-radius: 0 50px 50px 0;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .newsletter-button:hover {
+            background: #ffcc44;
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+        
+        .footer-text {
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .coming-soon h2 {
+                font-size: 2rem;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .newsletter-input {
+                border-radius: 50px;
+                margin-bottom: 10px;
+            }
+            
+            .newsletter-button {
+                border-radius: 50px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Gombe Football Initiatives</h1>
+            <p class="subtitle">Transforming Football in Gombe State</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <section class="coming-soon">
+            <div class="icon-container">
+                <i class="fas fa-futbol"></i>
+            </div>
+            <h2>Explore Gombe Football Initiatives</h2>
+            <p>This section is currently under development and will be available soon. We're working hard to bring you comprehensive information about all football initiatives across Gombe State.</p>
+            <p>Check back later to discover how Governor Inuwa Yahaya's vision is transforming football in our state!</p>
+        </section>
+        
+        <section class="features">
+            <div class="feature">
+                <div class="feature-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3 class="feature-title">Youth Development</h3>
+                <p class="feature-desc">Grassroots programs to identify and nurture young football talents across Gombe State.</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">
+                    <i class="fas fa-hard-hat"></i>
+                </div>
+                <h3 class="feature-title">Infrastructure</h3>
+                <p class="feature-desc">Modern football facilities and stadium upgrades to support the growth of the sport.</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="feature-title">Community Programs</h3>
+                <p class="feature-desc">Football initiatives that bring communities together and promote healthy living.</p>
+            </div>
+        </section>
+        
+        <section class="countdown">
+            <h3 class="countdown-title">Coming Soon</h3>
+            <div class="countdown-container">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">365</div>
+                    <div class="countdown-label">Days</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">12</div>
+                    <div class="countdown-label">Hours</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">45</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">30</div>
+                    <div class="countdown-label">Seconds</div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="newsletter">
+            <h3 class="newsletter-title">Stay Updated</h3>
+            <p class="newsletter-desc">Subscribe to our newsletter to be the first to know when Gombe Football Initiatives are launched.</p>
+            <form class="newsletter-form">
+                <input type="email" class="newsletter-input" placeholder="Your email address" required>
+                <button type="submit" class="newsletter-button">Subscribe</button>
+            </form>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Gombe Football</div>
+            <p class="footer-text">Under the visionary leadership of His Excellency, Governor Muhammadu Inuwa Yahaya</p>
+            <p class="footer-text">Transforming Lives Through Football Development</p>
+            
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Countdown timer (just for visual effect)
+        function updateCountdown() {
+            const days = document.getElementById('days');
+            const hours = document.getElementById('hours');
+            const minutes = document.getElementById('minutes');
+            const seconds = document.getElementById('seconds');
+            
+            let sec = parseInt(seconds.innerText);
+            let min = parseInt(minutes.innerText);
+            let hr = parseInt(hours.innerText);
+            let d = parseInt(days.innerText);
+            
+            sec--;
+            
+            if (sec < 0) {
+                sec = 59;
+                min--;
+                
+                if (min < 0) {
+                    min = 59;
+                    hr--;
+                    
+                    if (hr < 0) {
+                        hr = 23;
+                        d--;
+                        
+                        if (d < 0) {
+                            d = 30;
+                        }
+                    }
+                }
+            }
+            
+            seconds.innerText = sec.toString().padStart(2, '0');
+            minutes.innerText = min.toString().padStart(2, '0');
+            hours.innerText = hr.toString().padStart(2, '0');
+            days.innerText = d.toString().padStart(2, '0');
+        }
+        
+        setInterval(updateCountdown, 1000);
+        
+        // Newsletter form submission
+        document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input').value;
+            alert(`Thank you for subscribing with ${email}! We'll notify you when Gombe Football Initiatives are launched.`);
+            this.querySelector('input').value = '';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>League Division Tables</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .zone-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .zone-btn {
+            padding: 12px 25px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .zone-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .zone-btn.active {
+            background: #e74c3c;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: none;
+        }
+        
+        .table-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .zone-header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .league-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .league-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .league-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .league-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .league-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .champions-league {
+            background: rgba(0, 255, 0, 0.1);
+            border-left: 4px solid #27ae60;
+        }
+        
+        .warriors-cup {
+            background: rgba(255, 165, 0, 0.1);
+            border-left: 4px solid #f39c12;
+        }
+        
+        .relegated {
+            background: rgba(255, 0, 0, 0.1);
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .position {
+            font-weight: bold;
+            text-align: center;
+            width: 50px;
+        }
+        
+        .team-name {
+            font-weight: 600;
+            cursor: pointer;
+            color: #3498db;
+            transition: color 0.2s;
+        }
+        
+        .team-name:hover {
+            color: #e74c3c;
+            text-decoration: underline;
+        }
+        
+        .stats {
+            text-align: center;
+            width: 60px;
+        }
+        
+        .qualification-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .legend-item:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .champions-color {
+            background: #27ae60;
+        }
+        
+        .warriors-color {
+            background: #f39c12;
+        }
+        
+        .relegated-color {
+            background: #e74c3c;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .league-table {
+                font-size: 0.9rem;
+            }
+            
+            .league-table th, 
+            .league-table td {
+                padding: 10px 8px;
+            }
+            
+            .zone-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>League Division Tables</h1>
+            <p class="description">View league standings for each zone. Top 8 teams qualify for Champions League (green), next 8 qualify for Warriors Cup (orange), and bottom 3 are relegated (red).</p>
+        </header>
+        
+        <div class="navigation">
+            <a href="ChampionsCupView.html" class="nav-btn">Champions Cup</a>
+            <a href="WarriorsCupView.html" class="nav-btn">Warriors Cup</a>
+            <a href="Competitions.html" class="nav-btn">FA Cup</a>
+            <a href="CompetitionsChampionship.html" class="nav-btn" style="background: #e74c3c;">Championship Division</a>
+        </div>
+        
+        <div class="qualification-legend">
+            <div class="legend-item" id="champions-league-btn">
+                <div class="legend-color champions-color"></div>
+                <span>Champions Cup Qualification</span>
+            </div>
+            <div class="legend-item" id="warriors-cup-btn">
+                <div class="legend-color warriors-color"></div>
+                <span>Warriors Cup Qualification</span>
+            </div>
+            <div class="legend-item" id="relegation-btn">
+                <div class="legend-color relegated-color"></div>
+                <span>Relegation Zone</span>
+            </div>
+        </div>
+        
+        <div class="zone-selector" id="zone-buttons">
+            <!-- Zone buttons will be generated here -->
+        </div>
+        
+        <div id="tables-container">
+            <!-- League tables will be generated here -->
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            databaseURL: "https://gombefootball-default-rtdb.firebaseio.com",
+            projectId: "gombefootball",
+            storageBucket: "gombefootball.firebasestorage.app",
+            messagingSenderId: "120731655706",
+            appId: "1:120731655706:web:9c99d6831aca3df563bba3",
+            measurementId: "G-8SCVPBSKPG"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Global variables
+        let zones = [];
+        let currentZone = null;
+        let teamIdCache = {};
+        let teamNameCache = {};
+        
+        // DOM elements
+        const zoneButtonsContainer = document.getElementById('zone-buttons');
+        const tablesContainer = document.getElementById('tables-container');
+        const championsLeagueBtn = document.getElementById('champions-league-btn');
+        const warriorsCupBtn = document.getElementById('warriors-cup-btn');
+        const relegationBtn = document.getElementById('relegation-btn');
+        
+        // Load all teams from Firestore for ID mapping
+        async function loadAllTeams() {
+            try {
+                const snapshot = await db.collection('GombeTeams').get();
+                
+                snapshot.forEach(doc => {
+                    const teamData = doc.data();
+                    // Normalize team names for better matching
+                    const normalizedName = teamData.name.trim().toLowerCase();
+                    teamIdCache[normalizedName] = doc.id;
+                    teamNameCache[doc.id] = teamData.name;
+                });
+                
+                console.log("Loaded team ID mapping:", teamIdCache);
+            } catch (err) {
+                console.error('Error loading teams:', err);
+            }
+        }
+        
+        // Load all zones from Firestore
+        async function loadZones() {
+            try {
+                const snapshot = await db.collection('league_division').get();
+                
+                if (snapshot.empty) {
+                    tablesContainer.innerHTML = '<div class="no-data">No league divisions found. Please run the setup first.</div>';
+                    return;
+                }
+                
+                zones = [];
+                snapshot.forEach(doc => {
+                    zones.push(doc.id);
+                });
+                
+                // Sort zones alphabetically
+                zones.sort();
+                
+                // Create zone buttons
+                renderZoneButtons();
+                
+                // Load the first zone by default
+                if (zones.length > 0) {
+                    loadZoneTable(zones[0]);
+                }
+            } catch (err) {
+                console.error('Error loading zones:', err);
+                tablesContainer.innerHTML = '<div class="no-data">Error loading league data. Please check the console for details.</div>';
+            }
+        }
+        
+        // Render zone selection buttons
+        function renderZoneButtons() {
+            zoneButtonsContainer.innerHTML = '';
+            
+            zones.forEach(zone => {
+                const button = document.createElement('button');
+                button.className = 'zone-btn';
+                button.textContent = zone;
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.zone-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Load the zone table
+                    loadZoneTable(zone);
+                });
+                
+                zoneButtonsContainer.appendChild(button);
+            });
+            
+            // Activate the first button
+            if (zoneButtonsContainer.firstChild) {
+                zoneButtonsContainer.firstChild.classList.add('active');
+            }
+        }
+        
+        // Load and display table for a specific zone
+        async function loadZoneTable(zone) {
+            currentZone = zone;
+            
+            // Show loading state
+            tablesContainer.innerHTML = `
+                <div class="table-container active">
+                    <div class="zone-header">${zone}</div>
+                    <div class="loading">Loading data for ${zone}...</div>
+                </div>
+            `;
+            
+            try {
+                const doc = await db.collection('league_division').doc(zone).get();
+                
+                if (!doc.exists) {
+                    tablesContainer.innerHTML = `
+                        <div class="table-container active">
+                            <div class="zone-header">${zone}</div>
+                            <div class="no-data">No data available for ${zone}</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const data = doc.data();
+                console.log(`Data for ${zone}:`, data);
+                
+                if (!data.teams || !Array.isArray(data.teams) || data.teams.length === 0) {
+                    tablesContainer.innerHTML = `
+                        <div class="table-container active">
+                            <div class="zone-header">${zone}</div>
+                            <div class="no-data">No teams found in ${zone}</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                console.log(`Teams in ${zone}:`, data.teams);
+                
+                // Check the first team's structure
+                if (data.teams.length > 0) {
+                    console.log('First team structure:', data.teams[0]);
+                }
+                
+                // Sort teams by points, then goal difference, then goals scored
+                const sortedTeams = [...data.teams].sort((a, b) => {
+                    // Handle various possible field names
+                    const aPoints = a.points || a.pts || 0;
+                    const bPoints = b.points || b.pts || 0;
+                    
+                    const aGD = a.GD || a.goalDifference || a.goal_diff || 0;
+                    const bGD = b.GD || b.goalDifference || b.goal_diff || 0;
+                    
+                    const aGS = a.GS || a.goalsScored || a.goals_for || 0;
+                    const bGS = b.GS || b.goalsScored || b.goals_for || 0;
+                    
+                    if (bPoints !== aPoints) return bPoints - aPoints;
+                    if (bGD !== aGD) return bGD - aGD;
+                    return bGS - aGS;
+                });
+                
+                // Render the table
+                renderLeagueTable(zone, sortedTeams);
+            } catch (err) {
+                console.error(`Error loading data for ${zone}:`, err);
+                tablesContainer.innerHTML = `
+                    <div class="table-container active">
+                        <div class="zone-header">${zone}</div>
+                        <div class="no-data">Error loading data for ${zone}. Please check the console.</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Render league table for a zone
+        function renderLeagueTable(zone, teams) {
+            let tableHTML = `
+                <div class="table-container active">
+                    <div class="zone-header">${zone} - League Table</div>
+                    <table class="league-table">
+                        <thead>
+                            <tr>
+                                <th class="position">Pos</th>
+                                <th class="team-name">Team</th>
+                                <th class="stats">P</th>
+                                <th class="stats">W</th>
+                                <th class="stats">D</th>
+                                <th class="stats">L</th>
+                                <th class="stats">GS</th>
+                                <th class="stats">GA</th>
+                                <th class="stats">GD</th>
+                                <th class="stats">Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            teams.forEach((team, index) => {
+                const position = index + 1;
+                let rowClass = '';
+                
+                // Determine qualification/relegation status
+                if (position <= 8) {
+                    rowClass = 'champions-league';
+                } else if (position <= 16) {
+                    rowClass = 'warriors-cup';
+                } else if (position > teams.length - 3) {
+                    rowClass = 'relegated';
+                }
+                
+                // Get team ID for linking to profile
+                const normalizedTeamName = team.name.trim().toLowerCase();
+                const teamId = teamIdCache[normalizedTeamName] || '';
+                
+                // Handle various possible field names
+                const matches = team.M || team.matches || team.MP || 0;
+                const wins = team.W || team.wins || 0;
+                const draws = team.D || team.draws || 0;
+                const losses = team.L || team.losses || 0;
+                const goalsScored = team.GS || team.goalsScored || team.goals_for || 0;
+                const goalsAgainst = team.GA || team.goalsAgainst || team.goals_against || 0;
+                const goalDifference = team.GD || team.goalDifference || team.goal_diff || (goalsScored - goalsAgainst);
+                const points = team.points || team.pts || 0;
+                
+                tableHTML += `
+                    <tr class="${rowClass}">
+                        <td class="position">${position}</td>
+                        <td class="team-name" onclick="viewTeamProfile('${teamId}', '${team.name.replace(/'/g, "\\'")}')">${team.name}</td>
+                        <td class="stats">${matches}</td>
+                        <td class="stats">${wins}</td>
+                        <td class="stats">${draws}</td>
+                        <td class="stats">${losses}</td>
+                        <td class="stats">${goalsScored}</td>
+                        <td class="stats">${goalsAgainst}</td>
+                        <td class="stats">${goalDifference}</td>
+                        <td class="stats">${points}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            tablesContainer.innerHTML = tableHTML;
+        }
+        
+        // View team profile
+        function viewTeamProfile(teamId, teamName) {
+            if (teamId) {
+                // Redirect to team profile page with teamId parameter
+                window.location.href = `GombeTeamsProfileFinal.html?teamId=${teamId}`;
+            } else if (teamName) {
+                // Try to find the team ID by name (with normalization)
+                const normalizedTeamName = teamName.trim().toLowerCase();
+                const foundId = Object.keys(teamNameCache).find(id => {
+                    const cachedName = teamNameCache[id].trim().toLowerCase();
+                    return cachedName === normalizedTeamName;
+                });
+                
+                if (foundId) {
+                    window.location.href = `GombeTeamsProfileFinal.html?teamId=${foundId}`;
+                } else {
+                    alert(`Team profile for ${teamName} is not available. The team may not exist in the database.`);
+                }
+            }
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadAllTeams();
+            await loadZones();
+            
+            // Add event listeners for qualification zone buttons
+            championsLeagueBtn.addEventListener('click', () => {
+                highlightQualificationZone('champions-league');
+            });
+            
+            warriorsCupBtn.addEventListener('click', () => {
+                highlightQualificationZone('warriors-cup');
+            });
+            
+            relegationBtn.addEventListener('click', () => {
+                highlightQualificationZone('relegated');
+            });
+        });
+        
+        // Highlight a specific qualification zone
+        function highlightQualificationZone(zoneClass) {
+            const rows = document.querySelectorAll('.league-table tr');
+            
+            // Remove any existing highlights
+            rows.forEach(row => {
+                row.style.opacity = '1';
+                row.style.transform = 'scale(1)';
+            });
+            
+            // Highlight the selected zone
+            rows.forEach(row => {
+                if (row.classList.contains(zoneClass)) {
+                    row.style.opacity = '1';
+                    row.style.transform = 'scale(1.02)';
+                    row.style.transition = 'all 0.3s ease';
+                } else {
+                    row.style.opacity = '0.6';
+                }
+            });
+            
+            // Reset after 3 seconds
+            setTimeout(() => {
+                rows.forEach(row => {
+                    row.style.opacity = '1';
+                    row.style.transform = 'scale(1)';
+                });
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

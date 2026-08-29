@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kakaglobal Mega cup - Group Tables</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Roboto', sans-serif;
+        background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+        color: #333333;
+        min-height: 100vh;
+        padding: 20px;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    header {
+        text-align: center;
+        padding: 30px 0;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, #333333 0%, #000000 100%);
+        border-radius: 15px;
+        color: white;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        position: relative;
+        overflow: hidden;
+    }
+
+    header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #FFFFFF, #AAAAAA, #666666);
+    }
+
+    header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+    header p {
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .sort-controls {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    select {
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 2px solid #cccccc;
+        background: white;
+        font-size: 1rem;
+        color: #333333;
+        min-width: 180px;
+    }
+
+    select:focus {
+        outline: none;
+        border-color: #666666;
+        box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.2);
+    }
+
+    .stats-toggle {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .toggle-btn {
+        padding: 8px 15px;
+        background: #f0f0f0;
+        border: 1px solid #cccccc;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.9rem;
+        color: #333333;
+    }
+
+    .toggle-btn.active {
+        background: #666666;
+        color: white;
+        border-color: #666666;
+    }
+
+    .refresh-btn {
+        padding: 10px 20px;
+        background: #333333;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .refresh-btn:hover {
+        background: #000000;
+    }
+
+    .groups-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    @media (max-width: 768px) {
+        .groups-container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .group-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #cccccc;
+        transition: transform 0.3s ease;
+    }
+
+    .group-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .group-header {
+        background: linear-gradient(135deg, #666666 0%, #333333 100%);
+        color: white;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .group-title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .group-badge {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: white;
+        color: #333333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .group-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .group-stats {
+        display: flex;
+        gap: 15px;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .stats-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .standings-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+    }
+
+    .standings-table th {
+        background: #f0f0f0;
+        padding: 15px 10px;
+        text-align: center;
+        font-weight: 500;
+        border-bottom: 2px solid #cccccc;
+        color: #333333;
+    }
+
+    .standings-table td {
+        padding: 12px 10px;
+        text-align: center;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333333;
+    }
+
+    .standings-table tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+
+    .standings-table tr:hover {
+        background: #f0f0f0;
+    }
+
+    .team-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+        padding-left: 15px;
+    }
+
+    .position {
+        font-weight: bold;
+        width: 30px;
+        text-align: center;
+    }
+
+    .team-badge {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #666666;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.8rem;
+    }
+
+    .team-name {
+        font-weight: 500;
+        flex: 1;
+        color: #333333;
+    }
+
+    .stats-cell {
+        font-weight: 500;
+    }
+
+    .positive {
+        color: #333333;
+    }
+
+    .negative {
+        color: #666666;
+    }
+
+    .highlight {
+        background: #f0f0f0 !important;
+        font-weight: 600;
+    }
+
+    .qualification-marker {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .qualification-qf {
+        background: #333333;
+    }
+
+    .qualification-ro16 {
+        background: #666666;
+    }
+
+    .loader {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(51, 51, 51, 0.3);
+        border-radius: 50%;
+        border-top-color: #333333;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .status-container {
+        margin-top: 30px;
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+        background: #f0f0f0;
+        border: 1px solid #cccccc;
+    }
+
+    .error {
+        color: #333333;
+        font-weight: 500;
+        padding: 15px;
+        border-radius: 8px;
+        background: #f5f5f5;
+        border: 1px solid #cccccc;
+        font-size: 1rem;
+    }
+
+    .success {
+        color: #333333;
+        font-weight: 500;
+        padding: 15px;
+        border-radius: 8px;
+        background: #f0f0f0;
+        border: 1px solid #cccccc;
+        font-size: 1rem;
+    }
+
+    footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 25px;
+        color: #333333;
+        font-size: 1rem;
+        background: #f0f0f0;
+        border-radius: 15px;
+        border: 1px solid #cccccc;
+    }
+
+    @media (max-width: 768px) {
+        header h1 {
+            font-size: 2rem;
+        }
+        
+        .controls {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .sort-controls, .stats-toggle {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .group-header {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .group-stats {
+            justify-content: center;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <header>
+    <h1><i class="fas fa-trophy" style="color: #ffffff;"></i> Kakaglobal Mega cup</h1>
+    <p>Group Stage Standings - Live Tables</p>
+</header>
+        
+        <div class="controls">
+            <div class="sort-controls">
+                <label for="sortBy">Sort Groups By:</label>
+                <select id="sortBy">
+                    <option value="group">Group Name (A-Z)</option>
+                    <option value="points">Highest Points</option>
+                    <option value="goals">Most Goals</option>
+                    <option value="wins">Most Wins</option>
+                </select>
+                
+                <label for="statsView">View:</label>
+                <select id="statsView">
+                    <option value="all">All Stats</option>
+                    <option value="compact">Compact View</option>
+                    <option value="extended">Extended Stats</option>
+                </select>
+            </div>
+            
+            <div class="stats-toggle">
+                <span>Show:</span>
+                <button class="toggle-btn active" data-stat="points">Points</button>
+                <button class="toggle-btn active" data-stat="goals">Goals</button>
+                <button class="toggle-btn" data-stat="cards">Cards</button>
+                <button class="toggle-btn" data-stat="form">Form</button>
+            </div>
+            
+            <button id="refreshBtn" class="refresh-btn">
+                <i class="fas fa-sync-alt"></i> Refresh Data
+            </button>
+        </div>
+        
+        <div class="groups-container" id="groupsContainer">
+            <!-- Groups will be loaded here -->
+            <div style="text-align: center; grid-column: 1/-1; padding: 40px;">
+                <div class="loader" style="width: 40px; height: 40px; margin: 0 auto 20px;"></div>
+                <p>Loading group standings...</p>
+            </div>
+        </div>
+        
+        <div class="status-container" id="statusMessage" style="display: none;"></div>
+        
+        <footer>
+            <p>Gombe Football Ecosystem &copy; 2025 | Kakaglobal Mega cup - Group Stage Standings</p>
+        </footer>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // DOM elements
+        const groupsContainer = document.getElementById('groupsContainer');
+        const sortBySelect = document.getElementById('sortBy');
+        const statsViewSelect = document.getElementById('statsView');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const toggleButtons = document.querySelectorAll('.toggle-btn');
+        
+        // App state
+        let groupData = {};
+        let currentSort = 'group';
+        let currentView = 'all';
+        let visibleStats = {
+            points: true,
+            goals: true,
+            cards: false,
+            form: false
+        };
+        
+        // Event listeners
+        sortBySelect.addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            renderGroups();
+        });
+        
+        statsViewSelect.addEventListener('change', (e) => {
+            currentView = e.target.value;
+            renderGroups();
+        });
+        
+        refreshBtn.addEventListener('click', loadGroupData);
+        
+        toggleButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const stat = e.target.dataset.stat;
+                visibleStats[stat] = !visibleStats[stat];
+                e.target.classList.toggle('active');
+                renderGroups();
+            });
+        });
+        
+        // Load group data from Firestore
+        async function loadGroupData() {
+            try {
+                showStatus('Loading group standings...', 'success');
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading';
+                refreshBtn.disabled = true;
+                
+                // Clear current data
+                groupData = {};
+                
+                // Load all groups from the same collection used by the draw page
+                const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                
+                for (const group of groups) {
+                    try {
+                        // Get group data from the same collection used by the draw page
+                        const groupDoc = await db.collection('GombeChampionsCupDemo/Groupstage/Groups')
+                            .doc(`Group${group}`)
+                            .get();
+                        
+                        if (!groupDoc.exists) {
+                            console.warn(`No data found for Group ${group}`);
+                            continue;
+                        }
+                        
+                        const groupInfo = groupDoc.data();
+                        const teams = groupInfo.teams || [];
+                        
+                        // Use the actual team data from the draw
+                        const standings = teams.map(team => ({
+                            name: team.name,
+                            played: team.matchesPlayed || 0,
+                            wins: team.wins || 0,
+                            draws: team.draws || 0,
+                            losses: team.losses || 0,
+                            goalsFor: team.goalsFor || 0,
+                            goalsAgainst: team.goalsAgainst || 0,
+                            goalDifference: team.goalDifference || 0,
+                            points: team.points || 0,
+                            yellowCards: team.yellowCards || 0,
+                            redCards: team.redCards || 0,
+                            form: team.form || []
+                        }));
+                        
+                        // Sort teams by points, goal difference, goals for
+                        standings.sort((a, b) => {
+                            if (b.points !== a.points) return b.points - a.points;
+                            if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+                            if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+                            return a.name.localeCompare(b.name);
+                        });
+                        
+                        // Add position
+                        standings.forEach((team, index) => {
+                            team.position = index + 1;
+                        });
+                        
+                        // Calculate group statistics
+                        const totalMatches = standings.reduce((sum, team) => sum + team.played, 0) / 2;
+                        const totalGoals = standings.reduce((sum, team) => sum + team.goalsFor, 0);
+                        
+                        // Store group data
+                        groupData[group] = {
+                            name: `Group ${group}`,
+                            teams: standings,
+                            totalMatches: totalMatches,
+                            totalGoals: totalGoals,
+                            drawDate: groupInfo.drawDate
+                        };
+                        
+                    } catch (error) {
+                        console.error(`Error loading data for Group ${group}:`, error);
+                    }
+                }
+                
+                renderGroups();
+                showStatus('Group standings loaded successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error loading group data:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+            } finally {
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+                refreshBtn.disabled = false;
+            }
+        }
+        
+        // Render groups based on current sort and view settings
+        function renderGroups() {
+            if (Object.keys(groupData).length === 0) {
+                groupsContainer.innerHTML = `
+                    <div style="text-align: center; grid-column: 1/-1; padding: 40px;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #757575; margin-bottom: 15px;"></i>
+                        <p>No group data available. Groups need to be drawn first.</p>
+                        <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">
+                            Use the Group Draw page to create groups first.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort groups based on current selection
+            const sortedGroups = Object.entries(groupData).sort((a, b) => {
+                const groupA = a[1];
+                const groupB = b[1];
+                
+                switch (currentSort) {
+                    case 'points':
+                        // Sort by highest points among top teams
+                        const topPointsA = Math.max(...groupA.teams.map(t => t.points));
+                        const topPointsB = Math.max(...groupB.teams.map(t => t.points));
+                        return topPointsB - topPointsA;
+                    
+                    case 'goals':
+                        // Sort by total goals in group
+                        return groupB.totalGoals - groupA.totalGoals;
+                    
+                    case 'wins':
+                        // Sort by total wins in group
+                        const totalWinsA = groupA.teams.reduce((sum, team) => sum + team.wins, 0);
+                        const totalWinsB = groupB.teams.reduce((sum, team) => sum + team.wins, 0);
+                        return totalWinsB - totalWinsA;
+                    
+                    case 'group':
+                    default:
+                        // Sort by group name (A, B, C, ...)
+                        return a[0].localeCompare(b[0]);
+                }
+            });
+            
+            // Generate HTML for each group
+            groupsContainer.innerHTML = '';
+            
+            sortedGroups.forEach(([groupKey, group]) => {
+                const groupCard = document.createElement('div');
+                groupCard.className = 'group-card';
+                
+                // Determine qualification spots
+                const qualificationSpots = {
+                    1: 'QF',
+                    2: 'R16'
+                };
+                
+                // Generate table headers based on view settings
+                let tableHeaders = `
+                    <th>Pos</th>
+                    <th style="text-align: left;">Team</th>
+                    <th>P</th>
+                `;
+                
+                if (visibleStats.points) {
+                    tableHeaders += `
+                        <th>W</th>
+                        <th>D</th>
+                        <th>L</th>
+                        <th>Pts</th>
+                    `;
+                }
+                
+                if (visibleStats.goals) {
+                    tableHeaders += `
+                        <th>GF</th>
+                        <th>GA</th>
+                        <th>GD</th>
+                    `;
+                }
+                
+                if (visibleStats.cards) {
+                    tableHeaders += `
+                        <th title="Yellow Cards">YC</th>
+                        <th title="Red Cards">RC</th>
+                    `;
+                }
+                
+                if (visibleStats.form) {
+                    tableHeaders += `<th>Form</th>`;
+                }
+                
+                // Generate table rows
+                let tableRows = '';
+                group.teams.forEach((team, index) => {
+                    const qualification = qualificationSpots[team.position] || '';
+                    const qualificationClass = qualification ? `qualification-${qualification.toLowerCase()}` : '';
+                    const highlightClass = qualification ? 'highlight' : '';
+                    
+                    let formHTML = '';
+                    if (visibleStats.form && team.form && team.form.length > 0) {
+                        formHTML = `<td>${team.form.map(result => 
+                            `<span style="display: inline-block; width: 15px; height: 15px; border-radius: 50%; 
+                            background: ${result === 'W' ? '#4caf50' : result === 'D' ? '#ff9800' : '#f44336'}; 
+                            margin-right: 2px;" title="${result}"></span>`
+                        ).join('')}</td>`;
+                    } else if (visibleStats.form) {
+                        formHTML = '<td>-</td>';
+                    }
+                    
+                    tableRows += `
+                        <tr class="${highlightClass}">
+                            <td>
+                                <span class="position">${team.position}</span>
+                                ${qualification ? `<span class="qualification-marker ${qualificationClass}"></span>` : ''}
+                            </td>
+                            <td class="team-cell">
+                                <div class="team-badge">${team.name.charAt(0)}</div>
+                                <div class="team-name">${team.name}</div>
+                            </td>
+                            <td class="stats-cell">${team.played}</td>
+                            ${visibleStats.points ? `
+                                <td class="stats-cell positive">${team.wins}</td>
+                                <td class="stats-cell">${team.draws}</td>
+                                <td class="stats-cell negative">${team.losses}</td>
+                                <td class="stats-cell" style="font-weight: bold;">${team.points}</td>
+                            ` : ''}
+                            ${visibleStats.goals ? `
+                                <td class="stats-cell">${team.goalsFor}</td>
+                                <td class="stats-cell">${team.goalsAgainst}</td>
+                                <td class="stats-cell ${team.goalDifference >= 0 ? 'positive' : 'negative'}">
+                                    ${team.goalDifference > 0 ? '+' : ''}${team.goalDifference}
+                                </td>
+                            ` : ''}
+                            ${visibleStats.cards ? `
+                                <td class="stats-cell">${team.yellowCards}</td>
+                                <td class="stats-cell negative">${team.redCards}</td>
+                            ` : ''}
+                            ${visibleStats.form ? formHTML : ''}
+                        </tr>
+                    `;
+                });
+                
+                groupCard.innerHTML = `
+                    <div class="group-header">
+                        <div class="group-title">
+                            <div class="group-badge">${groupKey}</div>
+                            <div class="group-name">${group.name}</div>
+                        </div>
+                        <div class="group-stats">
+                            <div class="stats-item">
+                                <i class="fas fa-futbol"></i>
+                                <span>${group.totalMatches} matches</span>
+                            </div>
+                            <div class="stats-item">
+                                <i class="fas fa-bullseye"></i>
+                                <span>${group.totalGoals} goals</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="standings-table">
+                            <thead>
+                                <tr>${tableHeaders}</tr>
+                            </thead>
+                            <tbody>${tableRows}</tbody>
+                        </table>
+                    </div>
+                `;
+                
+                groupsContainer.appendChild(groupCard);
+            });
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.style.display = 'block';
+            statusMessage.innerHTML = `
+                <div class="${type}">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            
+            // Auto hide after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGroupData();
+        });
+    </script>
+</body>
+</html>

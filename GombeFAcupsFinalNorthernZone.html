@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FA Cup - Finals Selection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            color: #2e7d32;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 20px;
+            background: #2e7d32;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        header p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .tournament-progress {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .progress-step {
+            padding: 10px 20px;
+            background: #e8f5e9;
+            border-radius: 30px;
+            color: #1b5e20;
+            font-weight: 500;
+            position: relative;
+            text-align: center;
+            flex: 1;
+            max-width: 160px;
+            min-width: 140px;
+            margin: 5px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+        }
+
+        .progress-step.completed {
+            background: #a5d6a7;
+        }
+
+        .progress-step.active {
+            background: #4caf50;
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .progress-step:not(:last-child):after {
+            content: "→";
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #2e7d32;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #c8e6c9;
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #1b5e20;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #c8e6c9;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            color: #2e7d32;
+            text-align: center;
+        }
+
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 8px;
+            border: 2px solid #c8e6c9;
+            background: white;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            color: #2e7d32;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232e7d32' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .teams-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f1f8e9;
+            border-radius: 10px;
+            border: 1px solid #e8f5e9;
+        }
+
+        .team-item {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #e8f5e9;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .team-item:hover {
+            background: #e8f5e9;
+            transform: translateY(-3px);
+        }
+
+        .team-item.selected {
+            background: #c8e6c9;
+            border-color: #4caf50;
+        }
+
+        .team-item input {
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            accent-color: #4caf50;
+        }
+
+        .team-item label {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .team-count {
+            font-size: 1.1rem;
+            color: #1b5e20;
+            margin-top: 15px;
+            text-align: center;
+            padding: 12px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+            gap: 15px;
+        }
+
+        button {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .primary-btn {
+            background: linear-gradient(to right, #4caf50, #2e7d32);
+            color: white;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background: linear-gradient(to right, #388e3c, #1b5e20);
+            transform: translateY(-2px);
+        }
+
+        .secondary-btn {
+            background: #f5f5f5;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .secondary-btn:hover:not(:disabled) {
+            background: #e8f5e9;
+            transform: translateY(-2px);
+        }
+
+        .status-container {
+            margin-top: 25px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: #e8f5e9;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-section {
+            padding: 20px;
+            background: #f1f8e9;
+            border-radius: 10px;
+        }
+
+        .summary-section h3 {
+            color: #1b5e20;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 500;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #c8e6c9;
+        }
+
+        .team-list {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e8f5e9;
+        }
+
+        .team-list div {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 3px solid #4caf50;
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(46, 125, 50, 0.3);
+            border-radius: 50%;
+            border-top-color: #2e7d32;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #388e3c;
+            font-size: 1rem;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-weight: 500;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .tournament-progress {
+                flex-wrap: wrap;
+            }
+            
+            .progress-step {
+                max-width: 45%;
+            }
+            
+            .progress-step:not(:last-child):after {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .tournament-progress {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .progress-step {
+                max-width: 100%;
+                width: 100%;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .teams-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FA Cup Finals</h1>
+            <p>Select a zone and choose 2 teams from the Semifinals to advance to the Finals</p>
+        </header>
+        
+        <div class="tournament-progress">
+            <div class="progress-step completed">Round One</div>
+            <div class="progress-step completed">Round Two</div>
+            <div class="progress-step completed">Third Round</div>
+            <div class="progress-step completed">Quarterfinals</div>
+            <div class="progress-step completed">Semifinals</div>
+            <div class="progress-step active">Finals</div>
+        </div>
+        
+        <main>
+            <div class="card">
+                <h2>Finals Team Selection</h2>
+                <div class="form-group">
+                    <label for="zoneSelect">Select Football Zone:</label>
+                    <select id="zoneSelect">
+                        <option value="">-- Choose a zone --</option>
+                        <!-- <option value="central-zone">Central Zone</option>-->
+                        <option value="northern-zone">Northern Zone</option> 
+                        <!-- <option value="southern-zone">Southern Zone</option> -->
+                        <!-- <option value="eastern-zone">Eastern Zone</option> -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <h3>Semifinals Teams (4 Teams)</h3>
+                    <p>Select 2 teams to advance to the Finals</p>
+                    <div class="teams-container" id="semifinalsTeams">
+                        <p>Select a zone to load teams</p>
+                    </div>
+                    <div class="team-count">
+                        Selected: <span id="selectedCount">0</span> of 2
+                    </div>
+                </div>
+                
+                <div class="button-container">
+                    <button id="saveBtn" class="primary-btn" disabled>
+                        <span id="saveText">Advance to Finals</span>
+                        <span id="saveLoader" class="loader" style="display: none;"></span>
+                    </button>
+                    <button id="resetBtn" class="secondary-btn">Reset Selection</button>
+                </div>
+            </div>
+            
+            <div class="card" id="summaryCard" style="display: none;">
+                <h2>Tournament Summary</h2>
+                <div class="summary">
+                    <div class="summary-section">
+                        <h3>Finalists</h3>
+                        <div class="team-list" id="finalistsList"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status-container" id="statusMessage" style="display: none;"></div>
+        </main>
+        
+        <footer>
+            <p>Gombe Football Association &copy; 2025 | Tournament Management System</p>
+        </footer>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // DOM elements
+        const zoneSelect = document.getElementById('zoneSelect');
+        const semifinalsTeams = document.getElementById('semifinalsTeams');
+        const selectedCount = document.getElementById('selectedCount');
+        const saveBtn = document.getElementById('saveBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const finalistsList = document.getElementById('finalistsList');
+        const summaryCard = document.getElementById('summaryCard');
+        const statusMessage = document.getElementById('statusMessage');
+        const saveText = document.getElementById('saveText');
+        const saveLoader = document.getElementById('saveLoader');
+        
+        // App state
+        let selectedZone = '';
+        let semifinalsTeamsList = [];
+        let selectedTeams = [];
+        
+        // Event listeners
+        zoneSelect.addEventListener('change', loadTeamsForZone);
+        saveBtn.addEventListener('click', saveSelection);
+        resetBtn.addEventListener('click', resetSelection);
+        
+        // Load teams for selected zone
+        async function loadTeamsForZone() {
+            selectedZone = zoneSelect.value;
+            
+            if (!selectedZone) {
+                resetSelection();
+                return;
+            }
+            
+            // Show loading state
+            semifinalsTeams.innerHTML = '<p>Loading teams... <span class="loader"></span></p>';
+            
+            try {
+                // Format zone ID for Firebase
+                const formattedZoneId = selectedZone.charAt(0).toUpperCase() + selectedZone.slice(1).replace('-zone', ' Zone');
+                
+                // Get Semifinals teams from Firestore
+                const semifinalsQuery = await db.collection('GombeFAcups')
+                    .doc(formattedZoneId)
+                    .collection('Semifinals')
+                    .orderBy('timestamp', 'desc')
+                    .limit(1)
+                    .get();
+                
+                if (semifinalsQuery.empty) {
+                    throw new Error('No Semifinals teams found for this zone!');
+                }
+                
+                const semifinalsDoc = semifinalsQuery.docs[0];
+                semifinalsTeamsList = semifinalsDoc.data().teams || [];
+                
+                // Reset selected teams
+                selectedTeams = [];
+                
+                // Render teams
+                renderTeams();
+                
+            } catch (error) {
+                console.error('Error loading teams:', error);
+                semifinalsTeams.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Render teams in the UI
+        function renderTeams() {
+            // Render Semifinals teams
+            if (semifinalsTeamsList.length === 0) {
+                semifinalsTeams.innerHTML = '<p class="error">No teams found in Semifinals for this zone</p>';
+            } else {
+                semifinalsTeams.innerHTML = '';
+                semifinalsTeamsList.forEach(team => {
+                    const isSelected = selectedTeams.includes(team);
+                    const teamEl = document.createElement('div');
+                    teamEl.className = `team-item ${isSelected ? 'selected' : ''}`;
+                    teamEl.innerHTML = `
+                        <input type="checkbox" id="team-${team}" ${isSelected ? 'checked' : ''}>
+                        <label for="team-${team}">${team}</label>
+                    `;
+                    teamEl.querySelector('input').addEventListener('change', () => toggleTeamSelection(team));
+                    semifinalsTeams.appendChild(teamEl);
+                });
+            }
+            
+            // Update selected count
+            updateSelectedCount();
+        }
+        
+        // Toggle team selection
+        function toggleTeamSelection(team) {
+            const index = selectedTeams.indexOf(team);
+            
+            if (index === -1) {
+                // Don't allow more than 2 selections
+                if (selectedTeams.length >= 2) {
+                    alert('You can only select 2 teams to advance to the Finals');
+                    return;
+                }
+                selectedTeams.push(team);
+            } else {
+                selectedTeams.splice(index, 1);
+            }
+            
+            // Re-render teams to update selection state
+            renderTeams();
+        }
+        
+        // Update selected team count
+        function updateSelectedCount() {
+            selectedCount.textContent = selectedTeams.length;
+            saveBtn.disabled = selectedTeams.length !== 2;
+        }
+        
+        // Save selection to Firebase
+        async function saveSelection() {
+            if (selectedTeams.length !== 2) {
+                alert('Please select exactly 2 teams to advance to the Finals');
+                return;
+            }
+            
+            try {
+                // Show loading state
+                saveText.innerHTML = 'Saving...';
+                saveLoader.style.display = 'inline-block';
+                saveBtn.disabled = true;
+                
+                // Format zone ID for Firebase
+                const formattedZoneId = selectedZone.charAt(0).toUpperCase() + selectedZone.slice(1).replace('-zone', ' Zone');
+                
+                // Save to Finals collection
+                await db.collection('GombeFAcups')
+                    .doc(formattedZoneId)
+                    .collection('Finals')
+                    .add({
+                        teams: selectedTeams,
+                        zone: formattedZoneId,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                
+                // Update summary display
+                showSummary();
+                
+                // Show success message
+                statusMessage.style.display = 'block';
+                statusMessage.innerHTML = `
+                    <div style="color: #1b5e20; font-weight: 600; margin-bottom: 15px;">
+                        ✅ Teams advanced to Finals!
+                    </div>
+                    <p><strong>Zone:</strong> ${formattedZoneId}</p>
+                    <p><strong>Finalists:</strong> ${selectedTeams.join(' and ')}</p>
+                `;
+                
+            } catch (error) {
+                console.error('Error saving selection:', error);
+                statusMessage.style.display = 'block';
+                statusMessage.innerHTML = `
+                    <div style="color: #d32f2f; font-weight: 600; margin-bottom: 15px;">
+                        ❌ Error saving selection
+                    </div>
+                    <p class="error">${error.message}</p>
+                `;
+            } finally {
+                // Reset button state
+                saveText.innerHTML = 'Advance to Finals';
+                saveLoader.style.display = 'none';
+            }
+        }
+        
+        // Show summary after save
+        function showSummary() {
+            // Update finalists list
+            finalistsList.innerHTML = '';
+            selectedTeams.forEach(team => {
+                const teamEl = document.createElement('div');
+                teamEl.textContent = team;
+                finalistsList.appendChild(teamEl);
+            });
+            
+            // Show summary card
+            summaryCard.style.display = 'block';
+            
+            // Scroll to summary
+            summaryCard.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Reset selection
+        function resetSelection() {
+            selectedZone = '';
+            semifinalsTeamsList = [];
+            selectedTeams = [];
+            
+            semifinalsTeams.innerHTML = '<p>Select a zone to load teams</p>';
+            zoneSelect.value = '';
+            
+            selectedCount.textContent = '0';
+            saveBtn.disabled = true;
+            summaryCard.style.display = 'none';
+            statusMessage.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

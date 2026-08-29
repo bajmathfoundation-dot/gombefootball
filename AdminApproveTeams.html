@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Approve Teams</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a3a5c, #2c5a7c);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        header .badge {
+            background: #f39c12;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1a3a5c;
+        }
+
+        .stat-card .label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .stat-card.pending .number { color: #f39c12; }
+        .stat-card.approved .number { color: #27ae60; }
+        .stat-card.rejected .number { color: #e74c3c; }
+
+        .team-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .team-card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .team-card-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .team-card-header .team-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1a3a5c;
+        }
+
+        .team-card-header .team-status {
+            padding: 4px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .team-status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .team-status.approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .team-status.rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .team-card-body {
+            padding: 20px;
+            display: none;
+        }
+
+        .team-card-body.active {
+            display: block;
+        }
+
+        .team-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .detail-item .label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .detail-item .value {
+            font-size: 1rem;
+            color: #2c3e50;
+            margin-top: 3px;
+        }
+
+        .approval-form {
+            border-top: 2px solid #e9ecef;
+            padding-top: 20px;
+            margin-top: 10px;
+        }
+
+        .approval-form .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .approval-form .form-group {
+            margin-bottom: 10px;
+        }
+
+        .approval-form .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1a3a5c;
+            margin-bottom: 5px;
+        }
+
+        .approval-form .form-group label .required {
+            color: #e74c3c;
+        }
+
+        .approval-form .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .approval-form .form-control:focus {
+            outline: none;
+            border-color: #1a3a5c;
+        }
+
+        .approval-form .form-control.is-valid {
+            border-color: #27ae60;
+        }
+
+        .approval-form .form-control.is-invalid {
+            border-color: #e74c3c;
+        }
+
+        .approval-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-approve {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #2ecc71;
+        }
+
+        .btn-reject {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #c0392b;
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            background: #128C7E;
+        }
+
+        .btn-view {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #2980b9;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .no-teams {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .no-teams i {
+            font-size: 4rem;
+            color: #bdc3c7;
+            margin-bottom: 15px;
+        }
+
+        .no-teams h3 {
+            color: #7f8c8d;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            color: #1a3a5c;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 1000;
+            display: none;
+            max-width: 400px;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.success { background: #27ae60; }
+        .toast.error { background: #e74c3c; }
+        .toast.info { background: #3498db; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .team-details-grid,
+            .approval-form .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .team-card-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .approval-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            setDoc,
+            doc,
+            arrayUnion,
+            serverTimestamp,
+            runTransaction,
+            getDoc,
+            query,
+            where,
+            getDocs,
+            deleteDoc,
+            onSnapshot
+        } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            databaseURL: "https://gombefootball-default-rtdb.firebaseio.com",
+            projectId: "gombefootball",
+            storageBucket: "gombefootball.firebasestorage.app",
+            messagingSenderId: "120731655706",
+            appId: "1:120731655706:web:9c99d6831aca3df563bba3",
+            measurementId: "G-8SCVPBSKPG"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        window.firebase = {
+            db,
+            collection,
+            addDoc,
+            setDoc,
+            doc,
+            arrayUnion,
+            serverTimestamp,
+            runTransaction,
+            getDoc,
+            query,
+            where,
+            getDocs,
+            deleteDoc,
+            onSnapshot
+        };
+
+        document.addEventListener('DOMContentLoaded', main);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <i class="fas fa-user-shield"></i>
+                Admin - Team Approval
+            </h1>
+            <div>
+                <span class="badge"><i class="fas fa-clock"></i> Awaiting Approval</span>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card pending">
+                <div class="number" id="pendingCount">0</div>
+                <div class="label">Pending Approval</div>
+            </div>
+            <div class="stat-card approved">
+                <div class="number" id="approvedCount">0</div>
+                <div class="label">Approved Today</div>
+            </div>
+            <div class="stat-card rejected">
+                <div class="number" id="rejectedCount">0</div>
+                <div class="label">Rejected</div>
+            </div>
+        </div>
+
+        <!-- Teams List -->
+        <div id="teamsList">
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <p>Loading teams...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        function main() {
+            console.log("Admin approval page loaded");
+
+            // DOM Elements
+            const teamsList = document.getElementById('teamsList');
+            const pendingCount = document.getElementById('pendingCount');
+            const approvedCount = document.getElementById('approvedCount');
+            const rejectedCount = document.getElementById('rejectedCount');
+            const toast = document.getElementById('toast');
+
+            // Show toast notification
+            function showToast(message, type = 'info') {
+                toast.textContent = message;
+                toast.className = `toast show ${type}`;
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 5000);
+            }
+
+            // Load teams awaiting approval
+            function loadTeams() {
+                const q = window.firebase.query(
+                    window.firebase.collection(window.firebase.db, "GombeTeamsAwaitingapproval")
+                );
+
+                window.firebase.onSnapshot(q, (snapshot) => {
+                    const teams = [];
+                    let pending = 0, approved = 0, rejected = 0;
+
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const team = {
+                            id: doc.id,
+                            ...data
+                        };
+                        teams.push(team);
+
+                        // Count statuses
+                        const status = data.status || 'Pending Approval';
+                        if (status === 'Pending Approval' || status === 'Pending') pending++;
+                        else if (status === 'Approved') approved++;
+                        else if (status === 'Rejected') rejected++;
+                    });
+
+                    // Update stats
+                    pendingCount.textContent = pending;
+                    approvedCount.textContent = approved;
+                    rejectedCount.textContent = rejected;
+
+                    // Render teams
+                    renderTeams(teams);
+
+                    if (teams.length === 0) {
+                        teamsList.innerHTML = `
+                            <div class="no-teams">
+                                <i class="fas fa-check-circle"></i>
+                                <h3>No teams waiting for approval</h3>
+                                <p style="color: #7f8c8d;">All teams have been processed</p>
+                            </div>
+                        `;
+                    }
+                }, (error) => {
+                    console.error("Error loading teams:", error);
+                    teamsList.innerHTML = `
+                        <div class="no-teams">
+                            <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+                            <h3>Error loading teams</h3>
+                            <p style="color: #7f8c8d;">${error.message}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            // Render teams
+            function renderTeams(teams) {
+                let html = '';
+                
+                teams.forEach((team, index) => {
+                    const status = team.status || 'Pending Approval';
+                    const statusClass = status === 'Approved' ? 'approved' : 
+                                      status === 'Rejected' ? 'rejected' : 'pending';
+                    
+                    html += `
+                        <div class="team-card">
+                            <div class="team-card-header" onclick="toggleTeam(${index})">
+                                <div>
+                                    <span class="team-name">${team.teamName || 'Unnamed Team'}</span>
+                                </div>
+                                <div>
+                                    <span class="team-status ${statusClass}">${status}</span>
+                                    <span style="margin-left: 10px; font-size: 0.8rem; color: #7f8c8d;">
+                                        <i class="fas fa-clock"></i> ${new Date(team.submittedAt?.toMillis() || Date.now()).toLocaleDateString()}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="team-card-body" id="teamBody${index}">
+                                <div class="team-details-grid">
+                                    <div class="detail-item">
+                                        <div class="label">Team Name</div>
+                                        <div class="value">${team.teamName || 'N/A'}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Nickname</div>
+                                        <div class="value">${team.teamNickname || 'N/A'}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Year Founded</div>
+                                        <div class="value">${team.yearFounded || 'N/A'}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">LGA</div>
+                                        <div class="value">${team.lga || 'N/A'}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Ward</div>
+                                        <div class="value">${team.ward || 'N/A'}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Zone</div>
+                                        <div class="value">${team.zone || 'N/A'}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Manager Phone</div>
+                                        <div class="value">${team.managerPhone || 'N/A'}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Declarant</div>
+                                        <div class="value">${team.declarantName || 'N/A'}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Declaration Date</div>
+                                        <div class="value">${team.declarationDate || 'N/A'}</div>
+                                    </div>
+                                </div>
+
+                                <div class="approval-form">
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label>Team ID (Auto-generated)</label>
+                                            <input type="text" class="form-control" id="teamId_${team.id}" 
+                                                   value="GT-${sanitizeTeamName(team.teamName)}-${String(index + 1).padStart(3, '0')}" readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Approved By <span class="required">*</span></label>
+                                            <input type="text" class="form-control" id="approvedBy_${team.id}" 
+                                                   placeholder="Enter your name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Date Approved (Auto)</label>
+                                            <input type="text" class="form-control" id="approvedDate_${team.id}" 
+                                                   value="${new Date().toLocaleDateString()}" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="approval-actions">
+                                        <button class="btn btn-approve" onclick="approveTeam('${team.id}')">
+                                            <i class="fas fa-check"></i> Approve & Send PDF
+                                        </button>
+                                        <button class="btn btn-reject" onclick="rejectTeam('${team.id}')">
+                                            <i class="fas fa-times"></i> Reject
+                                        </button>
+                                        <button class="btn btn-whatsapp" onclick="sendWhatsApp('${team.id}')">
+                                            <i class="fab fa-whatsapp"></i> Send via WhatsApp
+                                        </button>
+                                        <button class="btn btn-view" onclick="viewPDF('${team.id}')">
+                                            <i class="fas fa-file-pdf"></i> View PDF
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                teamsList.innerHTML = html;
+            }
+
+            // Toggle team details
+            window.toggleTeam = function(index) {
+                const body = document.getElementById(`teamBody${index}`);
+                if (body) {
+                    body.classList.toggle('active');
+                }
+            };
+
+            // Sanitize team name for ID
+            function sanitizeTeamName(name) {
+                if (!name) return 'team';
+                return name
+                    .trim()
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '')
+                    .substring(0, 20);
+            }
+
+            // Get next sequential team number
+            async function getNextTeamNumber() {
+                const counterRef = window.firebase.doc(
+                    window.firebase.db, 
+                    "counters", 
+                    "teams"
+                );
+                
+                try {
+                    await window.firebase.runTransaction(
+                        window.firebase.db, 
+                        async (transaction) => {
+                            const counterDoc = await transaction.get(counterRef);
+                            let newCount = 1;
+                            
+                            if (counterDoc.exists()) {
+                                newCount = counterDoc.data().count + 1;
+                            }
+                            
+                            transaction.set(counterRef, { count: newCount });
+                            return newCount;
+                        }
+                    );
+                    
+                    const counterSnap = await window.firebase.getDoc(counterRef);
+                    return counterSnap.data().count;
+                } catch (error) {
+                    console.error("Counter error:", error);
+                    throw new Error("Could not generate team ID");
+                }
+            }
+
+            // ============================================
+            // APPROVE TEAM WITH COMPLETE PDF & STAMP
+            // ============================================
+            window.approveTeam = async function(docId) {
+                try {
+                    const approvedBy = document.getElementById(`approvedBy_${docId}`).value.trim();
+                    const teamIdInput = document.getElementById(`teamId_${docId}`);
+                    const teamId = teamIdInput.value.trim();
+
+                    if (!approvedBy) {
+                        showToast('Please enter your name in "Approved By" field', 'error');
+                        document.getElementById(`approvedBy_${docId}`).classList.add('is-invalid');
+                        return;
+                    }
+
+                    // Get the pending team data
+                    const pendingDoc = await window.firebase.getDoc(
+                        window.firebase.doc(window.firebase.db, "GombeTeamsAwaitingapproval", docId)
+                    );
+
+                    if (!pendingDoc.exists()) {
+                        showToast('Team not found', 'error');
+                        return;
+                    }
+
+                    const teamData = pendingDoc.data();
+
+                    // Get next sequential number
+                    const seqNumber = await getNextTeamNumber();
+                    const sanitizedName = sanitizeTeamName(teamData.teamName);
+                    const generatedTeamId = `GT-${sanitizedName}-${seqNumber.toString().padStart(3, '0')}`;
+
+                    // Get current date/time for stamp
+                    const now = new Date();
+                    const formattedDate = now.toLocaleDateString('en-NG', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    const formattedTime = now.toLocaleTimeString('en-NG', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                    const isoDate = now.toISOString();
+
+                    // Create team data for GombeTeams
+                    const finalTeamData = {
+                        name: teamData.teamName,
+                        nickname: teamData.teamNickname || null,
+                        year: teamData.yearFounded || null,
+                        colors: teamData.teamColors || null,
+                        homeKit: teamData.homeKitColor || null,
+                        awayKit: teamData.awayKitColor || null,
+                        lga: teamData.lga,
+                        ward: teamData.ward,
+                        location: teamData.location || null,
+                        zone: teamData.zone || null,
+                        managerPhone: teamData.managerPhone,
+                        managerName: null,
+                        password: null,
+                        phoneNumber: teamData.managerPhone,
+                        logoUrl: null,
+                        tier: null,
+                        stateWideCompetition: null,
+                        kitColorsHome: null,
+                        kitColorsAway: null,
+                        kitColorsThird: null,
+                        status: "Approved",
+                        approvedBy: approvedBy,
+                        approvedDate: isoDate,
+                        createdAt: window.firebase.serverTimestamp()
+                    };
+
+                    // Save to GombeTeams with custom ID
+                    await window.firebase.setDoc(
+                        window.firebase.doc(
+                            window.firebase.db, 
+                            "GombeTeams", 
+                            generatedTeamId
+                        ),
+                        finalTeamData
+                    );
+
+                    // Update leaguezones
+                    const zoneDocName = teamData.zone ? teamData.zone.replace(/\s+/g, '-').toLowerCase() : 'unknown';
+                    await window.firebase.setDoc(
+                        window.firebase.doc(
+                            window.firebase.db, 
+                            "leaguezones", 
+                            zoneDocName
+                        ),
+                        {
+                            teams: window.firebase.arrayUnion(teamData.teamName),
+                            lastUpdated: window.firebase.serverTimestamp()
+                        },
+                        { merge: true }
+                    );
+
+                    // Delete from awaiting approval
+                    await window.firebase.deleteDoc(
+                        window.firebase.doc(window.firebase.db, "GombeTeamsAwaitingapproval", docId)
+                    );
+
+                    showToast(`✅ Team "${teamData.teamName}" approved with ID: ${generatedTeamId}`, 'success');
+
+                    // ============================================
+                    // SEND COMPLETE PDF WITH OFFICIAL STAMP VIA WHATSAPP
+                    // ============================================
+                    const phone = teamData.managerPhone || '';
+                    if (phone) {
+                        // Format phone number
+                        const formattedPhone = phone.replace(/\D/g, '');
+                        const finalPhone = formattedPhone.startsWith('0') ? '234' + formattedPhone.substring(1) : formattedPhone;
+
+                        // ============================================
+                        // GENERATE COMPLETE PDF WITH OFFICIAL STAMP
+                        // ============================================
+                        const pdfContent = `
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║                 GOMBE FOOTBALL ECOSYSTEM                          ║
+║              OFFICIAL TEAM REGISTRATION APPROVAL                  ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+📋 APPROVAL CERTIFICATE
+═══════════════════════════════════════════════════════════════════
+Registration ID   : ${generatedTeamId}
+Approval Date     : ${formattedDate}
+Approval Time     : ${formattedTime}
+Approved By       : ${approvedBy}
+Status            : ✅ APPROVED
+
+═══════════════════════════════════════════════════════════════════
+📌 TEAM INFORMATION
+═══════════════════════════════════════════════════════════════════
+Team Name         : ${teamData.teamName || 'N/A'}
+Nickname          : ${teamData.teamNickname || 'N/A'}
+Year Founded      : ${teamData.yearFounded || 'N/A'}
+Team Colors       : ${teamData.teamColors || 'N/A'}
+Home Kit Color    : ${teamData.homeKitColor || 'N/A'}
+Away Kit Color    : ${teamData.awayKitColor || 'N/A'}
+
+═══════════════════════════════════════════════════════════════════
+📍 LOCATION DETAILS
+═══════════════════════════════════════════════════════════════════
+LGA               : ${teamData.lga || 'N/A'}
+Ward              : ${teamData.ward || 'N/A'}
+Location          : ${teamData.location || 'N/A'}
+Zone              : ${teamData.zone || 'N/A'}
+
+═══════════════════════════════════════════════════════════════════
+📞 CONTACT INFORMATION
+═══════════════════════════════════════════════════════════════════
+Manager Phone     : ${teamData.managerPhone || 'N/A'}
+
+═══════════════════════════════════════════════════════════════════
+✍️ DECLARATION
+═══════════════════════════════════════════════════════════════════
+Declarant Name    : ${teamData.declarantName || 'N/A'}
+Declaration Date  : ${teamData.declarationDate || 'N/A'}
+
+═══════════════════════════════════════════════════════════════════
+🏛️ OFFICIAL ECOSYSTEM STAMP
+═══════════════════════════════════════════════════════════════════
+
+    ┌─────────────────────────────────────────────────────────┐
+    │                                                         │
+    │              🏛️ GOMBE FOOTBALL ECOSYSTEM              │
+    │                                                         │
+    │           ⚽ OFFICIAL APPROVAL STAMP                   │
+    │                                                         │
+    │    This team has been officially registered and        │
+    │    approved to participate in the Gombe State          │
+    │    Football Championship.                              │
+    │                                                         │
+    │    📅 ${formattedDate}                                    │
+    │    🆔 ${generatedTeamId}                                │
+    │    ✅ STATUS: APPROVED                                │
+    │                                                         │
+    │    ───────────────────────────────────────────────       │
+    │                                                         │
+    │    Approved By: ${approvedBy}                            │
+    │                                                         │
+    │    ═══════════════════════════════════════════════       │
+    │    DIGITAL SEAL                                         │
+    │    ═══════════════════════════════════════════════       │
+    │                                                         │
+    └─────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════
+📱 SYSTEM INFORMATION
+═══════════════════════════════════════════════════════════════════
+Document Type     : Official Registration Certificate
+Generated By      : Gombe Football Ecosystem System
+Version           : 1.0
+Timestamp         : ${isoDate}
+
+═══════════════════════════════════════════════════════════════════
+⚡ This is a digitally generated official document.
+   Please retain this certificate for your records.
+
+© ${new Date().getFullYear()} Gombe Football Ecosystem
+Private Youth & Sports Development - Gombe, Nigeria
+═══════════════════════════════════════════════════════════════════`;
+
+                        // ============================================
+                        // FORMAT WHATSAPP MESSAGE WITH PDF
+                        // ============================================
+                        const waMessage = `🏛️ *GOMBE FOOTBALL ECOSYSTEM*
+        ⚽ *OFFICIAL TEAM APPROVAL*
+
+        ──────────────────────────
+        ✅ *APPROVAL CERTIFICATE*
+        ──────────────────────────
+        🆔 Team ID: ${generatedTeamId}
+        📅 Approved: ${formattedDate}
+        🕐 Time: ${formattedTime}
+        👤 Approved By: ${approvedBy}
+        📌 Status: *APPROVED* ✅
+
+        ──────────────────────────
+        📌 *TEAM DETAILS*
+        Team Name: ${teamData.teamName || 'N/A'}
+        Nickname: ${teamData.teamNickname || 'N/A'}
+        Founded: ${teamData.yearFounded || 'N/A'}
+        Colors: ${teamData.teamColors || 'N/A'}
+
+        📍 *LOCATION*
+        LGA: ${teamData.lga || 'N/A'}
+        Ward: ${teamData.ward || 'N/A'}
+        Zone: ${teamData.zone || 'N/A'}
+
+        📞 *CONTACT*
+        Manager Phone: ${teamData.managerPhone || 'N/A'}
+
+        ✍️ *DECLARANT*
+        Name: ${teamData.declarantName || 'N/A'}
+        Date: ${teamData.declarationDate || 'N/A'}
+
+        ──────────────────────────
+        🏛️ *OFFICIAL STAMP*
+        ┌─────────────────────────┐
+        │   GOMBE FOOTBALL        │
+        │   ECOSYSTEM             │
+        │   ⚽ OFFICIAL STAMP     │
+        │                         │
+        │   ✅ APPROVED           │
+        │   📅 ${formattedDate}    │
+        │   🆔 ${generatedTeamId}  │
+        │                         │
+        │   Approved By:          │
+        │   ${approvedBy}         │
+        └─────────────────────────┘
+
+        ──────────────────────────
+        📱 *System Generated Certificate*
+        This is an official approval document
+        from the Gombe Football Ecosystem.
+
+        *© Gombe Football Ecosystem*
+        *Private Youth & Sports Development*`;
+
+                        // Encode and send via WhatsApp
+                        const encodedMessage = encodeURIComponent(waMessage + '\n\n' + pdfContent);
+                        const waUrl = `https://wa.me/${finalPhone}?text=${encodedMessage}`;
+                        
+                        // Open WhatsApp in new window
+                        window.open(waUrl, '_blank');
+                        showToast(`📱 Sending approval certificate via WhatsApp to ${phone}`, 'success');
+                    }
+
+                } catch (error) {
+                    console.error("Approval error:", error);
+                    showToast(`❌ Error: ${error.message}`, 'error');
+                }
+            };
+
+            // ============================================
+            // REJECT TEAM
+            // ============================================
+            window.rejectTeam = async function(docId) {
+                if (!confirm('Are you sure you want to reject this team registration?')) return;
+
+                try {
+                    const approvedBy = document.getElementById(`approvedBy_${docId}`).value.trim() || 'System';
+
+                    // Get the pending team data
+                    const pendingDoc = await window.firebase.getDoc(
+                        window.firebase.doc(window.firebase.db, "GombeTeamsAwaitingapproval", docId)
+                    );
+
+                    if (!pendingDoc.exists()) {
+                        showToast('Team not found', 'error');
+                        return;
+                    }
+
+                    const teamData = pendingDoc.data();
+
+                    // Delete from awaiting approval
+                    await window.firebase.deleteDoc(
+                        window.firebase.doc(window.firebase.db, "GombeTeamsAwaitingapproval", docId)
+                    );
+
+                    showToast(`❌ Team "${teamData.teamName}" rejected`, 'error');
+
+                    // Send WhatsApp notification
+                    const phone = teamData.managerPhone || '';
+                    if (phone) {
+                        const formattedPhone = phone.replace(/\D/g, '');
+                        const finalPhone = formattedPhone.startsWith('0') ? '234' + formattedPhone.substring(1) : formattedPhone;
+                        
+                        const now = new Date();
+                        const formattedDate = now.toLocaleDateString('en-NG', {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric'
+                        });
+
+                        const message = `❌ *Team Registration Update*\n\n` +
+                                       `Team: ${teamData.teamName}\n` +
+                                       `Status: Rejected\n` +
+                                       `Reviewed By: ${approvedBy}\n` +
+                                       `Date: ${formattedDate}\n\n` +
+                                       `Please contact the sports commission for more information.`;
+                        
+                        const waUrl = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
+                        window.open(waUrl, '_blank');
+                    }
+
+                } catch (error) {
+                    console.error("Rejection error:", error);
+                    showToast(`❌ Error: ${error.message}`, 'error');
+                }
+            };
+
+            // ============================================
+            // SEND WHATSAPP - SEND PENDING FORM
+            // ============================================
+            window.sendWhatsApp = async function(docId) {
+                try {
+                    const doc = await window.firebase.getDoc(
+                        window.firebase.doc(window.firebase.db, "GombeTeamsAwaitingapproval", docId)
+                    );
+
+                    if (!doc.exists()) {
+                        showToast('Team not found', 'error');
+                        return;
+                    }
+
+                    const team = doc.data();
+                    const phone = team.managerPhone || '';
+
+                    if (!phone) {
+                        showToast('No phone number found for this team', 'error');
+                        return;
+                    }
+
+                    const formattedPhone = phone.replace(/\D/g, '');
+                    const finalPhone = formattedPhone.startsWith('0') ? '234' + formattedPhone.substring(1) : formattedPhone;
+
+                    // Generate full PDF content with pending status
+                    const now = new Date();
+                    const formattedDate = now.toLocaleDateString('en-NG', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+
+                    const pdfContent = `
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║                 GOMBE FOOTBALL ECOSYSTEM                          ║
+║              TEAM REGISTRATION FORM (PENDING)                     ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+📋 REGISTRATION DETAILS
+═══════════════════════════════════════════════════════════════════
+Reference ID      : ${docId}
+Date Submitted    : ${formattedDate}
+Status            : ⏳ PENDING APPROVAL
+
+═══════════════════════════════════════════════════════════════════
+📌 TEAM INFORMATION
+═══════════════════════════════════════════════════════════════════
+Team Name         : ${team.teamName || 'N/A'}
+Nickname          : ${team.teamNickname || 'N/A'}
+Year Founded      : ${team.yearFounded || 'N/A'}
+Team Colors       : ${team.teamColors || 'N/A'}
+Home Kit Color    : ${team.homeKitColor || 'N/A'}
+Away Kit Color    : ${team.awayKitColor || 'N/A'}
+
+═══════════════════════════════════════════════════════════════════
+📍 LOCATION DETAILS
+═══════════════════════════════════════════════════════════════════
+LGA               : ${team.lga || 'N/A'}
+Ward              : ${team.ward || 'N/A'}
+Location          : ${team.location || 'N/A'}
+Zone              : ${team.zone || 'N/A'}
+
+═══════════════════════════════════════════════════════════════════
+📞 CONTACT INFORMATION
+═══════════════════════════════════════════════════════════════════
+Manager Phone     : ${team.managerPhone || 'N/A'}
+
+═══════════════════════════════════════════════════════════════════
+✍️ DECLARATION
+═══════════════════════════════════════════════════════════════════
+Declarant Name    : ${team.declarantName || 'N/A'}
+Declaration Date  : ${team.declarationDate || 'N/A'}
+
+═══════════════════════════════════════════════════════════════════
+⏳ STATUS: PENDING APPROVAL
+═══════════════════════════════════════════════════════════════════
+This registration is awaiting review by the
+Gombe Football Ecosystem Commission.
+
+Please wait for official approval notification.
+
+═══════════════════════════════════════════════════════════════════`;
+
+                    const message = `📋 *Team Registration Form (Pending)*\n\n` +
+                                   `Team: ${team.teamName || 'N/A'}\n` +
+                                   `LGA: ${team.lga || 'N/A'}\n` +
+                                   `Ward: ${team.ward || 'N/A'}\n` +
+                                   `Zone: ${team.zone || 'N/A'}\n` +
+                                   `Manager Phone: ${team.managerPhone || 'N/A'}\n` +
+                                   `Declarant: ${team.declarantName || 'N/A'}\n` +
+                                   `Submitted: ${formattedDate}\n\n` +
+                                   `⏳ Status: PENDING APPROVAL\n\n` +
+                                   `Please review this registration.`;
+
+                    const encodedMessage = encodeURIComponent(message + '\n\n' + pdfContent);
+                    const waUrl = `https://wa.me/${finalPhone}?text=${encodedMessage}`;
+                    window.open(waUrl, '_blank');
+                    showToast(`📱 Opening WhatsApp for ${phone}`, 'info');
+
+                } catch (error) {
+                    console.error("WhatsApp error:", error);
+                    showToast(`❌ Error: ${error.message}`, 'error');
+                }
+            };
+
+            // ============================================
+            // VIEW PDF
+            // ============================================
+            window.viewPDF = async function(docId) {
+                try {
+                    const doc = await window.firebase.getDoc(
+                        window.firebase.doc(window.firebase.db, "GombeTeamsAwaitingapproval", docId)
+                    );
+
+                    if (!doc.exists()) {
+                        showToast('Team not found', 'error');
+                        return;
+                    }
+
+                    const team = doc.data();
+                    const now = new Date();
+                    const formattedDate = now.toLocaleDateString('en-NG', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    
+                    // Open in new window for printing
+                    const printWindow = window.open('', '_blank', 'width=800,height=600');
+                    printWindow.document.write(`
+                        <html>
+                        <head>
+                            <title>Team Registration - ${team.teamName}</title>
+                            <style>
+                                body { font-family: 'Courier New', monospace; padding: 40px; line-height: 1.8; }
+                                .header { text-align: center; border-bottom: 3px double #333; padding-bottom: 20px; margin-bottom: 30px; }
+                                h1 { font-size: 1.8rem; }
+                                .stamp { 
+                                    border: 2px solid #1a3a5c; 
+                                    padding: 20px; 
+                                    text-align: center; 
+                                    margin: 20px 0;
+                                    border-radius: 8px;
+                                    background: #f8f9fa;
+                                }
+                                .stamp h2 { color: #1a3a5c; }
+                                .stamp .status { font-size: 1.2rem; font-weight: bold; color: #f39c12; }
+                                .section { margin: 25px 0; }
+                                .section-title { font-weight: bold; font-size: 1.1rem; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; }
+                                .field { margin: 5px 0; }
+                                .label { font-weight: bold; }
+                                .footer { margin-top: 30px; border-top: 2px solid #333; padding-top: 10px; font-size: 0.9rem; color: #666; text-align: center; }
+                                .seal { 
+                                    display: inline-block;
+                                    border: 3px double #1a3a5c;
+                                    padding: 10px 30px;
+                                    border-radius: 50px;
+                                    font-weight: bold;
+                                    color: #1a3a5c;
+                                    margin: 10px 0;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="header">
+                                <h1>🏛️ GOMBE FOOTBALL ECOSYSTEM</h1>
+                                <h2>Team Registration Form</h2>
+                                <p>Reference: ${docId}</p>
+                                <p>Date: ${formattedDate}</p>
+                            </div>
+                            
+                            <div class="stamp">
+                                <h2>⏳ PENDING APPROVAL</h2>
+                                <p>This registration is awaiting official review</p>
+                                <div class="seal">GOMBE FOOTBALL ECOSYSTEM</div>
+                            </div>
+                            
+                            <div class="section">
+                                <div class="section-title">📌 SECTION A: TEAM INFORMATION</div>
+                                <div class="field"><span class="label">Team Name:</span> ${team.teamName || 'N/A'}</div>
+                                <div class="field"><span class="label">Nickname:</span> ${team.teamNickname || 'N/A'}</div>
+                                <div class="field"><span class="label">Year Founded:</span> ${team.yearFounded || 'N/A'}</div>
+                                <div class="field"><span class="label">Colors:</span> ${team.teamColors || 'N/A'}</div>
+                                <div class="field"><span class="label">Home Kit:</span> ${team.homeKitColor || 'N/A'}</div>
+                                <div class="field"><span class="label">Away Kit:</span> ${team.awayKitColor || 'N/A'}</div>
+                            </div>
+                            
+                            <div class="section">
+                                <div class="section-title">📍 SECTION B: LOCATION DETAILS</div>
+                                <div class="field"><span class="label">LGA:</span> ${team.lga || 'N/A'}</div>
+                                <div class="field"><span class="label">Ward:</span> ${team.ward || 'N/A'}</div>
+                                <div class="field"><span class="label">Location:</span> ${team.location || 'N/A'}</div>
+                                <div class="field"><span class="label">Zone:</span> ${team.zone || 'N/A'}</div>
+                            </div>
+                            
+                            <div class="section">
+                                <div class="section-title">📞 SECTION C: CONTACT INFORMATION</div>
+                                <div class="field"><span class="label">Manager Phone:</span> ${team.managerPhone || 'N/A'}</div>
+                            </div>
+                            
+                            <div class="section">
+                                <div class="section-title">✍️ SECTION D: DECLARATION</div>
+                                <div class="field"><span class="label">Declarant:</span> ${team.declarantName || 'N/A'}</div>
+                                <div class="field"><span class="label">Date:</span> ${team.declarationDate || 'N/A'}</div>
+                            </div>
+                            
+                            <div class="footer">
+                                <p>Submitted: ${new Date(team.submittedAt?.toMillis() || Date.now()).toLocaleString()}</p>
+                                <p>Status: ${team.status || 'Pending Approval'}</p>
+                                <p>© ${new Date().getFullYear()} Gombe Football Ecosystem</p>
+                            </div>
+                            
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button onclick="window.print()" style="padding: 10px 30px; background: #1a3a5c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem;">
+                                    🖨️ Print / Download PDF
+                                </button>
+                            </div>
+                        </body>
+                        </html>
+                    `);
+                    printWindow.document.close();
+
+                } catch (error) {
+                    console.error("View PDF error:", error);
+                    showToast(`❌ Error: ${error.message}`, 'error');
+                }
+            };
+
+            // Load teams on page load
+            loadTeams();
+        }
+    </script>
+</body>
+</html>

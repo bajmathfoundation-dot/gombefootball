@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe FA Cup Fixtures by Zone</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .nav-btn.active {
+            background: #e74c3c;
+        }
+        
+        .controls-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+        }
+        
+        .control-group label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .control-group select {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            min-width: 200px;
+        }
+        
+        .season-input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .season-input {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            width: 150px;
+        }
+        
+        .edit-season-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-season-btn:hover {
+            background: #2980b9;
+        }
+        
+        .zone-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .zone-btn {
+            padding: 12px 25px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .zone-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .zone-btn.active {
+            background: #e74c3c;
+        }
+        
+        .round-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: none;
+        }
+        
+        .round-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .round-header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .matches-container {
+            padding: 20px;
+        }
+        
+        .match-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .match-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .match-teams {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .team {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+        
+        .team-badge {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .vs {
+            font-weight: bold;
+            margin: 0 10px;
+            color: #7f8c8d;
+        }
+        
+        .match-details {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            text-align: right;
+            min-width: 150px;
+        }
+        
+        .match-date {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .match-status {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-scheduled {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-live {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .match-commissioner {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        
+        .round-info {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-left: 10px;
+        }
+        
+        .no-matches {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+        
+        .round-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .round-btn {
+            padding: 10px 20px;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .round-btn:hover {
+            background: #7f8c8d;
+        }
+        
+        .round-btn.active {
+            background: #e74c3c;
+        }
+        
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .match-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .match-info {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .match-details {
+                width: 100%;
+                text-align: left;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .controls-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .control-group select {
+                min-width: 100%;
+            }
+            
+            .season-input-container {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .season-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gombe FA Cup Fixtures</h1>
+            <p class="description">View all FA Cup matches by zone and season. Select a season and zone to see matches from all rounds.</p>
+        </header>
+        
+        <div class="navigation">
+            <a href="ChampionsCupView.html" class="nav-btn">Champions Cup</a>
+            <a href="WarriorsCupView.html" class="nav-btn">Warriors Cup</a>
+            <a href="Competitions.html" class="nav-btn active">FA Cup</a>
+            <a href="CompetitionsChampionship.html" class="nav-btn">Championship Division</a>
+        </div>
+        
+        <div class="controls-container">
+            <div class="control-group">
+                <label for="seasonSelect">Select Season:</label>
+                <div class="season-input-container">
+                    <select id="seasonSelect">
+                        <option value="">Loading seasons...</option>
+                    </select>
+                    <input type="text" id="seasonInput" class="season-input" placeholder="e.g., 2025-26" style="display: none;">
+                    <button id="editSeasonBtn" class="edit-season-btn">Edit</button>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label for="zoneSelect">Select Zone:</label>
+                <select id="zoneSelect">
+                    <option value="">-- Select a zone --</option>
+                    <option value="Central Zone">Central Zone</option>
+                    <option value="Northern Zone">Northern Zone</option>
+                    <option value="Southern Zone">Southern Zone</option>
+                    <option value="Eastern Zone">Eastern Zone</option>
+                </select>
+            </div>
+        </div>
+        
+        <div id="debugContainer" class="debug-info" style="display: none;"></div>
+        
+        <div class="round-selector" id="round-buttons">
+            <!-- Round buttons will be generated here -->
+        </div>
+        
+        <div id="rounds-container">
+            <!-- Round containers will be generated here -->
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            databaseURL: "https://gombefootball-default-rtdb.firebaseio.com",
+            projectId: "gombefootball",
+            storageBucket: "gombefootball.firebasestorage.app",
+            messagingSenderId: "120731655706",
+            appId: "1:120731655706:web:9c99d6831aca3df563bba3",
+            measurementId: "G-8SCVPBSKPG"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Global variables
+        let currentSeason = '';
+        let currentZone = '';
+        let allMatches = [];
+        let seasons = [];
+        let rounds = [
+            'RoundOne', 'RoundTwo', 'ThirdRound', 'Quarterfinals', 'Semifinals', 'Finals'
+        ];
+        let teamZoneMap = {}; // Map team names to their zones
+        
+        // DOM elements
+        const seasonSelect = document.getElementById('seasonSelect');
+        const seasonInput = document.getElementById('seasonInput');
+        const editSeasonBtn = document.getElementById('editSeasonBtn');
+        const zoneSelect = document.getElementById('zoneSelect');
+        const roundButtonsContainer = document.getElementById('round-buttons');
+        const roundsContainer = document.getElementById('rounds-container');
+        const debugContainer = document.getElementById('debugContainer');
+        
+        // Toggle between select and input for season
+        function toggleSeasonInput() {
+            const isEditing = seasonInput.style.display !== 'none';
+            
+            if (isEditing) {
+                // Save the custom season
+                const customSeason = seasonInput.value.trim();
+                if (customSeason && isValidSeasonFormat(customSeason)) {
+                    // Add to seasons if not already there
+                    if (!seasons.includes(customSeason)) {
+                        seasons.unshift(customSeason);
+                        updateSeasonSelect();
+                    }
+                    seasonSelect.value = customSeason;
+                    seasonInput.style.display = 'none';
+                    seasonSelect.style.display = 'block';
+                    editSeasonBtn.textContent = 'Edit';
+                    loadMatches();
+                } else {
+                    alert('Please enter a valid season in format YYYY-YY (e.g., 2025-26)');
+                    seasonInput.focus();
+                }
+            } else {
+                // Switch to input mode
+                seasonInput.value = seasonSelect.value || '';
+                seasonSelect.style.display = 'none';
+                seasonInput.style.display = 'block';
+                editSeasonBtn.textContent = 'Save';
+                seasonInput.focus();
+            }
+        }
+        
+        // Validate season format (YYYY-YY)
+        function isValidSeasonFormat(season) {
+            const pattern = /^\d{4}-\d{2}$/;
+            return pattern.test(season);
+        }
+        
+        // Load team zone mapping from GombeTeams collection
+        async function loadTeamZones() {
+            try {
+                const teamsSnapshot = await db.collection('GombeTeams').get();
+                teamZoneMap = {};
+                
+                teamsSnapshot.forEach(doc => {
+                    const teamData = doc.data();
+                    teamZoneMap[doc.id] = teamData.zone || 'Unknown Zone';
+                });
+                
+                console.log('Loaded team zones:', teamZoneMap);
+            } catch (err) {
+                console.error('Error loading team zones:', err);
+            }
+        }
+        
+        // Load available seasons from Firestore by checking GombeFAcupsMatch structure
+        async function loadSeasons() {
+            try {
+                debugContainer.innerHTML = 'Loading seasons from GombeFAcupsMatch...';
+                debugContainer.style.display = 'block';
+                
+                // Get all teams from GombeFAcupsMatch collection
+                const teamsSnapshot = await db.collection('GombeFAcupsMatch').get();
+                
+                const seasonSet = new Set();
+                const debugInfo = [];
+                
+                debugInfo.push(`Found ${teamsSnapshot.size} teams in GombeFAcupsMatch`);
+                
+                // Check each team for season collections
+                for (const teamDoc of teamsSnapshot.docs) {
+                    const teamName = teamDoc.id;
+                    debugInfo.push(`Checking team: ${teamName}`);
+                    
+                    try {
+                        // List all collections (seasons) for this team
+                        const collections = await teamDoc.ref.listCollections();
+                        
+                        for (const collection of collections) {
+                            // Extract season from collection name (e.g., "Season2025-26")
+                            const seasonMatch = collection.id.match(/Season(\d{4}-\d{2})/);
+                            
+                            if (seasonMatch && seasonMatch[1]) {
+                                seasonSet.add(seasonMatch[1]);
+                                debugInfo.push(`Found season: ${seasonMatch[1]} for team ${teamName}`);
+                            }
+                        }
+                    } catch (err) {
+                        debugInfo.push(`Error checking collections for ${teamName}: ${err.message}`);
+                    }
+                }
+                
+                seasons = Array.from(seasonSet).sort().reverse();
+                
+                debugInfo.push(`Final seasons found: ${seasons.join(', ')}`);
+                debugContainer.innerHTML = debugInfo.join('<br>');
+                
+                // Add current year as default if no seasons found
+                if (seasons.length === 0) {
+                    const currentYear = new Date().getFullYear();
+                    const nextYear = (currentYear + 1).toString().slice(2);
+                    seasons.push(`${currentYear}-${nextYear}`);
+                    debugInfo.push(`No seasons found, using default: ${currentYear}-${nextYear}`);
+                }
+                
+                // Populate season select
+                updateSeasonSelect();
+                
+                // Set default to current season
+                const currentYear = new Date().getFullYear();
+                const nextYear = (currentYear + 1).toString().slice(2);
+                const currentSeasonStr = `${currentYear}-${nextYear}`;
+                
+                if (seasons.includes(currentSeasonStr)) {
+                    seasonSelect.value = currentSeasonStr;
+                } else if (seasons.length > 0) {
+                    seasonSelect.value = seasons[0];
+                }
+                
+            } catch (err) {
+                console.error('Error loading seasons:', err);
+                seasonSelect.innerHTML = '<option value="">Error loading seasons</option>';
+                debugContainer.innerHTML = `Error loading seasons: ${err.message}`;
+                debugContainer.style.display = 'block';
+            }
+        }
+        
+        // Update the season select dropdown
+        function updateSeasonSelect() {
+            seasonSelect.innerHTML = '<option value="">-- Select a season --</option>';
+            seasons.forEach(season => {
+                const option = document.createElement('option');
+                option.value = season;
+                option.textContent = `Season ${season}`;
+                seasonSelect.appendChild(option);
+            });
+        }
+        
+        // Load matches for selected season and zone
+        async function loadMatches() {
+            currentSeason = seasonSelect.value;
+            currentZone = zoneSelect.value;
+            
+            if (!currentSeason || !currentZone) {
+                roundsContainer.innerHTML = '<div class="no-matches">Please select both a season and a zone</div>';
+                return;
+            }
+            
+            // Show loading state
+            roundsContainer.innerHTML = '<div class="loading">Loading matches for ' + currentZone + ' - Season ' + currentSeason + '...</div>';
+            debugContainer.innerHTML = `Loading matches for ${currentZone} - Season ${currentSeason}...`;
+            debugContainer.style.display = 'block';
+            
+            try {
+                allMatches = [];
+                const seasonId = `Season${currentSeason}`;
+                const debugInfo = [];
+                
+                // Get all teams in the GombeFAcupsMatch collection
+                const teamsSnapshot = await db.collection('GombeFAcupsMatch').get();
+                debugInfo.push(`Found ${teamsSnapshot.size} teams in GombeFAcupsMatch`);
+                
+                // Array to hold all match promises
+                const matchPromises = [];
+                
+                teamsSnapshot.forEach(teamDoc => {
+                    const teamName = teamDoc.id;
+                    const teamZone = teamZoneMap[teamName] || 'Unknown Zone';
+                    
+                    // Only process teams from the selected zone
+                    if (teamZone !== currentZone) {
+                        debugInfo.push(`Skipping team ${teamName} (zone: ${teamZone}) - not in ${currentZone}`);
+                        return;
+                    }
+                    
+                    debugInfo.push(`Processing team ${teamName} from ${teamZone}`);
+                    
+                    // For each team, get matches in the specified season
+                    const matchPromise = teamDoc.ref.collection(seasonId)
+                        .where('competitionType', '==', 'facup')
+                        .get().then(matchSnap => {
+                        debugInfo.push(`Found ${matchSnap.size} FA Cup matches for ${teamName}`);
+                        
+                        matchSnap.forEach(matchDoc => {
+                            const matchData = matchDoc.data();
+                            
+                            // Add team name and zone to match data
+                            matchData.teamName = teamName;
+                            matchData.teamZone = teamZone;
+                            
+                            allMatches.push({
+                                id: matchDoc.id,
+                                team: teamName,
+                                ...matchData
+                            });
+                        });
+                    }).catch(err => {
+                        // Collection might not exist for this team/season
+                        debugInfo.push(`No matches for ${teamName} in ${seasonId}: ${err.message}`);
+                    });
+                    
+                    matchPromises.push(matchPromise);
+                });
+                
+                // Wait for all match data to be loaded
+                await Promise.all(matchPromises);
+                
+                debugInfo.push(`Total matches loaded: ${allMatches.length}`);
+                debugContainer.innerHTML = debugInfo.join('<br>');
+                
+                console.log('Loaded matches:', allMatches);
+                
+                if (allMatches.length === 0) {
+                    roundsContainer.innerHTML = '<div class="no-matches">No matches found for ' + currentZone + ' - Season ' + currentSeason + '</div>';
+                    return;
+                }
+                
+                // Group matches by round
+                const matchesByRound = groupMatchesByRound(allMatches);
+                
+                // Render round buttons and matches
+                renderRoundButtons();
+                renderMatches(matchesByRound);
+                
+            } catch (err) {
+                console.error('Error loading matches:', err);
+                roundsContainer.innerHTML = '<div class="no-matches">Error loading matches. Please check the console for details.</div>';
+                debugContainer.innerHTML = `Error loading matches: ${err.message}`;
+                debugContainer.style.display = 'block';
+            }
+        }
+        
+        // Group matches by round
+        function groupMatchesByRound(matches) {
+            const matchesByRound = {};
+            const debugInfo = [];
+            
+            rounds.forEach(round => {
+                matchesByRound[round] = [];
+            });
+            
+            matches.forEach(match => {
+                const round = match.matchStatus;
+                debugInfo.push(`Match: ${match.team} vs ${match.opponent} - Round: ${round}`);
+                
+                if (rounds.includes(round)) {
+                    matchesByRound[round].push(match);
+                } else if (round) {
+                    debugInfo.push(`Unknown round: ${round} for match ${match.team} vs ${match.opponent}`);
+                }
+            });
+            
+            // Remove duplicate matches (same match ID)
+            Object.keys(matchesByRound).forEach(round => {
+                const uniqueMatches = [];
+                const seenMatchIds = new Set();
+                
+                matchesByRound[round].forEach(match => {
+                    // Create a unique match identifier
+                    const homeTeam = match.venue === 'home' ? match.team : match.opponent;
+                    const awayTeam = match.venue === 'away' ? match.team : match.opponent;
+                    const matchIdentifier = `${homeTeam}-${awayTeam}-${match.date}`;
+                    
+                    if (!seenMatchIds.has(matchIdentifier)) {
+                        seenMatchIds.add(matchIdentifier);
+                        uniqueMatches.push(match);
+                    }
+                });
+                
+                matchesByRound[round] = uniqueMatches;
+                debugInfo.push(`Round ${round}: ${uniqueMatches.length} unique matches`);
+            });
+            
+            debugContainer.innerHTML += '<br>' + debugInfo.join('<br>');
+            return matchesByRound;
+        }
+        
+        // Render round selection buttons
+        function renderRoundButtons() {
+            roundButtonsContainer.innerHTML = '';
+            
+            rounds.forEach(round => {
+                const button = document.createElement('button');
+                button.className = 'round-btn';
+                button.textContent = formatRoundName(round);
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.round-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    button.classList.add('active');
+                    
+                    // Show only the selected round
+                    document.querySelectorAll('.round-container').forEach(container => {
+                        container.classList.remove('active');
+                    });
+                    
+                    const roundContainer = document.getElementById(`round-${round}`);
+                    if (roundContainer) {
+                        roundContainer.classList.add('active');
+                    }
+                });
+                
+                roundButtonsContainer.appendChild(button);
+            });
+            
+            // Activate the first button if there are rounds with matches
+            if (roundButtonsContainer.firstChild) {
+                roundButtonsContainer.firstChild.classList.add('active');
+            }
+        }
+        
+        // Render matches for each round
+        function renderMatches(matchesByRound) {
+            roundsContainer.innerHTML = '';
+            
+            let hasMatches = false;
+            
+            rounds.forEach(round => {
+                const roundMatches = matchesByRound[round] || [];
+                
+                if (roundMatches.length > 0) {
+                    hasMatches = true;
+                    
+                    const roundContainer = document.createElement('div');
+                    roundContainer.className = 'round-container';
+                    roundContainer.id = `round-${round}`;
+                    
+                    const roundHeader = document.createElement('div');
+                    roundHeader.className = 'round-header';
+                    roundHeader.innerHTML = `
+                        <span>${formatRoundName(round)}</span>
+                        <span>${roundMatches.length} Matches</span>
+                    `;
+                    
+                    const matchesContainer = document.createElement('div');
+                    matchesContainer.className = 'matches-container';
+                    
+                    roundMatches.forEach(match => {
+                        const matchCard = document.createElement('div');
+                        matchCard.className = 'match-card';
+                        
+                        // Determine home and away teams
+                        const homeTeam = match.venue === 'home' ? match.team : match.opponent;
+                        const awayTeam = match.venue === 'away' ? match.team : match.opponent;
+                        
+                        // Determine match status
+                        let statusClass = 'status-scheduled';
+                        let statusText = 'Scheduled';
+                        
+                        if (match.matchCompleted) {
+                            statusClass = 'status-completed';
+                            statusText = 'Completed';
+                        } else if (match.status === 'live') {
+                            statusClass = 'status-live';
+                            statusText = 'Live';
+                        }
+                        
+                        matchCard.innerHTML = `
+                            <div class="match-info">
+                                <div class="match-teams">
+                                    <div class="team">
+                                        <div class="team-badge">${homeTeam.charAt(0)}</div>
+                                        <span>${homeTeam}</span>
+                                    </div>
+                                    <div class="vs">VS</div>
+                                    <div class="team">
+                                        <div class="team-badge">${awayTeam.charAt(0)}</div>
+                                        <span>${awayTeam}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="match-details">
+                                <div class="match-date">${match.date || 'Date TBD'}</div>
+                                <div class="match-status ${statusClass}">${statusText}</div>
+                                <div class="round-info">${formatRoundName(match.matchStatus)}</div>
+                                ${match.commissioner ? `<div class="match-commissioner">Commissioner: ${match.commissioner}</div>` : ''}
+                            </div>
+                        `;
+                        
+                        matchesContainer.appendChild(matchCard);
+                    });
+                    
+                    roundContainer.appendChild(roundHeader);
+                    roundContainer.appendChild(matchesContainer);
+                    roundsContainer.appendChild(roundContainer);
+                }
+            });
+            
+            if (!hasMatches) {
+                roundsContainer.innerHTML = '<div class="no-matches">No matches found for the selected season and zone</div>';
+            } else {
+                // Show the first round by default
+                const firstRoundContainer = document.querySelector('.round-container');
+                if (firstRoundContainer) {
+                    firstRoundContainer.classList.add('active');
+                }
+            }
+        }
+        
+        // Format round name for display
+        function formatRoundName(round) {
+            const nameMap = {
+                'RoundOne': 'Round One',
+                'RoundTwo': 'Round Two',
+                'ThirdRound': 'Third Round',
+                'Quarterfinals': 'Quarterfinals',
+                'Semifinals': 'Semifinals',
+                'Finals': 'Finals'
+            };
+            
+            return nameMap[round] || round;
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadTeamZones(); // Load team-zone mapping first
+            await loadSeasons();
+            
+            // Add event listeners
+            seasonSelect.addEventListener('change', loadMatches);
+            zoneSelect.addEventListener('change', loadMatches);
+            editSeasonBtn.addEventListener('click', toggleSeasonInput);
+            seasonInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    toggleSeasonInput();
+                }
+            });
+            
+            // Load matches if both season and zone are selected
+            if (seasonSelect.value && zoneSelect.value) {
+                loadMatches();
+            }
+        });
+    </script>
+</body>
+</html>

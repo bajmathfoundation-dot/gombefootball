@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe State Football Revitalization Plan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #006400;
+            --secondary-green: #228B22;
+            --accent-gold: #FFD700;
+            --light-beige: #F5F5DC;
+            --dark-text: #333333;
+            --light-text: #FFFFFF;
+            --card-bg: #FFFFFF;
+            --northern: #D2B48C;
+            --southern: #2E8B57;
+            --central: #4682B4;
+            --eastern: #DAA520;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f0f8f0;
+            color: var(--dark-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Language Switcher */
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 8px 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            gap: 10px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .lang-btn {
+            background: none;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .lang-btn.active {
+            background: var(--primary-green);
+            color: white;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 100, 0, 0.85), rgba(0, 100, 0, 0.9)), url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
+            color: var(--light-text);
+            padding: 100px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            color: var(--light-text);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Section Styling */
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--accent-gold);
+        }
+        
+        /* Key Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+            position: relative;
+            border-top: 4px solid var(--secondary-green);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--secondary-green);
+            margin: 25px 0 15px;
+            text-align: center;
+        }
+        
+        .feature-content {
+            padding: 0 25px 30px;
+            text-align: center;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            color: var(--primary-green);
+        }
+        
+        /* Football Pyramid */
+        .pyramid {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin: 50px 0;
+        }
+        
+        .pyramid-levels {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+        
+        .level {
+            width: 80%;
+            padding: 25px;
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .level:hover {
+            transform: scale(1.03);
+        }
+        
+        .level-1 {
+            background: linear-gradient(90deg, var(--primary-green), var(--secondary-green));
+            z-index: 4;
+            width: 70%;
+        }
+        
+        .level-2 {
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+            z-index: 3;
+            width: 80%;
+        }
+        
+        .level-3 {
+            background: linear-gradient(90deg, #c21500, #ffc500);
+            z-index: 2;
+            width: 90%;
+        }
+        
+        .level h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        /* Zones Section */
+        .zones-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .zone-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        
+        .zone-header {
+            padding: 25px;
+            color: white;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .zone-northern .zone-header {
+            background: linear-gradient(90deg, var(--northern), #CD853F);
+        }
+        
+        .zone-southern .zone-header {
+            background: linear-gradient(90deg, var(--southern), #3CB371);
+        }
+        
+        .zone-central .zone-header {
+            background: linear-gradient(90deg, var(--central), #5F9EA0);
+        }
+        
+        .zone-eastern .zone-header {
+            background: linear-gradient(90deg, var(--eastern), #CD853F);
+        }
+        
+        .zone-body {
+            padding: 30px;
+            background: white;
+        }
+        
+        .zone-name {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .zone-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .zone-stat {
+            background: rgba(255,255,255,0.15);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+        
+        /* Calendar Section */
+        .calendar {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin: 50px 0;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .calendar-item {
+            border-left: 4px solid var(--secondary-green);
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s;
+        }
+        
+        .calendar-item:hover {
+            transform: translateX(10px);
+        }
+        
+        .calendar-month {
+            font-weight: 700;
+            color: var(--primary-green);
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        /* Benefits Section */
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .benefit-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--accent-gold);
+            transition: transform 0.3s;
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .benefit-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+            line-height: 1;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary-green);
+            color: var(--light-text);
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+        
+        .footer-logo {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .footer-logo-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--light-text);
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .social-icon:hover {
+            background: var(--accent-gold);
+            color: var(--primary-green);
+            transform: translateY(-3px);
+        }
+        
+        .footer-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+            color: var(--accent-gold);
+        }
+        
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--accent-gold);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-gold);
+        }
+        
+        .contact-info {
+            list-style: none;
+        }
+        
+        .contact-info li {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+        
+        .contact-info i {
+            color: var(--accent-gold);
+            margin-top: 4px;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* Language-specific styling */
+        .lang-hausa {
+            direction: rtl;
+            font-family: 'Open Sans', sans-serif;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .level {
+                width: 95%;
+            }
+            
+            .language-switcher {
+                top: 10px;
+                right: 10px;
+                padding: 6px 10px;
+            }
+            
+            .lang-btn {
+                padding: 4px 8px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ha">Hausa</button>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 data-en="Gombe State Football Revitalization Plan" data-ha="Shirin Farfaɗoɗin Ƙwallon Ƙafa na Jihar Gombe">Gombe State Football Revitalization Plan</h1>
+            <p data-en="Uniting communities, empowering youth, and driving economic growth through the beautiful game" data-ha="Haɗa al'ummomi, ƙarfafa matasa, da haɓaka ci gaban tattalin arziki ta hanyar wasan ƙwallon ƙafa">Uniting communities, empowering youth, and driving economic growth through the beautiful game</p>
+        </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-en="Key Features" data-ha="Mahimman Fasali">Key Features</h2>
+            </div>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3 data-en="Grassroots Empowerment" data-ha="Ƙarfafa Tushe">Grassroots Empowerment</h3>
+                        <p data-en="Every ward has a pathway to glory via zonal leagues and FA Cups like the Cattle Cup in the North." data-ha="Kowace unguwa tana da hanyar zuwa ga ɗaukaka ta hanyar gasar yanki da kofunan FA kamar Kofin Shanu a Arewa.">Every ward has a pathway to glory via zonal leagues and FA Cups like the Cattle Cup in the North.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3 data-en="Economic Growth" data-ha="Haɓaka Tattalin Arziki">Economic Growth</h3>
+                        <p data-en="Tourism surges during marquee events like the Gombe Unity Shield, boosting local businesses." data-ha="Yawon shakatawa yana ƙaruwa yayin manyan abubuwan da suka faru kamar Garkuwar Haɗin Kan Gombe, yana haɓaka kasuwancin gida.">Tourism surges during marquee events like the Gombe Unity Shield, boosting local businesses.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-monument"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3 data-en="Cultural Celebration" data-ha="Bikin Al'adu">Cultural Celebration</h3>
+                        <p data-en="Names like Hills League and Farmers Cup honor Gombe's rich heritage and traditions." data-ha="Sunaye kamar Gasar Tuddai da Kofin Manoma suna girmama arziƙin al'adu da al'adun Gombe.">Names like Hills League and Farmers Cup honor Gombe's rich heritage and traditions.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3 data-en="Statewide Unity" data-ha="Haɗin Kan Jiha">Statewide Unity</h3>
+                        <p data-en="Cross-zonal competitions dissolve divides, fostering pride in 'One Gombe'." data-ha="Gasar tsakanin yankuna suna warware rarrabuwar kawuna, suna haɓaka alfahari a cikin 'Gombe ɗaya'.">Cross-zonal competitions dissolve divides, fostering pride in "One Gombe".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Football Pyramid Section -->
+    <section class="section" style="background-color: #f8fbf8;">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-en="Gombe Football Pyramid System" data-ha="Tsarin Dala na Ƙwallon Ƙafa na Gombe">Gombe Football Pyramid System</h2>
+            </div>
+            
+            <div class="pyramid">
+                <h3 data-en="Unified Football Ecosystem" data-ha="Tsarin Ƙwallon Ƙafa Guda ɗaya">Unified Football Ecosystem</h3>
+                <p data-en="A structured system connecting all levels of Gombe football from grassroots to elite competitions." data-ha="Tsarin da ya haɗa dukkan matakan ƙwallon ƙafa na Gombe daga tushe zuwa manyan gasa.">A structured system connecting all levels of Gombe football from grassroots to elite competitions.</p>
+                
+                <div class="pyramid-levels">
+                    <div class="level level-1">
+                        <h3 data-en="Statewide Competitions" data-ha="Gasar Jiha">Statewide Competitions</h3>
+                        <p data-en="Gombe Champions Cup • Gombe Warriors Cup • Gombe Unity Shield" data-ha="Kofin Zakarun Gombe • Kofin Mayakan Gombe • Garkuwar Haɗin Kan Gombe">Gombe Champions Cup • Gombe Warriors Cup • Gombe Unity Shield</p>
+                    </div>
+                    
+                    <div class="level level-2">
+                        <h3 data-en="Zonal Premier Leagues (Tier 1)" data-ha="Manyan Gasar Yanki (Mataki na 1)">Zonal Premier Leagues (Tier 1)</h3>
+                        <p data-en="Sahel League (North) • Hills League (South) • City League (Central) • Lands League (East)" data-ha="Gasar Sahel (Arewa) • Gasar Tuddai (Kudu) • Gasar Birni (Tsakiya) • Gasar Ƙasa (Gabas)">Sahel League (North) • Hills League (South) • City League (Central) • Lands League (East)</p>
+                    </div>
+                    
+                    <div class="level level-3">
+                        <h3 data-en="Zonal Championships (Tier 2)" data-ha="Gasar Yanki (Mataki na 2)">Zonal Championships (Tier 2)</h3>
+                        <p data-en="Feeder leagues with promotion pathways to Tier 1" data-ha="Gasar ciyarwa tare da hanyoyin haɓakawa zuwa Mataki na 1">Feeder leagues with promotion pathways to Tier 1</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Zones Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-en="Football Zones of Gombe" data-ha="Yankunan Ƙwallon Ƙafa na Gombe">Football Zones of Gombe</h2>
+            </div>
+            
+            <div class="zones-container">
+                <div class="zone-card zone-northern">
+                    <div class="zone-header">
+                        <h3 class="zone-name" data-en="Northern Zone" data-ha="Yankin Arewa">Northern Zone</h3>
+                        <p data-en="Sahel League • Cattle Cup" data-ha="Gasar Sahel • Kofin Shanu">Sahel League • Cattle Cup</p>
+                        <div class="zone-stats">
+                            <div class="zone-stat" data-en="LGAs: Dukku, Funakaye, Nafada" data-ha="Kananan Hukumomi: Dukku, Funakaye, Nafada">LGAs: Dukku, Funakaye, Nafada</div>
+                        </div>
+                    </div>
+                    <div class="zone-body">
+                        <p><strong data-en="Cultural Traits:" data-ha="Halayen Al'adu:">Cultural Traits:</strong> <span data-en="Pastoralist communities, Sahel plains, Fulani cultural heritage." data-ha="Al'ummomin makiyaya, filayen Sahel, al'adun Fulani.">Pastoralist communities, Sahel plains, Fulani cultural heritage.</span></p>
+                        <p><strong data-en="Football Identity:" data-ha="Asalin Ƙwallon Ƙafa:">Football Identity:</strong> <span data-en="Teams reflect pastoral traditions with strong community connections." data-ha="Ƙungiyoyin suna nuna al'adun makiyaya tare da ƙaƙƙarfan alaƙar al'umma.">Teams reflect pastoral traditions with strong community connections.</span></p>
+                    </div>
+                </div>
+                
+                <div class="zone-card zone-southern">
+                    <div class="zone-header">
+                        <h3 class="zone-name" data-en="Southern Zone" data-ha="Yankin Kudu">Southern Zone</h3>
+                        <p data-en="Hills League • Hills Cup" data-ha="Gasar Tuddai • Kofin Tuddai">Hills League • Hills Cup</p>
+                        <div class="zone-stats">
+                            <div class="zone-stat" data-en="LGAs: Billiri, Kaltungo, Shongom" data-ha="Kanana Hukumomi: Billiri, Kaltungo, Shongom">LGAs: Billiri, Kaltungo, Shongom</div>
+                        </div>
+                    </div>
+                    <div class="zone-body">
+                        <p><strong data-en="Cultural Traits:" data-ha="Halayen Al'adu:">Cultural Traits:</strong> <span data-en="Kaltungo Hills, Tangale culture, fertile valleys." data-ha="Tsaunukan Kaltungo, al'adun Tangale, kwari masu albarka.">Kaltungo Hills, Tangale culture, fertile valleys.</span></p>
+                        <p><strong data-en="Football Identity:" data-ha="Asalin Ƙwallon Ƙafa:">Football Identity:</strong> <span data-en="Technical style influenced by hilly terrain, deep cultural connections." data-ha="Salon fasaha wanda yanayin tsaunuka ya rinjaye shi, zurfin alaƙar al'adu.">Technical style influenced by hilly terrain, deep cultural connections.</span></p>
+                    </div>
+                </div>
+                
+                <div class="zone-card zone-central">
+                    <div class="zone-header">
+                        <h3 class="zone-name" data-en="Central Zone" data-ha="Yankin Tsakiya">Central Zone</h3>
+                        <p data-en="City League • Dam Cup" data-ha="Gasar Birni • Kofin Dam">City League • Dam Cup</p>
+                        <div class="zone-stats">
+                            <div class="zone-stat" data-en="LGAs: Gombe, Kwami, Akko" data-ha="Kanana Hukumomi: Gombe, Kwami, Akko">LGAs: Gombe, Kwami, Akko</div>
+                        </div>
+                    </div>
+                    <div class="zone-body">
+                        <p><strong data-en="Cultural Traits:" data-ha="Halayen Al'adu:">Cultural Traits:</strong> <span data-en="Urban hub around Gombe City, Gongola River, commerce." data-ha="Cibiyar birane a kewayen Birnin Gombe, Kogin Gongola, kasuwanci.">Urban hub around Gombe City, Gongola River, commerce.</span></p>
+                        <p><strong data-en="Football Identity:" data-ha="Asalin Ƙwallon Ƙafa:">Football Identity:</strong> <span data-en="Modern facilities, diverse population, corporate sponsorships." data-ha="Kayan aiki na zamani, yawan jama'a daban-daban, tallafin kamfanoni.">Modern facilities, diverse population, corporate sponsorships.</span></p>
+                    </div>
+                </div>
+                
+                <div class="zone-card zone-eastern">
+                    <div class="zone-header">
+                        <h3 class="zone-name" data-en="Eastern Zone" data-ha="Yankin Gabas">Eastern Zone</h3>
+                        <p data-en="Lands League • Farmers Cup" data-ha="Gasar Ƙasa • Kofin Manoma">Lands League • Farmers Cup</p>
+                        <div class="zone-stats">
+                            <div class="zone-stat" data-en="LGAs: Yamaltu/Deba, Balanga" data-ha="Kanana Hukumomi: Yamaltu/Deba, Balanga">LGAs: Yamaltu/Deba, Balanga</div>
+                        </div>
+                    </div>
+                    <div class="zone-body">
+                        <p><strong data-en="Cultural Traits:" data-ha="Halayen Al'adu:">Cultural Traits:</strong> <span data-en="Farmlands, Dadin Kowa Dam, agrarian economy." data-ha="Filayen noma, Dam din Dadin Kowa, tattalin arzikin noma.">Farmlands, Dadin Kowa Dam, agrarian economy.</span></p>
+                        <p><strong data-en="Football Identity:" data-ha="Asalin Ƙwallon Ƙafa:">Football Identity:</strong> <span data-en="Community-based clubs tied to farming cooperatives, seasonal scheduling." data-ha="Ƙungiyoyin tushen al'umma da ke da alaƙa da ƙungiyoyin manoma, tsara lokutan yanayi.">Community-based clubs tied to farming cooperatives, seasonal scheduling.</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Club Benefits Section -->
+    <section class="section" style="background-color: #f8fbf8;">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-en="How Clubs Benefit" data-ha="Yadda Ƙungiyoyi ke Amfana">How Clubs Benefit</h2>
+            </div>
+            
+             <div class="benefits">
+                <div class="benefit-card">
+                    <div class="benefit-number">1</div>
+                    <h3 data-en="Structured Pathway" data-ha="Hanya Mai Tsari">Structured Pathway</h3>
+                    <p data-en="Clear promotion/relegation system with access to statewide tournaments." data-ha="Tsarin haɓakawa/ragewa bayyananne tare da samun damar shiga gasar jiha.">Clear promotion/relegation system with access to statewide tournaments.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-number">2</div>
+                    <h3 data-en="Financial Support" data-ha="Tallafin Kuɗi">Financial Support</h3>
+                    <p data-en="Revenue sharing from Gombe Champions Cup and sponsorships." data-ha="Rarraba kuɗin shiga daga Kofin Zakarun Gombe da tallafi.">Revenue sharing from Gombe Champions Cup and sponsorships.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-number">3</div>
+                    <h3 data-en="Youth Development" data-ha="Haɓaka Matasa">Youth Development</h3>
+                    <p data-en="Mandatory U-15/U-17 academies to nurture homegrown talent." data-ha="Makarantun U-15/U-17 na tilas don haɓaka gwanintar gida.">Mandatory U-15/U-17 academies to nurture homegrown talent.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-number">4</div>
+                    <h3 data-en="Infrastructure Upgrades" data-ha="Haɓaka Kayayyakin More Rayuwa">Infrastructure Upgrades</h3>
+                    <p data-en="Shared stadium improvements funded through league revenue." data-ha="Haɓaka filayen wasa tare da kuɗin shiga na gasa.">Shared stadium improvements funded through league revenue.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-number">5</div>
+                    <h3 data-en="Cultural Identity" data-ha="Asalin Al'adu">Cultural Identity</h3>
+                    <p data-en="Clubs reflect local heritage, deepening fan loyalty and community connections." data-ha="Ƙungiyoyin suna nuna al'adun gida, suna zurfafa amincin magoya baya da alaƙar al'umma.">Clubs reflect local heritage, deepening fan loyalty and community connections.</p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-number">6</div>
+                    <h3 data-en="Community Engagement" data-ha="Haɗin Kan Al'umma">Community Engagement</h3>
+                    <p data-en="Partnerships with local businesses and cultural outreach programs." data-ha="Haɗin gwiwa tare da kasuwancin gida da shirye-shiryen wayar da kan jama'a na al'adu.">Partnerships with local businesses and cultural outreach programs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calendar Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2 data-en="Football Calendar" data-ha="Kalandar Ƙwallon Ƙafa">Football Calendar</h2>
+            </div>
+            
+            <div class="calendar">
+                <div class="calendar-grid">
+                    <div class="calendar-item">
+                        <div class="calendar-month" data-en="August" data-ha="Agusta">August</div>
+                        <p data-en="Gombe Unity Shield (Season Opener)" data-ha="Garkuwar Haɗin Kan Gombe (Buɗe Kakar Wasanni)">Gombe Unity Shield (Season Opener)</p>
+                    </div>
+                    
+                    <div class="calendar-item">
+                        <div class="calendar-month" data-en="August - May" data-ha="Agusta - Mayu">August - May</div>
+                        <p data-en="Zonal Premier League Matches" data-ha="Wasan Gasar Yanki">Zonal Premier League Matches</p>
+                    </div>
+                    
+                    <div class="calendar-item">
+                        <div class="calendar-month" data-en="December" data-ha="Disamba">December</div>
+                        <p data-en="Zonal FA Cup Finals (Cattle, Hills, etc.)" data-ha="Karshen Kofin FA na Yanki (Shanu, Tuddai, da sauransu)">Zonal FA Cup Finals (Cattle, Hills, etc.)</p>
+                    </div>
+                    
+                    <div class="calendar-item">
+                        <div class="calendar-month" data-en="March" data-ha="Maris">March</div>
+                        <p data-en="Gombe Champions Cup Group Stage" data-ha="Matakin Rukuni na Kofin Zakarun Gombe">Gombe Champions Cup Group Stage</p>
+                    </div>
+                    
+                    <div class="calendar-item">
+                        <div class="calendar-month" data-en="April" data-ha="Afrilu">April</div>
+                        <p data-en="Gombe Warriors Cup Knockouts" data-ha="Matakin Daga Ciki na Kofin Mayakan Gombe">Gombe Warriors Cup Knockouts</p>
+                    </div>
+                    
+                    <div class="calendar-item">
+                        <div class="calendar-month" data-en="May" data-ha="Mayu">May</div>
+                        <p data-en="Gombe Champions Cup Final + Relegation Decisions" data-ha="Karshen Kofin Zakarun Gombe + Yanke Shawarar Ragewa">Gombe Champions Cup Final + Relegation Decisions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Closing Section -->
+    <section class="section" style="background: linear-gradient(90deg, var(--primary-green), var(--secondary-green)); color: white; text-align: center;">
+        <div class="container">
+            <h2 style="color: white;" data-en="A Legacy Project for Gombe State" data-ha="Aikin Gado na Jihar Gombe">A Legacy Project for Gombe State</h2>
+            <p style="font-size: 1.3rem; max-width: 800px; margin: 20px auto 30px;" data-en="This system ensures every ward, club, and citizen in Gombe State has a pathway to glory while uniting communities under a shared passion for football." data-ha="Wannan tsarin yana tabbatar da cewa kowace unguwa, ƙungiya, da ɗan ƙasa a Jihar Gombe yana da hanyar zuwa ga ɗaukaka yayin haɗa al'ummomi ƙarƙashin sha'awar ƙwallon ƙafa.">This system ensures every ward, club, and citizen in Gombe State has a pathway to glory while uniting communities under a shared passion for football.</p>
+            <div style="font-size: 1.8rem; margin-top: 30px; font-weight: 700; color: var(--accent-gold);">
+                <i class="fas fa-futbol"></i> <span data-en="One Gombe, One Passion" data-ha="Gombe ɗaya, Sha'awa ɗaya">One Gombe, One Passion</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <div class="footer-logo-text" data-en="Gombe Football" data-ha="Ƙwallon Ƙafa na Gombe">Gombe Football</div>
+                <p data-en="Developing football talent and promoting sports excellence across Gombe State." data-ha="Haɓaka gwanintar ƙwallon Ƙafa da inganta ƙwararrun wasanni a duk faɗin Jihar Gombe.">Developing football talent and promoting sports excellence across Gombe State.</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://youtube.com/@gombefootballecosystem?si=u4Rtoj2-Gll1Giss" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h4 class="footer-title" data-en="Competitions" data-ha="Gasar">Competitions</h4>
+                <ul class="footer-links">
+                    <li><a href="leaguesAbout.html" data-en="Zonal Premier Leagues" data-ha="Manyan Gasar Yanki">Zonal Premier Leagues</a></li>
+                    <li><a href="ChampionsWarriorsCup.html" data-en="Gombe Champions/Warriors Cup" data-ha="Kofin Zakarun Gombe/Mayakan Gombe">Gombe Champions/Warriors Cup</a></li>
+                    <li><a href="GombeUnityShield.html" data-en="Gombe Unity Shield" data-ha="Garkuwar Haɗin Kan Gombe">Gombe Unity Shield</a></li>
+                    <li><a href="FAcupsAbout.html" data-en="Zonal FA Cups" data-ha="Kofunan FA na Yanki">Zonal FA Cups</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4 class="footer-title" data-en="Resources" data-ha="Albarkatu">Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="teamManagerAccess.html" data-en="Club Ownership Registration" data-ha="Rajistar Ƙungiya">Club Registration</a></li>
+                    <li><a href="YouthDevelopment.html" data-en="Youth Development" data-ha="Haɓaka Matasa">Youth Development</a></li>
+                    <li><a href="#" data-en="Coaching Programs" data-ha="Shirye-shiryen Koci">Coaching Programs</a></li>
+                    <li><a href="#" data-en="Facility Standards" data-ha="Ma'aunin Wurare">Facility Standards</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4 class="footer-title" data-en="Contact Us" data-ha="Tuntuɓi Mu">Contact Us</h4>
+                <ul class="contact-info">
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <!-- <span data-en="Gombe State Football Association, Pantami Stadium Complex, Gombe" data-ha="Ƙungiyar Ƙwallon Ƙafa ta Jihar Gombe, Cibiyar Filin wasa na Pantami, Gombe">Gombe State Football Association, Pantami Stadium Complex, Gombe</span> -->
+                    </li>
+                    <li>
+                        <i class="fas fa-phone-alt"></i>
+                        <span data-en="" data-ha=""></span>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <span data-en="" data-ha=""></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            <span data-en="© 2025 Gombe State Football Ecosystem. All rights reserved. | Prepared for Governor's Office, 2027" data-ha="Ƙungiyar Ƙwallon Ƙafa ta Jihar Gombe. Duk haƙƙoƙin suna daɗe© 2025  | An shirya don Ofishin Gwamna,  2027"></span>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const langButtons = document.querySelectorAll('.lang-btn');
+            const currentLang = localStorage.getItem('preferred-lang') || 'en';
+            
+            // Set initial language
+            setLanguage(currentLang);
+            
+            // Add event listeners to language buttons
+            langButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    setLanguage(lang);
+                    localStorage.setItem('preferred-lang', lang);
+                });
+            });
+            
+            function setLanguage(lang) {
+                // Update active button
+                langButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+                });
+                
+                // Update all elements with data attributes
+                document.querySelectorAll('[data-en]').forEach(element => {
+                    if (lang === 'en') {
+                        element.textContent = element.getAttribute('data-en');
+                    } else if (lang === 'ha') {
+                        element.textContent = element.getAttribute('data-ha');
+                    }
+                });
+                
+                // Update HTML lang attribute
+                document.documentElement.lang = lang;
+                
+                // Update direction for Hausa
+                if (lang === 'ha') {
+                    document.body.classList.add('lang-hausa');
+                } else {
+                    document.body.classList.remove('lang-hausa');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

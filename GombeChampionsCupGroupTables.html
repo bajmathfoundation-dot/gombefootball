@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe Champions Cup - Group Tables</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f5f9f5 0%, #e8f5e9 100%);
+            color: #2e7d32;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FFD700, #C0C0C0, #CD7F32);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .sort-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #c8e6c9;
+            background: white;
+            font-size: 1rem;
+            color: #2e7d32;
+            min-width: 180px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .stats-toggle {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .toggle-btn {
+            padding: 8px 15px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .toggle-btn.active {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+
+        .refresh-btn {
+            padding: 10px 20px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: #1b5e20;
+        }
+
+        .groups-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .groups-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .group-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #c8e6c9;
+            transition: transform 0.3s ease;
+        }
+
+        .group-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .group-header {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .group-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .group-badge {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .group-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .group-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .stats-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .standings-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .standings-table th {
+            background: #e8f5e9;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 500;
+            border-bottom: 2px solid #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .standings-table td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .standings-table tr:nth-child(even) {
+            background: #f9fdf9;
+        }
+
+        .standings-table tr:hover {
+            background: #e8f5e9;
+        }
+
+        .team-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        .position {
+            font-weight: bold;
+            width: 30px;
+            text-align: center;
+        }
+
+        .team-badge {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #4caf50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .team-name {
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .stats-cell {
+            font-weight: 500;
+        }
+
+        .positive {
+            color: #2e7d32;
+        }
+
+        .negative {
+            color: #d32f2f;
+        }
+
+        .highlight {
+            background: #e8f5e9 !important;
+            font-weight: 600;
+        }
+
+        .qualification-marker {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .qualification-qf {
+            background: #4caf50;
+        }
+
+        .qualification-ro16 {
+            background: #2196f3;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(46, 125, 50, 0.3);
+            border-radius: 50%;
+            border-top-color: #2e7d32;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .status-container {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-weight: 500;
+            padding: 15px;
+            border-radius: 8px;
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            font-size: 1rem;
+        }
+
+        .success {
+            color: #1b5e20;
+            font-weight: 500;
+            padding: 15px;
+            border-radius: 8px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            font-size: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 25px;
+            color: #2e7d32;
+            font-size: 1rem;
+            background: #e8f5e9;
+            border-radius: 15px;
+            border: 1px solid #c8e6c9;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .sort-controls, .stats-toggle {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .group-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .group-stats {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-trophy"></i> Gombe Champions Cup</h1>
+            <p>Group Stage Standings - Live Tables</p>
+        </header>
+        
+        <div class="controls">
+            <div class="sort-controls">
+                <label for="sortBy">Sort Groups By:</label>
+                <select id="sortBy">
+                    <option value="group">Group Name (A-Z)</option>
+                    <option value="points">Highest Points</option>
+                    <option value="goals">Most Goals</option>
+                    <option value="wins">Most Wins</option>
+                </select>
+                
+                <label for="statsView">View:</label>
+                <select id="statsView">
+                    <option value="all">All Stats</option>
+                    <option value="compact">Compact View</option>
+                    <option value="extended">Extended Stats</option>
+                </select>
+            </div>
+            
+            <div class="stats-toggle">
+                <span>Show:</span>
+                <button class="toggle-btn active" data-stat="points">Points</button>
+                <button class="toggle-btn active" data-stat="goals">Goals</button>
+                <button class="toggle-btn" data-stat="cards">Cards</button>
+                <button class="toggle-btn" data-stat="form">Form</button>
+            </div>
+            
+            <button id="refreshBtn" class="refresh-btn">
+                <i class="fas fa-sync-alt"></i> Refresh Data
+            </button>
+        </div>
+        
+        <div class="groups-container" id="groupsContainer">
+            <!-- Groups will be loaded here -->
+            <div style="text-align: center; grid-column: 1/-1; padding: 40px;">
+                <div class="loader" style="width: 40px; height: 40px; margin: 0 auto 20px;"></div>
+                <p>Loading group standings...</p>
+            </div>
+        </div>
+        
+        <div class="status-container" id="statusMessage" style="display: none;"></div>
+        
+        <footer>
+            <p>Gombe Football Association &copy; 2025 | Champions Cup Tournament - Group Stage Standings</p>
+        </footer>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // DOM elements
+        const groupsContainer = document.getElementById('groupsContainer');
+        const sortBySelect = document.getElementById('sortBy');
+        const statsViewSelect = document.getElementById('statsView');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const toggleButtons = document.querySelectorAll('.toggle-btn');
+        
+        // App state
+        let groupData = {};
+        let currentSort = 'group';
+        let currentView = 'all';
+        let visibleStats = {
+            points: true,
+            goals: true,
+            cards: false,
+            form: false
+        };
+        
+        // Event listeners
+        sortBySelect.addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            renderGroups();
+        });
+        
+        statsViewSelect.addEventListener('change', (e) => {
+            currentView = e.target.value;
+            renderGroups();
+        });
+        
+        refreshBtn.addEventListener('click', loadGroupData);
+        
+        toggleButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const stat = e.target.dataset.stat;
+                visibleStats[stat] = !visibleStats[stat];
+                e.target.classList.toggle('active');
+                renderGroups();
+            });
+        });
+        
+        // Load group data from Firestore
+        async function loadGroupData() {
+            try {
+                showStatus('Loading group standings...', 'success');
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading';
+                refreshBtn.disabled = true;
+                
+                // Clear current data
+                groupData = {};
+                
+                // Load all groups
+                const groups = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                
+                for (const group of groups) {
+                    try {
+                        // Get group teams and fixtures
+                        const groupDoc = await db.collection('GombeChampionsCup/Groupstage/Groups')
+                            .doc(`Group${group}`)
+                            .get();
+                        
+                        if (!groupDoc.exists) {
+                            console.warn(`No data found for Group ${group}`);
+                            continue;
+                        }
+                        
+                        const groupInfo = groupDoc.data();
+                        const teams = groupInfo.teams || [];
+                        
+                        // Initialize team standings
+                        const standings = {};
+                        teams.forEach(team => {
+                            standings[team.name] = {
+                                name: team.name,
+                                zone: team.zone || 'All Zones',
+                                played: 0,
+                                wins: 0,
+                                draws: 0,
+                                losses: 0,
+                                goalsFor: 0,
+                                goalsAgainst: 0,
+                                goalDifference: 0,
+                                points: 0,
+                                yellowCards: 0,
+                                redCards: 0,
+                                form: [] // Last 5 matches: 'W', 'D', 'L'
+                            };
+                        });
+                        
+                        // Get fixtures for this group
+                        const fixturesDoc = await db.collection('GombeChampionsCup/fixtures/GroupFixtures')
+                            .doc(`Group_${group}`)
+                            .get();
+                        
+                        if (fixturesDoc.exists) {
+                            const fixturesData = fixturesDoc.data();
+                            const fixtures = fixturesData.fixtures || [];
+                            
+                            // Process completed matches
+                            for (const fixture of fixtures) {
+                                // Check if match has been played (has result data)
+                                // In a real app, we would check for actual match results
+                                // For now, we'll simulate some results for demonstration
+                                
+                                // Skip if no date set or if match is in the future
+                                if (!fixture.date) continue;
+                                
+                                const matchDate = new Date(fixture.date);
+                                const today = new Date();
+                                if (matchDate > today) continue;
+                                
+                                // For demo purposes, generate random results
+                                // In production, this would come from actual match data
+                                const homeGoals = Math.floor(Math.random() * 5);
+                                const awayGoals = Math.floor(Math.random() * 5);
+                                
+                                // Update standings based on match result
+                                if (standings[fixture.homeTeam] && standings[fixture.awayTeam]) {
+                                    // Update matches played
+                                    standings[fixture.homeTeam].played++;
+                                    standings[fixture.awayTeam].played++;
+                                    
+                                    // Update goals
+                                    standings[fixture.homeTeam].goalsFor += homeGoals;
+                                    standings[fixture.homeTeam].goalsAgainst += awayGoals;
+                                    standings[fixture.awayTeam].goalsFor += awayGoals;
+                                    standings[fixture.awayTeam].goalsAgainst += homeGoals;
+                                    
+                                    // Update goal difference
+                                    standings[fixture.homeTeam].goalDifference = 
+                                        standings[fixture.homeTeam].goalsFor - standings[fixture.homeTeam].goalsAgainst;
+                                    standings[fixture.awayTeam].goalDifference = 
+                                        standings[fixture.awayTeam].goalsFor - standings[fixture.awayTeam].goalsAgainst;
+                                    
+                                    // Update points and record
+                                    if (homeGoals > awayGoals) {
+                                        standings[fixture.homeTeam].wins++;
+                                        standings[fixture.homeTeam].points += 3;
+                                        standings[fixture.awayTeam].losses++;
+                                        standings[fixture.homeTeam].form.push('W');
+                                        standings[fixture.awayTeam].form.push('L');
+                                    } else if (homeGoals < awayGoals) {
+                                        standings[fixture.awayTeam].wins++;
+                                        standings[fixture.awayTeam].points += 3;
+                                        standings[fixture.homeTeam].losses++;
+                                        standings[fixture.awayTeam].form.push('W');
+                                        standings[fixture.homeTeam].form.push('L');
+                                    } else {
+                                        standings[fixture.homeTeam].draws++;
+                                        standings[fixture.awayTeam].draws++;
+                                        standings[fixture.homeTeam].points += 1;
+                                        standings[fixture.awayTeam].points += 1;
+                                        standings[fixture.homeTeam].form.push('D');
+                                        standings[fixture.awayTeam].form.push('D');
+                                    }
+                                    
+                                    // Keep only last 5 matches for form
+                                    if (standings[fixture.homeTeam].form.length > 5) {
+                                        standings[fixture.homeTeam].form.shift();
+                                    }
+                                    if (standings[fixture.awayTeam].form.length > 5) {
+                                        standings[fixture.awayTeam].form.shift();
+                                    }
+                                    
+                                    // Add random cards for demo
+                                    standings[fixture.homeTeam].yellowCards += Math.floor(Math.random() * 3);
+                                    standings[fixture.awayTeam].yellowCards += Math.floor(Math.random() * 3);
+                                    if (Math.random() > 0.9) {
+                                        standings[fixture.homeTeam].redCards += 1;
+                                    }
+                                    if (Math.random() > 0.9) {
+                                        standings[fixture.awayTeam].redCards += 1;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Convert standings object to array and sort
+                        const standingsArray = Object.values(standings).sort((a, b) => {
+                            // Primary sort by points
+                            if (b.points !== a.points) return b.points - a.points;
+                            // Secondary sort by goal difference
+                            if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+                            // Tertiary sort by goals for
+                            if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+                            // Final sort by team name
+                            return a.name.localeCompare(b.name);
+                        });
+                        
+                        // Add position
+                        standingsArray.forEach((team, index) => {
+                            team.position = index + 1;
+                        });
+                        
+                        // Store group data
+                        groupData[group] = {
+                            name: `Group ${group}`,
+                            teams: standingsArray,
+                            totalMatches: standingsArray.reduce((sum, team) => sum + team.played, 0) / 2,
+                            totalGoals: standingsArray.reduce((sum, team) => sum + team.goalsFor, 0)
+                        };
+                        
+                    } catch (error) {
+                        console.error(`Error loading data for Group ${group}:`, error);
+                    }
+                }
+                
+                renderGroups();
+                showStatus('Group standings loaded successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error loading group data:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+            } finally {
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+                refreshBtn.disabled = false;
+            }
+        }
+        
+        // Render groups based on current sort and view settings
+        function renderGroups() {
+            if (Object.keys(groupData).length === 0) {
+                groupsContainer.innerHTML = `
+                    <div style="text-align: center; grid-column: 1/-1; padding: 40px;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 3rem; color: #757575; margin-bottom: 15px;"></i>
+                        <p>No group data available. Click "Refresh Data" to load standings.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort groups based on current selection
+            const sortedGroups = Object.entries(groupData).sort((a, b) => {
+                const groupA = a[1];
+                const groupB = b[1];
+                
+                switch (currentSort) {
+                    case 'points':
+                        // Sort by highest points among top teams
+                        const topPointsA = Math.max(...groupA.teams.map(t => t.points));
+                        const topPointsB = Math.max(...groupB.teams.map(t => t.points));
+                        return topPointsB - topPointsA;
+                    
+                    case 'goals':
+                        // Sort by total goals in group
+                        return groupB.totalGoals - groupA.totalGoals;
+                    
+                    case 'wins':
+                        // Sort by total wins in group
+                        const totalWinsA = groupA.teams.reduce((sum, team) => sum + team.wins, 0);
+                        const totalWinsB = groupB.teams.reduce((sum, team) => sum + team.wins, 0);
+                        return totalWinsB - totalWinsA;
+                    
+                    case 'group':
+                    default:
+                        // Sort by group name (A, B, C, ...)
+                        return a[0].localeCompare(b[0]);
+                }
+            });
+            
+            // Generate HTML for each group
+            groupsContainer.innerHTML = '';
+            
+            sortedGroups.forEach(([groupKey, group]) => {
+                const groupCard = document.createElement('div');
+                groupCard.className = 'group-card';
+                
+                // Determine qualification spots
+                const qualificationSpots = {
+                    1: 'QF',
+                    2: 'R16'
+                };
+                
+                // Generate table headers based on view settings
+                let tableHeaders = `
+                    <th>Pos</th>
+                    <th style="text-align: left;">Team</th>
+                    <th>P</th>
+                `;
+                
+                if (visibleStats.points) {
+                    tableHeaders += `
+                        <th>W</th>
+                        <th>D</th>
+                        <th>L</th>
+                        <th>Pts</th>
+                    `;
+                }
+                
+                if (visibleStats.goals) {
+                    tableHeaders += `
+                        <th>GF</th>
+                        <th>GA</th>
+                        <th>GD</th>
+                    `;
+                }
+                
+                if (visibleStats.cards) {
+                    tableHeaders += `
+                        <th title="Yellow Cards">YC</th>
+                        <th title="Red Cards">RC</th>
+                    `;
+                }
+                
+                if (visibleStats.form) {
+                    tableHeaders += `<th>Form</th>`;
+                }
+                
+                // Generate table rows
+                let tableRows = '';
+                group.teams.forEach((team, index) => {
+                    const qualification = qualificationSpots[team.position] || '';
+                    const qualificationClass = qualification ? `qualification-${qualification.toLowerCase()}` : '';
+                    const highlightClass = qualification ? 'highlight' : '';
+                    
+                    let formHTML = '';
+                    if (visibleStats.form) {
+                        formHTML = `<td>${team.form.map(result => 
+                            `<span style="display: inline-block; width: 15px; height: 15px; border-radius: 50%; 
+                            background: ${result === 'W' ? '#4caf50' : result === 'D' ? '#ff9800' : '#f44336'}; 
+                            margin-right: 2px;" title="${result}"></span>`
+                        ).join('')}</td>`;
+                    }
+                    
+                    tableRows += `
+                        <tr class="${highlightClass}">
+                            <td>
+                                <span class="position">${team.position}</span>
+                                ${qualification ? `<span class="qualification-marker ${qualificationClass}"></span>` : ''}
+                            </td>
+                            <td class="team-cell">
+                                <div class="team-badge">${team.name.charAt(0)}</div>
+                                <div class="team-name">${team.name}</div>
+                                <div style="font-size: 0.8rem; color: #757575;">${team.zone}</div>
+                            </td>
+                            <td class="stats-cell">${team.played}</td>
+                            ${visibleStats.points ? `
+                                <td class="stats-cell positive">${team.wins}</td>
+                                <td class="stats-cell">${team.draws}</td>
+                                <td class="stats-cell negative">${team.losses}</td>
+                                <td class="stats-cell" style="font-weight: bold;">${team.points}</td>
+                            ` : ''}
+                            ${visibleStats.goals ? `
+                                <td class="stats-cell">${team.goalsFor}</td>
+                                <td class="stats-cell">${team.goalsAgainst}</td>
+                                <td class="stats-cell ${team.goalDifference >= 0 ? 'positive' : 'negative'}">
+                                    ${team.goalDifference > 0 ? '+' : ''}${team.goalDifference}
+                                </td>
+                            ` : ''}
+                            ${visibleStats.cards ? `
+                                <td class="stats-cell">${team.yellowCards}</td>
+                                <td class="stats-cell negative">${team.redCards}</td>
+                            ` : ''}
+                            ${visibleStats.form ? formHTML : ''}
+                        </tr>
+                    `;
+                });
+                
+                groupCard.innerHTML = `
+                    <div class="group-header">
+                        <div class="group-title">
+                            <div class="group-badge">${groupKey}</div>
+                            <div class="group-name">${group.name}</div>
+                        </div>
+                        <div class="group-stats">
+                            <div class="stats-item">
+                                <i class="fas fa-futbol"></i>
+                                <span>${group.totalMatches} matches</span>
+                            </div>
+                            <div class="stats-item">
+                                <i class="fas fa-bullseye"></i>
+                                <span>${group.totalGoals} goals</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="standings-table">
+                            <thead>
+                                <tr>${tableHeaders}</tr>
+                            </thead>
+                            <tbody>${tableRows}</tbody>
+                        </table>
+                    </div>
+                `;
+                
+                groupsContainer.appendChild(groupCard);
+            });
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.style.display = 'block';
+            statusMessage.innerHTML = `
+                <div class="${type}">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            
+            // Auto hide after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGroupData();
+        });
+    </script>
+</body>
+</html>

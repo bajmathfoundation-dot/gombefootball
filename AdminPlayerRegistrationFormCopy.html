@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gombe Football Team Player Registration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f4f7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #014421;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    .verification-section {
+      background: #f8f9fa;
+      border-left: 4px solid #014421;
+    }
+    form label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+    }
+    form input,
+    form select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #014421;
+      color: white;
+      padding: 12px 18px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #02743a;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .team-info {
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+      border-left: 4px solid #2e7d32;
+    }
+    .team-info h3 {
+      margin-top: 0;
+      color: #014421;
+    }
+    .team-info p {
+      margin: 8px 0;
+    }
+    .hidden {
+      display: none;
+    }
+    .verification-status {
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+    .status-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status-loading {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <header>Gombe Football Team Player Registration</header>
+
+  <div class="container">
+    <!-- Team Verification Section -->
+    <div class="card verification-section">
+      <h2>🔑 Team Verification</h2>
+      <p>Enter your team's collection ID to verify and register players</p>
+      
+      <div id="verificationStatus" class="verification-status hidden"></div>
+      
+      <label for="teamCollectionId">Team Collection ID</label>
+      <input type="text" id="teamCollectionId" placeholder="e.g., GT-team-a-010" required />
+      
+      <button type="button" id="verifyTeamBtn">Verify Team</button>
+    </div>
+
+    <!-- Player Registration Form (initially hidden) -->
+    <div id="registrationSection" class="card hidden">
+      <h2>📝 Register Players</h2>
+      
+      <!-- Team Information Display -->
+      <div id="teamInfoDisplay" class="team-info hidden">
+        <h3>✅ Verified Team Information</h3>
+        <p><strong>Team Name:</strong> <span id="displayTeamName"></span></p>
+        <p><strong>LGA:</strong> <span id="displayLGA"></span></p>
+        <p><strong>Ward:</strong> <span id="displayWard"></span></p>
+        <p><strong>Location:</strong> <span id="displayLocation"></span></p>
+        <p><strong>Collection ID:</strong> <span id="displayCollectionId"></span></p>
+      </div>
+
+      <form id="playerForm">
+        <label for="name">Player Name</label>
+        <input type="text" id="name" required />
+
+        <label for="LGAs">Local Government Area</label>
+        <select id="LGAs" required>
+          <option value="">-- Select LGA --</option>
+          <option>Akko</option><option>Balanga</option><option>Billiri</option><option>Dukku</option>
+          <option>Funakaye</option><option>Gombe</option><option>Kaltungo</option><option>Kwami</option>
+          <option>Nafada</option><option>Shongom</option><option>Yamaltu/Deba</option>
+        </select>
+
+        <label for="position">Position</label>
+        <select id="position" required>
+          <option value="">-- Select Position --</option>
+          <option>Goalkeeper</option><option>Right Back (RB)</option><option>Left Back (LB)</option>
+          <option>Center Back (CB)</option><option>Wing Back (WB)</option><option>Sweeper (SW)</option>
+          <option>Defensive Midfielder (CDM)</option><option>Central Midfielder (CM)</option>
+          <option>Attacking Midfielder (CAM)</option><option>Right Midfielder (RM)</option>
+          <option>Left Midfielder (LM)</option><option>Wide Midfielder</option>
+          <option>Striker (ST)</option><option>Center Forward (CF)</option>
+          <option>Second Striker (SS)</option><option>Right Winger (RW)</option><option>Left Winger (LW)</option>
+        </select>
+
+        <label for="DOB">Date of Birth</label>
+        <input type="date" id="DOB" required />
+
+        <!-- Team Name - auto-filled from verification -->
+        <input type="hidden" id="teamName" />
+        
+        <!-- Display team name for reference -->
+        <div style="background: #f0f0f0; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+          <strong>Registering for:</strong> <span id="registeredTeamDisplay">Not verified</span>
+        </div>
+
+        <label for="jerseyNumber">Jersey Number</label>
+        <select id="jerseyNumber" required>
+          <option value="">-- Select a team first --</option>
+        </select>
+
+        <label for="imageFile">Player Image (future-ready)</label>
+        <input type="file" id="imageFile" accept="image/*" />
+
+        <button type="submit" id="registerBtn" disabled>Register Player</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball",
+      storageBucket: "gombefootball.appspot.com"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // DOM elements
+    const teamCollectionIdInput = document.getElementById('teamCollectionId');
+    const verifyTeamBtn = document.getElementById('verifyTeamBtn');
+    const verificationStatus = document.getElementById('verificationStatus');
+    const registrationSection = document.getElementById('registrationSection');
+    const teamInfoDisplay = document.getElementById('teamInfoDisplay');
+    const registeredTeamDisplay = document.getElementById('registeredTeamDisplay');
+    const jerseyDropdown = document.getElementById('jerseyNumber');
+    const registerBtn = document.getElementById('registerBtn');
+    const playerForm = document.getElementById('playerForm');
+
+    // Display elements for team info
+    const displayTeamName = document.getElementById('displayTeamName');
+    const displayLGA = document.getElementById('displayLGA');
+    const displayWard = document.getElementById('displayWard');
+    const displayLocation = document.getElementById('displayLocation');
+    const displayCollectionId = document.getElementById('displayCollectionId');
+
+    let currentTeamData = null;
+
+    // Set verification status
+    function setVerificationStatus(message, type) {
+      verificationStatus.classList.remove('hidden', 'status-success', 'status-error', 'status-loading');
+      verificationStatus.textContent = message;
+      verificationStatus.classList.add(`status-${type}`);
+    }
+
+    // Clear verification status
+    function clearVerificationStatus() {
+      verificationStatus.classList.add('hidden');
+    }
+
+    // Verify team button click handler
+    verifyTeamBtn.addEventListener('click', async function() {
+      const teamId = teamCollectionIdInput.value.trim();
+      
+      if (!teamId) {
+        setVerificationStatus('⚠️ Please enter a team collection ID', 'error');
+        return;
+      }
+
+      // Show loading
+      setVerificationStatus('⏳ Verifying team...', 'loading');
+      verifyTeamBtn.disabled = true;
+
+      try {
+        // Query the GombeTeams collection for the document with this ID
+        const teamDoc = await db.collection('GombeTeams').doc(teamId).get();
+        
+        if (!teamDoc.exists) {
+          setVerificationStatus(`❌ Team with ID "${teamId}" not found. Please check and try again.`, 'error');
+          verifyTeamBtn.disabled = false;
+          registrationSection.classList.add('hidden');
+          return;
+        }
+
+        // Get team data
+        const teamData = teamDoc.data();
+        
+        // Check if the document has the expected fields
+        const requiredFields = ['name', 'lga', 'ward', 'location'];
+        const missingFields = requiredFields.filter(field => !teamData[field]);
+        
+        if (missingFields.length > 0) {
+          setVerificationStatus(`⚠️ Team data incomplete. Missing fields: ${missingFields.join(', ')}`, 'error');
+          verifyTeamBtn.disabled = false;
+          registrationSection.classList.add('hidden');
+          return;
+        }
+
+        // Store team data
+        currentTeamData = {
+          ...teamData,
+          collectionId: teamId
+        };
+
+        // Display team information
+        displayTeamName.textContent = teamData.name;
+        displayLGA.textContent = teamData.lga;
+        displayWard.textContent = teamData.ward || 'N/A';
+        displayLocation.textContent = teamData.Location || 'N/A';
+        displayCollectionId.textContent = teamId;
+
+        // Show registration section and team info
+        registrationSection.classList.remove('hidden');
+        teamInfoDisplay.classList.remove('hidden');
+        
+        // Set team name in form
+        document.getElementById('teamName').value = teamData.name;
+        registeredTeamDisplay.textContent = teamData.name;
+        
+        // Enable register button
+        registerBtn.disabled = false;
+
+        // Load jersey numbers for this team
+        await loadJerseyNumbers(teamData.name);
+
+        // Set verification success
+        setVerificationStatus(`✅ Team "${teamData.name}" verified successfully! You can now register players.`, 'success');
+
+      } catch (error) {
+        console.error('Verification error:', error);
+        setVerificationStatus(`❌ Error verifying team: ${error.message}`, 'error');
+        registrationSection.classList.add('hidden');
+      } finally {
+        verifyTeamBtn.disabled = false;
+      }
+    });
+
+    // Load jersey numbers for a team
+    async function loadJerseyNumbers(teamName) {
+      try {
+        jerseyDropdown.innerHTML = '<option>Loading...</option>';
+        const taken = new Set();
+
+        const snap = await db.collection("playerRegistry")
+          .where("teamName", "==", teamName).get();
+        
+        snap.forEach(doc => {
+          const jersey = doc.data().jerseyNumber;
+          if (typeof jersey === "number") taken.add(jersey);
+        });
+
+        jerseyDropdown.innerHTML = '<option value="">-- Select Jersey Number --</option>';
+        for (let i = 1; i <= 99; i++) {
+          if (!taken.has(i)) {
+            const opt = document.createElement("option");
+            opt.value = i;
+            opt.textContent = i;
+            jerseyDropdown.appendChild(opt);
+          }
+        }
+
+        if (taken.size >= 99) {
+          jerseyDropdown.innerHTML = '<option value="">All jersey numbers taken</option>';
+        }
+      } catch (error) {
+        console.error('Error loading jersey numbers:', error);
+        jerseyDropdown.innerHTML = '<option value="">Error loading jersey numbers</option>';
+      }
+    }
+
+    // Handle form submit
+    playerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!currentTeamData) {
+        alert('⚠️ Please verify your team first.');
+        return;
+      }
+
+      const name = document.getElementById("name").value;
+      const LGAs = document.getElementById("LGAs").value;
+      const position = document.getElementById("position").value;
+      const DOB = document.getElementById("DOB").value;
+      const teamName = currentTeamData.name;
+      const jerseyNumber = parseInt(document.getElementById("jerseyNumber").value);
+      const imageFile = document.getElementById("imageFile").files[0];
+
+      if (!jerseyNumber) {
+        alert('⚠️ Please select a jersey number.');
+        return;
+      }
+
+      // Enforce 33-player limit
+      try {
+        const teamPlayers = await db.collection("playerRegistry")
+          .where("teamName", "==", teamName).get();
+        
+        if (teamPlayers.size >= 33) {
+          alert(`❌ Team "${teamName}" already has 33 registered players. Cannot add more.`);
+          return;
+        }
+
+        const counterRef = db.collection("counters").doc("playerPSN");
+
+        await db.runTransaction(async tx => {
+          const doc = await tx.get(counterRef);
+          const latest = doc.exists ? doc.data().latestPSN || 0 : 0;
+          const next = latest + 1;
+          const psn = next.toString().padStart(6, "0");
+          const teamID = `${psn}_${teamName}`;
+
+          const playerData = {
+            name,
+            LGAs,
+            position,
+            DOB,
+            teamName,
+            jerseyNumber,
+            teamID,
+            teamCollectionId: currentTeamData.collectionId,
+            imageUrl: "https://via.placeholder.com/150?text=Player",
+            registeredBy: currentTeamData.managerPhone || 'Unknown',
+            registrationDate: new Date().toISOString()
+          };
+
+          // 📸 Future imageFile upload goes here
+
+          tx.set(db.collection("playerRegistry").doc(psn), playerData);
+          tx.set(counterRef, { latestPSN: next }, { merge: true });
+
+          alert(`✅ Player "${name}" registered successfully!\nPSN: ${psn}\nTeam: ${teamName}`);
+          
+          // Reset form but keep team verification
+          document.getElementById("name").value = '';
+          document.getElementById("LGAs").value = '';
+          document.getElementById("position").value = '';
+          document.getElementById("DOB").value = '';
+          document.getElementById("imageFile").value = '';
+          
+          // Reload jersey numbers
+          await loadJerseyNumbers(teamName);
+        });
+
+      } catch (err) {
+        console.error("❌ Registration error:", err);
+        alert(`❌ Registration failed: ${err.message}`);
+      }
+    });
+
+    // Enter key support for verification
+    teamCollectionIdInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        verifyTeamBtn.click();
+      }
+    });
+
+    // Initial state
+    console.log('Gombe Football Team Registration System loaded');
+    console.log('Enter your team collection ID (e.g., GT-team-a-010) to verify and register players');
+  </script>
+</body>
+</html>

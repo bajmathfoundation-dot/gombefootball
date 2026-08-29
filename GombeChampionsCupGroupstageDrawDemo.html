@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kakaglobal Mega cup - Group Stage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f5f9f5;
+            color: #2e7d32;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            background: #2e7d32;
+            border-radius: 10px;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0f2e1;
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #1b5e20;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #c8e6c9;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .selection-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 1024px) {
+            .selection-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .teams-pool {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 25px;
+            border: 2px solid #e0f2e1;
+        }
+
+        .teams-pool h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #2e7d32;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #c8e6c9;
+            font-weight: 500;
+        }
+
+        .selected-teams {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 25px;
+            border: 2px solid #4caf50;
+        }
+
+        .selected-teams h3 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #1b5e20;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #4caf50;
+            font-weight: 500;
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .team-item {
+            padding: 12px 15px;
+            background: white;
+            border: 2px solid #c8e6c9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .team-item:hover {
+            background: #f1f8e9;
+            border-color: #4caf50;
+        }
+
+        .team-item.selected {
+            background: #4caf50;
+            color: white;
+            border-color: #388e3c;
+        }
+
+        .team-item.zone-central { border-left: 4px solid #2196F3; }
+        .team-item.zone-northern { border-left: 4px solid #FF9800; }
+        .team-item.zone-southern { border-left: 4px solid #9C27B0; }
+        .team-item.zone-eastern { border-left: 4px solid #F44336; }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-size: 1rem;
+            color: #2e7d32;
+        }
+
+        .team-count {
+            font-size: 1.1rem;
+            color: #1b5e20;
+            margin-top: 20px;
+            text-align: center;
+            padding: 15px;
+            background: #f1f8e9;
+            border-radius: 8px;
+            font-weight: 500;
+            border: 1px solid #c8e6c9;
+        }
+
+        .team-count.completed {
+            background: #c8e6c9;
+            border-color: #4caf50;
+            color: #1b5e20;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .primary-btn {
+            background: #4caf50;
+            color: white;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background: #388e3c;
+        }
+
+        .secondary-btn {
+            background: #f5f5f5;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .secondary-btn:hover:not(:disabled) {
+            background: #e8f5e9;
+        }
+
+        .danger-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .danger-btn:hover:not(:disabled) {
+            background: #d32f2f;
+        }
+
+        .status-container {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+        }
+
+        .groups-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .group-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #c8e6c9;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .group-card h3 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 500;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #c8e6c9;
+        }
+
+        .group-teams {
+            min-height: 150px;
+            border: 2px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f9fdf9;
+        }
+
+        .group-team-item {
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: #e8f5e9;
+            border-radius: 6px;
+            border: 1px solid #c8e6c9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .group-team-item .remove-team {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .available-teams {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 10px;
+            background: white;
+            margin-top: 10px;
+        }
+
+        .available-team {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            background: white;
+            border: 1px solid #c8e6c9;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .available-team:hover {
+            background: #f1f8e9;
+            border-color: #4caf50;
+        }
+
+        .available-team:disabled {
+            background: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .group-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .group-table th {
+            background: #e8f5e9;
+            color: #1b5e20;
+            padding: 10px;
+            text-align: center;
+            font-weight: 500;
+            border-bottom: 2px solid #c8e6c9;
+        }
+
+        .group-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .group-table tr:nth-child(even) {
+            background: #f9fdf9;
+        }
+
+        .manual-assign-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .assign-btn {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(46, 125, 50, 0.3);
+            border-radius: 50%;
+            border-top-color: #2e7d32;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 25px;
+            color: #2e7d32;
+            font-size: 1rem;
+            background: #e8f5e9;
+            border-radius: 10px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-weight: 500;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            font-size: 1rem;
+        }
+
+        .completion-message {
+            color: #1b5e20;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 6px;
+            background: #c8e6c9;
+        }
+
+        @media (max-width: 768px) {
+            .selection-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .groups-container {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Kakaglobal Mega cup</h1>
+            <p>Group Stage Selection - Select 32 teams for the group stage</p>
+        </header>
+        
+        <main>
+            <div class="card">
+                <h2>Team Selection</h2>
+                
+                <div class="selection-container">
+                    <div class="teams-pool">
+                        <h3>Available Teams (champions-cupDemo)</h3>
+                        <div class="teams-grid" id="teamsPool">
+                            <!-- Teams will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="selected-teams">
+                        <h3>Selected Teams (32 needed)</h3>
+                        <div class="teams-grid" id="selectedTeams">
+                            <!-- Selected teams will appear here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-count" id="selectionCount">
+                    Selected: 0 of 32 teams
+                </div>
+                
+                <div class="button-container">
+                    <button id="drawGroupsBtn" class="primary-btn" disabled>
+                        <span id="drawText">Draw Groups Automatically</span>
+                        <span id="drawLoader" class="loader" style="display: none;"></span>
+                    </button>
+                    <button id="manualAssignBtn" class="secondary-btn" disabled>
+                        <span id="manualText">Manual Group Assignment</span>
+                    </button>
+                    <button id="resetBtn" class="danger-btn">Reset Selection</button>
+                </div>
+            </div>
+            
+            <div class="card" id="groupsCard" style="display: none;">
+                <h2>Group Stage Draw</h2>
+                
+                <div class="manual-assign-controls" id="manualControls" style="display: none;">
+                    <button id="autoDistributeBtn" class="secondary-btn assign-btn">Auto-Distribute Remaining</button>
+                    <button id="clearGroupsBtn" class="danger-btn assign-btn">Clear All Groups</button>
+                    <div style="color: #666; font-size: 0.9rem; text-align: center;">
+                        Select 4 teams for each group from the dropdown
+                    </div>
+                </div>
+                
+                <div class="groups-container" id="groupsContainer">
+                    <!-- Groups will be generated here -->
+                </div>
+                
+                <div class="button-container" style="margin-top: 30px;">
+                    <button id="saveGroupsBtn" class="primary-btn">
+                        <span id="saveGroupsText">Save Group Stage</span>
+                        <span id="saveGroupsLoader" class="loader" style="display: none;"></span>
+                    </button>
+                    <button id="backToSelectionBtn" class="secondary-btn">Back to Team Selection</button>
+                </div>
+            </div>
+            
+            <div class="status-container" id="statusMessage" style="display: none;"></div>
+        </main>
+        
+        <footer>
+            <p>Gombe Football Association &copy; 2025 | Champions Cup Tournament</p>
+        </footer>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // DOM elements
+        const teamsPool = document.getElementById('teamsPool');
+        const selectedTeams = document.getElementById('selectedTeams');
+        const selectionCount = document.getElementById('selectionCount');
+        const drawGroupsBtn = document.getElementById('drawGroupsBtn');
+        const manualAssignBtn = document.getElementById('manualAssignBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const groupsCard = document.getElementById('groupsCard');
+        const groupsContainer = document.getElementById('groupsContainer');
+        const statusMessage = document.getElementById('statusMessage');
+        const saveGroupsBtn = document.getElementById('saveGroupsBtn');
+        const backToSelectionBtn = document.getElementById('backToSelectionBtn');
+        const manualControls = document.getElementById('manualControls');
+        const autoDistributeBtn = document.getElementById('autoDistributeBtn');
+        const clearGroupsBtn = document.getElementById('clearGroupsBtn');
+        
+        const drawText = document.getElementById('drawText');
+        const drawLoader = document.getElementById('drawLoader');
+        const saveGroupsText = document.getElementById('saveGroupsText');
+        const saveGroupsLoader = document.getElementById('saveGroupsLoader');
+        const manualText = document.getElementById('manualText');
+        
+        // App state
+        let allTeams = [];
+        let selectedTeamsList = [];
+        let groups = [];
+        const groupNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        let isManualMode = false;
+        
+        // Event listeners
+        drawGroupsBtn.addEventListener('click', () => drawGroups(false));
+        manualAssignBtn.addEventListener('click', () => drawGroups(true));
+        resetBtn.addEventListener('click', resetSelection);
+        saveGroupsBtn.addEventListener('click', saveGroups);
+        backToSelectionBtn.addEventListener('click', backToSelection);
+        autoDistributeBtn.addEventListener('click', autoDistributeRemaining);
+        clearGroupsBtn.addEventListener('click', clearAllGroups);
+        
+        // Initialize the app
+        loadAllTeams();
+        
+        // Load all teams from Firebase with champions-cupDemo filter
+        async function loadAllTeams() {
+            try {
+                teamsPool.innerHTML = '<div style="text-align: center; padding: 20px;">Loading teams...</div>';
+                
+                const teamsSnapshot = await db.collection('GombeTeams').get();
+                
+                if (teamsSnapshot.empty) {
+                    throw new Error('No teams found in GombeTeams collection!');
+                }
+                
+                allTeams = [];
+                
+                teamsSnapshot.forEach(doc => {
+                    const team = doc.data();
+                    const teamName = team.name || '';
+                    const teamZone = team.zone || '';
+                    
+                    // Only include champions-cupDemo teams
+                    const CompetitionValue = (team.StateWideCompetition || '').toString().toLowerCase().trim();
+                    if (CompetitionValue !== 'champions-cupdemo') return;
+                    
+                    allTeams.push({
+                        id: doc.id,
+                        name: teamName,
+                        zone: teamZone,
+                        normalizedZone: teamZone.toLowerCase().replace(' ', '-')
+                    });
+                });
+                
+                if (allTeams.length === 0) {
+                    throw new Error('No teams found with StateWideCompetition = champions-cupDemo');
+                }
+                
+                renderTeamsPool();
+                
+            } catch (error) {
+                console.error('Error loading teams:', error);
+                teamsPool.innerHTML = `<div class="error">Error loading teams: ${error.message}</div>`;
+            }
+        }
+        
+        // Render teams in the pool
+        function renderTeamsPool() {
+            teamsPool.innerHTML = '';
+            
+            if (allTeams.length === 0) {
+                teamsPool.innerHTML = '<div style="text-align: center; padding: 20px;">No teams available</div>';
+                return;
+            }
+            
+            allTeams.forEach(team => {
+                const teamElement = document.createElement('div');
+                teamElement.className = `team-item zone-${team.normalizedZone}`;
+                teamElement.textContent = team.name;
+                teamElement.dataset.teamId = team.id;
+                
+                // Check if team is already selected
+                if (selectedTeamsList.find(t => t.id === team.id)) {
+                    teamElement.classList.add('selected');
+                }
+                
+                teamElement.addEventListener('click', () => toggleTeamSelection(team));
+                
+                teamsPool.appendChild(teamElement);
+            });
+            
+            renderSelectedTeams();
+        }
+        
+        // Render selected teams
+        function renderSelectedTeams() {
+            selectedTeams.innerHTML = '';
+            
+            if (selectedTeamsList.length === 0) {
+                selectedTeams.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">No teams selected yet</div>';
+                return;
+            }
+            
+            selectedTeamsList.forEach(team => {
+                const teamElement = document.createElement('div');
+                teamElement.className = `team-item zone-${team.normalizedZone} selected`;
+                teamElement.textContent = team.name;
+                teamElement.dataset.teamId = team.id;
+                
+                teamElement.addEventListener('click', () => toggleTeamSelection(team));
+                
+                selectedTeams.appendChild(teamElement);
+            });
+            
+            // Update count and button states
+            selectionCount.textContent = `Selected: ${selectedTeamsList.length} of 32 teams`;
+            
+            if (selectedTeamsList.length === 32) {
+                selectionCount.classList.add('completed');
+                drawGroupsBtn.disabled = false;
+                manualAssignBtn.disabled = false;
+            } else {
+                selectionCount.classList.remove('completed');
+                drawGroupsBtn.disabled = true;
+                manualAssignBtn.disabled = true;
+            }
+        }
+        
+        // Toggle team selection
+        function toggleTeamSelection(team) {
+            const index = selectedTeamsList.findIndex(t => t.id === team.id);
+            
+            if (index === -1) {
+                // Add team if we have less than 32
+                if (selectedTeamsList.length < 32) {
+                    selectedTeamsList.push(team);
+                }
+            } else {
+                // Remove team
+                selectedTeamsList.splice(index, 1);
+            }
+            
+            renderTeamsPool();
+        }
+        
+        // Draw groups function
+        function drawGroups(manualMode = false) {
+            if (selectedTeamsList.length !== 32) return;
+            
+            try {
+                isManualMode = manualMode;
+                
+                // Show loading state for automatic draw
+                if (!manualMode) {
+                    drawText.innerHTML = 'Drawing Groups...';
+                    drawLoader.style.display = 'inline-block';
+                    drawGroupsBtn.disabled = true;
+                }
+                
+                // Create empty groups
+                groups = [];
+                for (let i = 0; i < 8; i++) {
+                    groups.push({
+                        id: groupNames[i],
+                        teams: []
+                    });
+                }
+                
+                if (manualMode) {
+                    // Manual mode - start with empty groups
+                    manualControls.style.display = 'flex';
+                    manualText.innerHTML = 'Manual Assignment Active';
+                } else {
+                    // Automatic mode - distribute teams randomly
+                    manualControls.style.display = 'none';
+                    
+                    // Shuffle teams and distribute
+                    const shuffledTeams = [...selectedTeamsList];
+                    shuffleArray(shuffledTeams);
+                    
+                    for (let i = 0; i < shuffledTeams.length; i++) {
+                        const groupIndex = i % 8;
+                        const team = shuffledTeams[i];
+                        groups[groupIndex].teams.push({
+                            ...team,
+                            matchesPlayed: 0,
+                            wins: 0,
+                            draws: 0,
+                            losses: 0,
+                            goalsFor: 0,
+                            goalsAgainst: 0,
+                            goalDifference: 0,
+                            points: 0
+                        });
+                    }
+                }
+                
+                // Display groups
+                displayGroups();
+                
+                // Show groups card
+                groupsCard.style.display = 'block';
+                
+                // Scroll to groups
+                groupsCard.scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error('Error drawing groups:', error);
+                statusMessage.style.display = 'block';
+                statusMessage.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Error drawing groups:</strong> ${error.message}
+                    </div>
+                `;
+            } finally {
+                // Reset button state
+                if (!manualMode) {
+                    drawText.innerHTML = 'Draw Groups Automatically';
+                    drawLoader.style.display = 'none';
+                }
+            }
+        }
+        
+        // Display groups in the UI
+        function displayGroups() {
+            groupsContainer.innerHTML = '';
+            
+            groups.forEach(group => {
+                const groupCard = document.createElement('div');
+                groupCard.className = 'group-card';
+                groupCard.dataset.groupId = group.id;
+                
+                const teamCount = group.teams.length;
+                const maxTeams = 4;
+                
+                // Get available teams (not in any group)
+                const assignedTeamIds = new Set();
+                groups.forEach(g => g.teams.forEach(t => assignedTeamIds.add(t.id)));
+                const availableTeams = selectedTeamsList.filter(team => !assignedTeamIds.has(team.id));
+                
+                groupCard.innerHTML = `
+                    <h3>Group ${group.id} (${teamCount}/${maxTeams})</h3>
+                    <div class="group-teams">
+                        ${group.teams.map(team => `
+                            <div class="group-team-item" data-team-id="${team.id}">
+                                <span>${team.name}</span>
+                                ${isManualMode ? `<button class="remove-team" onclick="removeTeamFromGroup('${team.id}', '${group.id}')">×</button>` : ''}
+                            </div>
+                        `).join('')}
+                        ${teamCount === 0 ? '<div style="text-align: center; color: #999; padding: 20px;">No teams assigned</div>' : ''}
+                    </div>
+                    
+                    ${isManualMode ? `
+                        <div class="available-teams">
+                            <strong>Add Team:</strong>
+                            ${availableTeams.map(team => `
+                                <div class="available-team" onclick="addTeamToGroup('${team.id}', '${group.id}')">
+                                    ${team.name}
+                                </div>
+                            `).join('')}
+                            ${availableTeams.length === 0 ? '<div style="text-align: center; color: #999; padding: 10px;">No available teams</div>' : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <table class="group-table">
+                        <thead>
+                            <tr>
+                                <th>Team</th>
+                                <th>MP</th>
+                                <th>W</th>
+                                <th>D</th>
+                                <th>L</th>
+                                <th>GF</th>
+                                <th>GA</th>
+                                <th>GD</th>
+                                <th>Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${group.teams.map(team => `
+                                <tr>
+                                    <td>${team.name}</td>
+                                    <td>${team.matchesPlayed}</td>
+                                    <td>${team.wins}</td>
+                                    <td>${team.draws}</td>
+                                    <td>${team.losses}</td>
+                                    <td>${team.goalsFor}</td>
+                                    <td>${team.goalsAgainst}</td>
+                                    <td>${team.goalDifference}</td>
+                                    <td><strong>${team.points}</strong></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                groupsContainer.appendChild(groupCard);
+            });
+        }
+        
+        // Add team to group
+        function addTeamToGroup(teamId, groupId) {
+            const group = groups.find(g => g.id === groupId);
+            if (!group) return;
+            
+            // Check if group is full
+            if (group.teams.length >= 4) {
+                alert(`Group ${groupId} is already full (4 teams maximum)`);
+                return;
+            }
+            
+            // Find team in selected teams
+            const team = selectedTeamsList.find(t => t.id === teamId);
+            if (!team) return;
+            
+            // Check if team is already in a group
+            const teamInGroup = groups.some(g => g.teams.some(t => t.id === teamId));
+            if (teamInGroup) {
+                alert('This team is already assigned to a group');
+                return;
+            }
+            
+            // Add team to group
+            group.teams.push({
+                ...team,
+                matchesPlayed: 0,
+                wins: 0,
+                draws: 0,
+                losses: 0,
+                goalsFor: 0,
+                goalsAgainst: 0,
+                goalDifference: 0,
+                points: 0
+            });
+            
+            // Update display
+            displayGroups();
+        }
+        
+        // Remove team from group
+        function removeTeamFromGroup(teamId, groupId) {
+            const group = groups.find(g => g.id === groupId);
+            if (!group) return;
+            
+            const teamIndex = group.teams.findIndex(t => t.id === teamId);
+            if (teamIndex === -1) return;
+            
+            group.teams.splice(teamIndex, 1);
+            displayGroups();
+        }
+        
+        // Auto-distribute remaining teams
+        function autoDistributeRemaining() {
+            // Get all teams currently in groups
+            const assignedTeamIds = new Set();
+            groups.forEach(group => {
+                group.teams.forEach(team => {
+                    assignedTeamIds.add(team.id);
+                });
+            });
+            
+            // Get unassigned teams
+            const unassignedTeams = selectedTeamsList.filter(team => !assignedTeamIds.has(team.id));
+            
+            if (unassignedTeams.length === 0) {
+                alert('All teams are already assigned to groups!');
+                return;
+            }
+            
+            // Shuffle and distribute unassigned teams
+            const shuffledTeams = [...unassignedTeams];
+            shuffleArray(shuffledTeams);
+            
+            let teamIndex = 0;
+            while (teamIndex < shuffledTeams.length) {
+                // Find groups with available slots
+                const availableGroups = groups.filter(group => group.teams.length < 4);
+                
+                if (availableGroups.length === 0) break;
+                
+                // Distribute to available groups round-robin
+                for (const group of availableGroups) {
+                    if (teamIndex >= shuffledTeams.length) break;
+                    if (group.teams.length < 4) {
+                        const team = shuffledTeams[teamIndex];
+                        group.teams.push({
+                            ...team,
+                            matchesPlayed: 0,
+                            wins: 0,
+                            draws: 0,
+                            losses: 0,
+                            goalsFor: 0,
+                            goalsAgainst: 0,
+                            goalDifference: 0,
+                            points: 0
+                        });
+                        teamIndex++;
+                    }
+                }
+            }
+            
+            displayGroups();
+        }
+        
+        // Clear all groups
+        function clearAllGroups() {
+            if (confirm('Are you sure you want to clear all groups? This will remove all team assignments.')) {
+                groups.forEach(group => {
+                    group.teams = [];
+                });
+                displayGroups();
+            }
+        }
+        
+        // Save groups to Firebase
+        async function saveGroups() {
+            try {
+                // Validate groups
+                for (const group of groups) {
+                    if (group.teams.length !== 4) {
+                        throw new Error(`Group ${group.id} has ${group.teams.length} teams. Each group must have exactly 4 teams.`);
+                    }
+                }
+                
+                // Show loading state
+                saveGroupsText.innerHTML = 'Saving Groups...';
+                saveGroupsLoader.style.display = 'inline-block';
+                saveGroupsBtn.disabled = true;
+                
+                // Save each group to its own document
+                for (const group of groups) {
+                    const groupRef = db.collection('GombeChampionsCupDemo/Groupstage/Groups').doc(`Group${group.id}`);
+                    
+                    await groupRef.set({
+                        groupId: group.id,
+                        teams: group.teams,
+                        drawDate: firebase.firestore.FieldValue.serverTimestamp(),
+                        drawMode: isManualMode ? 'manual' : 'automatic'
+                    });
+                }
+                
+                // Show success message
+                statusMessage.style.display = 'block';
+                statusMessage.innerHTML = `
+                    <div style="color: #1b5e20; font-weight: 600; margin-bottom: 10px;">
+                        ✅ Group Stage saved successfully!
+                    </div>
+                    <p>Groups A-H have been saved to Firestore.</p>
+                `;
+                
+            } catch (error) {
+                console.error('Error saving groups:', error);
+                statusMessage.style.display = 'block';
+                statusMessage.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Error saving groups:</strong> ${error.message}
+                    </div>
+                `;
+            } finally {
+                // Reset button state
+                saveGroupsText.innerHTML = 'Save Group Stage';
+                saveGroupsLoader.style.display = 'none';
+                saveGroupsBtn.disabled = false;
+            }
+        }
+        
+        // Back to team selection
+        function backToSelection() {
+            groupsCard.style.display = 'none';
+            statusMessage.style.display = 'none';
+            manualControls.style.display = 'none';
+            isManualMode = false;
+            manualText.innerHTML = 'Manual Group Assignment';
+        }
+        
+        // Reset all selections
+        function resetSelection() {
+            if (confirm('Are you sure you want to reset all selections? This will clear all selected teams and groups.')) {
+                selectedTeamsList = [];
+                groups = [];
+                groupsCard.style.display = 'none';
+                statusMessage.style.display = 'none';
+                manualControls.style.display = 'none';
+                isManualMode = false;
+                manualText.innerHTML = 'Manual Group Assignment';
+                renderTeamsPool();
+            }
+        }
+        
+        // Utility function to shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // Make functions global for HTML event handlers
+        window.addTeamToGroup = addTeamToGroup;
+        window.removeTeamFromGroup = removeTeamFromGroup;
+    </script>
+</body>
+</html>
