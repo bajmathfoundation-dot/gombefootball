@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe Warriors Cup - Knockout Fixtures</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FFD700, #C0C0C0, #CD7F32);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .tournament-banner {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .trophy {
+            font-size: 3rem;
+            color: #FFD700;
+            text-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #c8e6c9;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #1b5e20;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #c8e6c9;
+            font-weight: 500;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .controls-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            color: #2e7d32;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 2px solid #c8e6c9;
+            background: white;
+            font-size: 1rem;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            color: #2e7d32;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232e7d32' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        .teams-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f1f8e9;
+            border-radius: 10px;
+            border: 1px solid #e8f5e9;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #c8e6c9;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+        }
+
+        .team-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #4caf50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            color: white;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #388e3c 0%, #1b5e20 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .secondary-btn {
+            background: #f5f5f5;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .secondary-btn:hover:not(:disabled) {
+            background: #e8f5e9;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .fixtures-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .fixtures-table th {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .fixtures-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .fixtures-table tr:nth-child(even) {
+            background: #f9fdf9;
+        }
+
+        .fixtures-table tr:hover {
+            background: #e8f5e9;
+        }
+
+        .date-time-input {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .date-time-input input {
+            padding: 10px;
+            border-radius: 6px;
+            width: auto;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(46, 125, 50, 0.3);
+            border-radius: 50%;
+            border-top-color: #2e7d32;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 25px;
+            color: #2e7d32;
+            font-size: 1rem;
+            background: #e8f5e9;
+            border-radius: 15px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .status-container {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-weight: 500;
+            padding: 15px;
+            border-radius: 8px;
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            font-size: 1rem;
+        }
+
+        .success {
+            color: #1b5e20;
+            font-weight: 500;
+            padding: 15px;
+            border-radius: 8px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            font-size: 1rem;
+        }
+
+        .round-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .round-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #4caf50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .round-name {
+            font-size: 1.8rem;
+            color: #1b5e20;
+            font-weight: 600;
+        }
+
+        .knockout-stage {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .match-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #c8e6c9;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            flex: 1;
+            min-width: 300px;
+            max-width: 450px;
+        }
+
+        .match-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e8f5e9;
+        }
+
+        .match-id {
+            font-weight: bold;
+            color: #1b5e20;
+            font-size: 1.1rem;
+        }
+
+        .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f9f5;
+        }
+
+        .team-name {
+            font-weight: 500;
+            flex: 1;
+            text-align: center;
+        }
+
+        .vs-text {
+            font-size: 0.9rem;
+            color: #757575;
+            margin: 0 10px;
+        }
+
+        .stadium {
+            font-size: 0.85rem;
+            color: #757575;
+            text-align: center;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f1f8e9;
+            border-radius: 10px;
+            border: 1px solid #c8e6c9;
+            font-size: 0.9rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+
+        .commissioner-field {
+            margin-top: 15px;
+        }
+
+        .commissioner-field label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #2e7d32;
+        }
+
+        .commissioner-select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 2px solid #c8e6c9;
+            background: white;
+            font-size: 0.9rem;
+            color: #2e7d32;
+        }
+
+        .commissioner-select:focus {
+            outline: none;
+            border-color: #4caf50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .date-time-input {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .date-time-input input {
+                width: 100%;
+            }
+            
+            .match-card {
+                min-width: 100%;
+            }
+            
+            .info-panel {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-trophy"></i> Gombe Warriors Cup</h1>
+            <p>Knockout Stage Fixtures Generator - Commissioner Access</p>
+        </header>
+        
+        <div class="tournament-banner">
+            <div class="trophy"><i class="fas fa-trophy"></i></div>
+            <div class="trophy"><i class="fas fa-futbol"></i></div>
+            <div class="trophy"><i class="fas fa-trophy"></i></div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-cog"></i> Round Selection</h2>
+            
+            <div class="controls-container">
+                <div class="form-group">
+                    <label for="roundSelect"><i class="fas fa-layer-group"></i> Select Knockout Round:</label>
+                    <select id="roundSelect">
+                        <option value="">-- Choose a round --</option>
+                        <option value="RoundOf16">Round of 16</option>
+                        <option value="quarterfinals">Quarterfinals</option>
+                        <option value="semifinals">Semifinals</option>
+                        <option value="final">Final</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-users"></i> Teams in Round:</label>
+                    <div class="teams-container" id="teamsContainer">
+                        <div style="text-align: center; grid-column: 1/-1; padding: 20px; color: #757575;">
+                            <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                            <p>Select a round to load teams</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-container">
+                <button id="loadTeamsBtn" class="primary-btn">
+                    <i class="fas fa-download"></i> Load Teams
+                    <span id="loadLoader" class="loader" style="display: none;"></span>
+                </button>
+                <button id="generateFixturesBtn" class="primary-btn" disabled>
+                    <i class="fas fa-calendar-alt"></i> Generate Fixtures
+                </button>
+            </div>
+        </div>
+        
+        <div class="card" id="fixturesCard" style="display: none;">
+            <div class="round-header">
+                <div class="round-icon">
+                    <i class="fas fa-futbol"></i>
+                </div>
+                <div class="round-name" id="roundName">Round Fixtures</div>
+            </div>
+            
+            <div class="knockout-stage" id="fixturesContainer">
+                <!-- Fixtures will be generated here -->
+            </div>
+            
+            <div class="info-panel">
+                <div class="info-item">
+                    <div class="info-label">Round Type</div>
+                    <div id="roundTypeInfo">Two-legged</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Total Matches</div>
+                    <div id="totalMatchesInfo">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Teams</div>
+                    <div id="teamsCountInfo">0</div>
+                </div>
+            </div>
+            
+            <div class="button-container" style="margin-top: 30px;">
+                <button id="saveFixturesBtn" class="primary-btn">
+                    <i class="fas fa-save"></i> Save All Fixtures
+                    <span id="saveLoader" class="loader" style="display: none;"></span>
+                </button>
+                <button id="resetBtn" class="secondary-btn">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+        </div>
+        
+        <div class="status-container" id="statusMessage" style="display: none;"></div>
+        
+        <footer>
+            <p>Gombe Football Association &copy; 2023 | Warriors Cup Tournament</p>
+            <p>Knockout Stage Fixture Generator - Commissioner Access</p>
+        </footer>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // DOM elements
+        const roundSelect = document.getElementById('roundSelect');
+        const teamsContainer = document.getElementById('teamsContainer');
+        const fixturesCard = document.getElementById('fixturesCard');
+        const fixturesContainer = document.getElementById('fixturesContainer');
+        const loadTeamsBtn = document.getElementById('loadTeamsBtn');
+        const generateFixturesBtn = document.getElementById('generateFixturesBtn');
+        const saveFixturesBtn = document.getElementById('saveFixturesBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const loadLoader = document.getElementById('loadLoader');
+        const saveLoader = document.getElementById('saveLoader');
+        const roundName = document.getElementById('roundName');
+        const roundTypeInfo = document.getElementById('roundTypeInfo');
+        const totalMatchesInfo = document.getElementById('totalMatchesInfo');
+        const teamsCountInfo = document.getElementById('teamsCountInfo');
+        
+        // App state
+        let selectedRound = '';
+        let teams = [];
+        let fixtures = [];
+        let commissioners = [];
+        
+        // Event listeners
+        loadTeamsBtn.addEventListener('click', loadTeamsForRound);
+        generateFixturesBtn.addEventListener('click', generateFixtures);
+        saveFixturesBtn.addEventListener('click', saveFixtures);
+        resetBtn.addEventListener('click', resetSelection);
+        
+        // Load teams and commissioners for selected round
+        async function loadTeamsForRound() {
+            selectedRound = roundSelect.value;
+            
+            if (!selectedRound) {
+                showStatus('Please select a knockout round', 'error');
+                return;
+            }
+            
+            try {
+                // Show loading state
+                loadLoader.style.display = 'inline-block';
+                loadTeamsBtn.disabled = true;
+                
+                // Get round document from Firestore
+                const roundDoc = await db.collection('GombeWorriorsCup')
+                    .doc(selectedRound)
+                    .get();
+                
+                if (!roundDoc.exists) {
+                    throw new Error(`No teams found for ${formatRoundName(selectedRound)}`);
+                }
+                
+                const roundData = roundDoc.data();
+                
+                // Extract teams based on round type
+                if (selectedRound === 'RoundOf16') {
+                    // RoundOf16 has 'qualifiers' array with team objects
+                    teams = roundData.qualifiers.map(q => q.team);
+                } else if (selectedRound === 'quarterfinals') {
+                    // Quarterfinals has 'quarterfinalists' array with team objects
+                    teams = roundData.quarterfinalists.map(q => q.team);
+                } else if (selectedRound === 'semifinals') {
+                    // Semifinals has 'semifinalists' array with team objects
+                    teams = roundData.semifinalists.map(s => s.team);
+                } else if (selectedRound === 'final') {
+                    // Final has 'finalists' array with team objects
+                    teams = roundData.finalists.map(f => f.team);
+                } else {
+                    throw new Error('Invalid round selected');
+                }
+                
+                // Load all commissioners from Firestore
+                const commissionersSnapshot = await db.collection('MatchCommissioners').get();
+                commissioners = commissionersSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                // Validate team count for the round
+                const expectedCount = getExpectedTeamCount(selectedRound);
+                if (teams.length !== expectedCount) {
+                    throw new Error(`${formatRoundName(selectedRound)} requires exactly ${expectedCount} teams, found ${teams.length}`);
+                }
+                
+                // Render teams
+                renderTeams();
+                
+                // Enable generate button
+                generateFixturesBtn.disabled = false;
+                
+                showStatus(`Loaded ${teams.length} teams and ${commissioners.length} commissioners for ${formatRoundName(selectedRound)}`, 'success');
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+                teamsContainer.innerHTML = `<div class="error">${error.message}</div>`;
+            } finally {
+                // Reset button state
+                loadLoader.style.display = 'none';
+                loadTeamsBtn.disabled = false;
+            }
+        }
+        
+        // Format round name for display
+        function formatRoundName(roundId) {
+            const names = {
+                'RoundOf16': 'Round of 16',
+                'quarterfinals': 'Quarterfinals',
+                'semifinals': 'Semifinals',
+                'final': 'Final'
+            };
+            return names[roundId] || roundId;
+        }
+        
+        // Get expected team count for each round
+        function getExpectedTeamCount(roundId) {
+            const counts = {
+                'RoundOf16': 16,
+                'quarterfinals': 8,
+                'semifinals': 4,
+                'final': 2
+            };
+            return counts[roundId] || 0;
+        }
+        
+        // Render teams in the UI
+        function renderTeams() {
+            if (teams.length === 0) {
+                teamsContainer.innerHTML = '<div class="error">No teams found in this round</div>';
+                return;
+            }
+            
+            teamsContainer.innerHTML = '';
+            teams.forEach((team, index) => {
+                const teamCard = document.createElement('div');
+                teamCard.className = 'team-card';
+                teamCard.innerHTML = `
+                    <div class="team-badge">${index + 1}</div>
+                    <div>
+                        <div class="team-name">${team}</div>
+                        <div style="font-size: 0.9rem; color: #757575;">Qualified Team</div>
+                    </div>
+                `;
+                teamsContainer.appendChild(teamCard);
+            });
+        }
+        
+        // Generate fixtures for the round
+        function generateFixtures() {
+            if (teams.length < 2) {
+                showStatus('Need at least 2 teams to generate fixtures', 'error');
+                return;
+            }
+            
+            // Clear previous fixtures
+            fixturesContainer.innerHTML = '';
+            fixtures = [];
+            
+            // Determine if it's the final (single match)
+            const isFinal = selectedRound === 'final';
+            
+            // Create fixtures based on round type
+            let matchNumber = 1;
+            
+            if (isFinal) {
+                // Final - only one match
+                if (teams.length !== 2) {
+                    showStatus('Final requires exactly 2 teams', 'error');
+                    return;
+                }
+                
+                const fixture = {
+                    id: `FWMatch${matchNumber.toString().padStart(2, '0')}`,
+                    homeTeam: teams[0],
+                    awayTeam: teams[1],
+                    date: '',
+                    time: '19:00',
+                    commissioner: '',
+                    isFinal: true
+                };
+                
+                fixtures.push(fixture);
+                renderMatchCard(fixture, matchNumber);
+                roundTypeInfo.textContent = "Single Match";
+            } else {
+                // Other knockout rounds (two-legged)
+                roundTypeInfo.textContent = "Two-legged";
+                for (let i = 0; i < teams.length; i += 2) {
+                    if (i + 1 >= teams.length) break;
+                    
+                    // Create two fixtures (home and away legs)
+                    const fixture1 = {
+                        id: `${getRoundPrefix()}Match${matchNumber.toString().padStart(2, '0')}-1`,
+                        homeTeam: teams[i],
+                        awayTeam: teams[i + 1],
+                        date: '',
+                        time: '19:00',
+                        commissioner: '',
+                        leg: 1
+                    };
+                    
+                    const fixture2 = {
+                        id: `${getRoundPrefix()}Match${matchNumber.toString().padStart(2, '0')}-2`,
+                        homeTeam: teams[i + 1],
+                        awayTeam: teams[i],
+                        date: '',
+                        time: '19:00',
+                        commissioner: '',
+                        leg: 2
+                    };
+                    
+                    fixtures.push(fixture1);
+                    fixtures.push(fixture2);
+                    
+                    // Render match pair card
+                    renderMatchPairCard(fixture1, fixture2, matchNumber);
+                    matchNumber++;
+                }
+            }
+            
+            // Update round UI
+            roundName.textContent = `${formatRoundName(selectedRound)} Fixtures`;
+            fixturesCard.style.display = 'block';
+            totalMatchesInfo.textContent = fixtures.length;
+            teamsCountInfo.textContent = teams.length;
+            
+            // Add event listeners for commissioner validation
+            document.querySelectorAll('.date-input, .time-input, .commissioner-select').forEach(input => {
+                input.addEventListener('change', validateCommissionerAssignment);
+            });
+            
+            // Add event listeners to save buttons
+            document.querySelectorAll('.save-match-btn').forEach(btn => {
+                btn.addEventListener('click', saveSingleFixture);
+            });
+            
+            // Scroll to fixtures
+            fixturesCard.scrollIntoView({ behavior: 'smooth' });
+            
+            showStatus(`Generated ${fixtures.length} ${isFinal ? 'match' : 'fixtures'} for ${formatRoundName(selectedRound)}`, 'success');
+        }
+        
+        // Get round prefix for match IDs
+        function getRoundPrefix() {
+            const prefixes = {
+                'RoundOf16': 'R16CH',
+                'quarterfinals': 'QCH',
+                'semifinals': 'SCH',
+                'final': 'FCH'
+            };
+            return prefixes[selectedRound] || selectedRound.charAt(0) + 'CH';
+        }
+        
+        // Render a match card for the final
+        function renderMatchCard(fixture, matchNum) {
+            const matchCard = document.createElement('div');
+            matchCard.className = 'match-card';
+            matchCard.innerHTML = `
+                <div class="match-header">
+                    <div class="match-id">Match ${matchNum}</div>
+                    <div style="font-weight:500;color:#1b5e20;">FINAL</div>
+                </div>
+                <div class="team-row">
+                    <div class="team-name">${fixture.homeTeam}</div>
+                    <div class="vs-text">VS</div>
+                    <div class="team-name">${fixture.awayTeam}</div>
+                </div>
+                <div class="stadium">Gombe Central Stadium</div>
+                <div class="form-group" style="margin-top:20px;">
+                    <label><i class="fas fa-calendar-day"></i> Match Date & Time:</label>
+                    <div class="date-time-input">
+                        <input type="date" class="date-input" data-id="${fixture.id}" value="${fixture.date}">
+                        <input type="time" class="time-input" data-id="${fixture.id}" value="${fixture.time}">
+                    </div>
+                </div>
+                <div class="commissioner-field">
+                    <label><i class="fas fa-user-tie"></i> Match Commissioner:</label>
+                    <select class="commissioner-select" data-id="${fixture.id}">
+                        <option value="">Select Commissioner</option>
+                        ${commissioners.map(comm => 
+                            `<option value="${comm.id}">${comm.name} (${comm.psn})</option>`
+                        ).join('')}
+                    </select>
+                    <div class="commissioner-error" data-id="${fixture.id}" style="color: #d32f2f; font-size: 0.8rem; display: none;"></div>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button class="save-match-btn secondary-btn" data-id="${fixture.id}" style="padding: 8px 12px; font-size: 0.9rem;">
+                        <i class="fas fa-save"></i> Save Match
+                    </button>
+                </div>
+            `;
+            fixturesContainer.appendChild(matchCard);
+        }
+        
+        // Render a match pair card for two-legged fixtures
+        function renderMatchPairCard(fixture1, fixture2, matchNum) {
+            const matchCard = document.createElement('div');
+            matchCard.className = 'match-card';
+            matchCard.innerHTML = `
+                <div class="match-header">
+                    <div class="match-id">Match ${matchNum}</div>
+                    <div style="font-weight:500;color:#1b5e20;">${getRoundPrefix().replace('CH','')}${matchNum}</div>
+                </div>
+                
+                <div style="margin-bottom:20px;">
+                    <div style="font-weight:500; margin-bottom:10px; color:#2e7d32;">First Leg</div>
+                    <div class="team-row">
+                        <div class="team-name">${fixture1.homeTeam}</div>
+                        <div class="vs-text">VS</div>
+                        <div class="team-name">${fixture1.awayTeam}</div>
+                    </div>
+                    <div class="stadium">Home Stadium</div>
+                    <div class="form-group" style="margin-top:15px;">
+                        <label><i class="fas fa-calendar-day"></i> Date & Time:</label>
+                        <div class="date-time-input">
+                            <input type="date" class="date-input" data-id="${fixture1.id}" value="${fixture1.date}">
+                            <input type="time" class="time-input" data-id="${fixture1.id}" value="${fixture1.time}">
+                        </div>
+                    </div>
+                    <div class="commissioner-field">
+                        <label><i class="fas fa-user-tie"></i> Commissioner:</label>
+                        <select class="commissioner-select" data-id="${fixture1.id}">
+                            <option value="">Select Commissioner</option>
+                            ${commissioners.map(comm => 
+                                `<option value="${comm.id}">${comm.name} (${comm.psn})</option>`
+                            ).join('')}
+                        </select>
+                        <div class="commissioner-error" data-id="${fixture1.id}" style="color: #d32f2f; font-size: 0.8rem; display: none;"></div>
+                    </div>
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button class="save-match-btn secondary-btn" data-id="${fixture1.id}" style="padding: 8px 12px; font-size: 0.9rem;">
+                            <i class="fas fa-save"></i> Save Leg 1
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <div style="font-weight:500; margin-bottom:10px; color:#2e7d32;">Second Leg</div>
+                    <div class="team-row">
+                        <div class="team-name">${fixture2.homeTeam}</div>
+                        <div class="vs-text">VS</div>
+                        <div class="team-name">${fixture2.awayTeam}</div>
+                    </div>
+                    <div class="stadium">Home Stadium</div>
+                    <div class="form-group" style="margin-top:15px;">
+                        <label><i class="fas fa-calendar-day"></i> Date & Time:</label>
+                        <div class="date-time-input">
+                            <input type="date" class="date-input" data-id="${fixture2.id}" value="${fixture2.date}">
+                            <input type="time" class="time-input" data-id="${fixture2.id}" value="${fixture2.time}">
+                        </div>
+                    </div>
+                    <div class="commissioner-field">
+                        <label><i class="fas fa-user-tie"></i> Commissioner:</label>
+                        <select class="commissioner-select" data-id="${fixture2.id}">
+                            <option value="">Select Commissioner</option>
+                            ${commissioners.map(comm => 
+                                `<option value="${comm.id}">${comm.name} (${comm.psn})</option>`
+                            ).join('')}
+                        </select>
+                        <div class="commissioner-error" data-id="${fixture2.id}" style="color: #d32f2f; font-size: 0.8rem; display: none;"></div>
+                    </div>
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button class="save-match-btn secondary-btn" data-id="${fixture2.id}" style="padding: 8px 12px; font-size: 0.9rem;">
+                            <i class="fas fa-save"></i> Save Leg 2
+                        </button>
+                    </div>
+                </div>
+            `;
+            fixturesContainer.appendChild(matchCard);
+        }
+        
+        // Validate commissioner assignment
+        function validateCommissionerAssignment(event) {
+            const changedElement = event.target;
+            const fixtureId = changedElement.dataset.id;
+            const currentFixture = fixtures.find(f => f.id === fixtureId);
+            
+            if (!currentFixture) return;
+            
+            // Update current fixture values
+            if (changedElement.classList.contains('date-input')) {
+                currentFixture.date = changedElement.value;
+            } else if (changedElement.classList.contains('time-input')) {
+                currentFixture.time = changedElement.value;
+            } else if (changedElement.classList.contains('commissioner-select')) {
+                currentFixture.commissioner = changedElement.value;
+            }
+            
+            // Only validate if we have all required fields
+            if (!currentFixture.date || !currentFixture.time || !currentFixture.commissioner) {
+                return;
+            }
+            
+            // Find all fixtures with same date/time
+            const conflictingFixtures = fixtures.filter(f => 
+                f.id !== fixtureId && 
+                f.date === currentFixture.date && 
+                f.time === currentFixture.time &&
+                f.commissioner === currentFixture.commissioner
+            );
+            
+            const errorElement = document.querySelector(`.commissioner-error[data-id="${fixtureId}"]`);
+            
+            if (conflictingFixtures.length > 0) {
+                // Show error
+                errorElement.textContent = `This commissioner is already assigned to another match at this time`;
+                errorElement.style.display = 'block';
+                changedElement.style.border = '2px solid #d32f2f';
+                
+                // Reset the selection
+                if (changedElement.classList.contains('commissioner-select')) {
+                    changedElement.value = '';
+                    currentFixture.commissioner = '';
+                }
+            } else {
+                // Clear error
+                errorElement.style.display = 'none';
+                changedElement.style.border = '';
+            }
+        }
+        
+        // Save single fixture to Firebase
+        async function saveSingleFixture(event) {
+            const fixtureId = event.target.dataset.id;
+            const fixture = fixtures.find(f => f.id === fixtureId);
+            
+            if (!fixture) return;
+            
+            // Get current values from inputs
+            const dateInput = document.querySelector(`.date-input[data-id="${fixtureId}"]`);
+            const timeInput = document.querySelector(`.time-input[data-id="${fixtureId}"]`);
+            const commissionerSelect = document.querySelector(`.commissioner-select[data-id="${fixtureId}"]`);
+            
+            // Update fixture object
+            fixture.date = dateInput.value;
+            fixture.time = timeInput.value;
+            fixture.commissioner = commissionerSelect.value;
+            
+            // First validate inputs
+            if (!fixture.date) {
+                showStatus('Please set a date for this match', 'error');
+                dateInput.style.border = '2px solid #d32f2f';
+                return;
+            }
+            
+            if (!fixture.commissioner) {
+                showStatus('Please assign a commissioner to this match', 'error');
+                commissionerSelect.style.border = '2px solid #d32f2f';
+                return;
+            }
+            
+            // Then validate commissioner assignment
+            const conflictingFixtures = fixtures.filter(f => 
+                f.id !== fixtureId && 
+                f.date === fixture.date && 
+                f.time === fixture.time &&
+                f.commissioner === fixture.commissioner
+            );
+            
+            if (conflictingFixtures.length > 0) {
+                const errorElement = document.querySelector(`.commissioner-error[data-id="${fixtureId}"]`);
+                errorElement.textContent = 'Cannot save: This commissioner is already assigned to another match at this time';
+                errorElement.style.display = 'block';
+                commissionerSelect.style.border = '2px solid #d32f2f';
+                return;
+            }
+            
+            // Show loading state on the button
+            const saveBtn = event.target;
+            const originalHTML = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving';
+            saveBtn.disabled = true;
+            
+            try {
+                // Determine season from match date
+                const matchDate = new Date(fixture.date);
+                const matchYear = matchDate.getFullYear();
+                const season = `Season${matchYear}-${(matchYear + 1).toString().slice(2)}`;
+                
+                // 1. Save the main fixtures document
+                const fixturesRef = db.collection('GombeWorriorsCup')
+                    .doc('fixtures')
+                    .collection(selectedRound)
+                    .doc('matches');
+                
+                await fixturesRef.set({
+                    round: selectedRound,
+                    roundName: formatRoundName(selectedRound),
+                    fixtures: fixtures,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                
+                // 2. Save team records
+                const batch = db.batch();
+                const currentTimestamp = new Date().toISOString();
+                
+                // Home team record
+                const homeTeamRef = db.collection("GombeWorriorsCupMatches")
+                    .doc(fixture.homeTeam)
+                    .collection(season)
+                    .doc(fixture.id);
+                
+                batch.set(homeTeamRef, {
+                    matchStatus: formatRoundName(selectedRound),
+                    round: selectedRound,
+                    date: fixture.date,
+                    time: fixture.time,
+                    opponent: fixture.awayTeam,
+                    venue: "home",
+                    goalConceded: 0,
+                    goalScored: 0,
+                    matchCompleted: false,
+                    points: 0,
+                    redCards: 0,
+                    yellowCards: 0,
+                    referee: "",
+                    scorers: [],
+                    assistBy: [],
+                    status: "scheduled",
+                    competitionType: "championscup",
+                    isKnockout: true,
+                    leg: fixture.leg || null,
+                    commissioner: fixture.commissioner,
+                    commissionerAssigned: true,
+                    commissionerAssignedAt: currentTimestamp
+                });
+                
+                // Away team record
+                const awayTeamRef = db.collection("GombeWorriorsCupMatches")
+                    .doc(fixture.awayTeam)
+                    .collection(season)
+                    .doc(fixture.id);
+                
+                batch.set(awayTeamRef, {
+                    matchStatus: formatRoundName(selectedRound),
+                    round: selectedRound,
+                    date: fixture.date,
+                    time: fixture.time,
+                    opponent: fixture.homeTeam,
+                    venue: "away",
+                    goalConceded: 0,
+                    goalScored: 0,
+                    matchCompleted: false,
+                    points: 0,
+                    redCards: 0,
+                    yellowCards: 0,
+                    referee: "",
+                    scorers: [],
+                    assistBy: [],
+                    status: "scheduled",
+                    competitionType: "championscup",
+                    isKnockout: true,
+                    leg: fixture.leg || null,
+                    commissioner: fixture.commissioner,
+                    commissionerAssigned: true,
+                    commissionerAssignedAt: currentTimestamp
+                });
+                
+                // Save commissioner assignment
+                if (fixture.commissioner) {
+                    const commissionerRef = db.collection('GombeCommissionerAssignments')
+                        .doc(fixture.commissioner);
+                        
+                    const assignmentData = {
+                        matches: firebase.firestore.FieldValue.arrayUnion({
+                            matchId: fixture.id,
+                            matchType: "championscup",
+                            round: selectedRound,
+                            homeTeam: fixture.homeTeam,
+                            awayTeam: fixture.awayTeam,
+                            date: fixture.date,
+                            time: fixture.time,
+                            assignedAt: currentTimestamp
+                        })
+                    };
+                    
+                    batch.set(commissionerRef, { exists: true }, { merge: true });
+                    batch.set(
+                        commissionerRef.collection(season).doc('assignments'),
+                        assignmentData,
+                        { merge: true }
+                    );
+                }
+                
+                await batch.commit();
+                
+                showStatus(`Match ${fixture.id} saved successfully!`, 'success');
+                
+            } catch (error) {
+                console.error('Error saving single fixture:', error);
+                showStatus(`Error saving match: ${error.message}`, 'error');
+            } finally {
+                // Reset button state
+                saveBtn.innerHTML = originalHTML;
+                saveBtn.disabled = false;
+            }
+        }
+        
+        // Save all fixtures to Firebase
+        async function saveFixtures() {
+            try {
+                // Update fixture dates, times and commissioners from inputs
+                const dateInputs = document.querySelectorAll('.date-input');
+                const timeInputs = document.querySelectorAll('.time-input');
+                const commissionerSelects = document.querySelectorAll('.commissioner-select');
+                
+                // Validate inputs
+                let allDatesSet = true;
+                let allCommissionersSet = true;
+                
+                dateInputs.forEach(input => {
+                    const fixtureId = input.dataset.id;
+                    const fixture = fixtures.find(f => f.id === fixtureId);
+                    
+                    if (fixture) {
+                        fixture.date = input.value;
+                        
+                        if (!fixture.date) {
+                            allDatesSet = false;
+                            input.style.border = '2px solid #d32f2f';
+                        } else {
+                            input.style.border = '';
+                        }
+                    }
+                });
+                
+                timeInputs.forEach(input => {
+                    const fixtureId = input.dataset.id;
+                    const fixture = fixtures.find(f => f.id === fixtureId);
+                    
+                    if (fixture) {
+                        fixture.time = input.value || '19:00';
+                    }
+                });
+                
+                commissionerSelects.forEach(select => {
+                    const fixtureId = select.dataset.id;
+                    const fixture = fixtures.find(f => f.id === fixtureId);
+                    
+                    if (fixture) {
+                        fixture.commissioner = select.value;
+                        
+                        if (!fixture.commissioner) {
+                            allCommissionersSet = false;
+                            select.style.border = '2px solid #d32f2f';
+                        } else {
+                            select.style.border = '';
+                        }
+                    }
+                });
+                
+                if (!allDatesSet) {
+                    showStatus('Please set dates for all fixtures', 'error');
+                    return;
+                }
+                
+                if (!allCommissionersSet) {
+                    showStatus('Please assign commissioners to all fixtures', 'error');
+                    return;
+                }
+                
+                // Additional validation for commissioner assignments
+                const commissionerAssignments = {};
+                let hasConflict = false;
+                
+                fixtures.forEach(fixture => {
+                    if (!fixture.date || !fixture.time || !fixture.commissioner) return;
+                    
+                    const timeSlot = `${fixture.date}_${fixture.time}`;
+                    
+                    if (!commissionerAssignments[timeSlot]) {
+                        commissionerAssignments[timeSlot] = new Set();
+                    }
+                    
+                    if (commissionerAssignments[timeSlot].has(fixture.commissioner)) {
+                        hasConflict = true;
+                        const select = document.querySelector(`.commissioner-select[data-id="${fixture.id}"]`);
+                        select.style.border = '2px solid #d32f2f';
+                        const errorElement = document.querySelector(`.commissioner-error[data-id="${fixture.id}"]`);
+                        errorElement.textContent = 'This commissioner is already assigned to another match at this time';
+                        errorElement.style.display = 'block';
+                    } else {
+                        commissionerAssignments[timeSlot].add(fixture.commissioner);
+                    }
+                });
+                
+                if (hasConflict) {
+                    showStatus('Cannot save: Some commissioners are assigned to multiple matches at the same time', 'error');
+                    return;
+                }
+                
+                // Show loading state
+                saveLoader.style.display = 'inline-block';
+                saveFixturesBtn.disabled = true;
+                
+                // 1. Save the main fixtures document
+                const fixturesRef = db.collection('GombeWorriorsCup')
+                    .doc('fixtures')
+                    .collection(selectedRound)
+                    .doc('matches');
+                
+                await fixturesRef.set({
+                    round: selectedRound,
+                    roundName: formatRoundName(selectedRound),
+                    fixtures: fixtures,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // 2. Save individual match records and commissioner assignments
+                const batch = db.batch();
+                const currentYear = new Date().getFullYear();
+                const season = `Season${currentYear}-${(currentYear + 1).toString().slice(2)}`;
+                const currentTimestamp = new Date().toISOString();
+                
+                for (const fixture of fixtures) {
+                    if (!fixture.date) continue;
+                    
+                    // Home team record
+                    const homeTeamRef = db.collection("GombeWorriorsCupMatches")
+                        .doc(fixture.homeTeam)
+                        .collection(season)
+                        .doc(fixture.id);
+                    
+                    batch.set(homeTeamRef, {
+                        matchStatus: formatRoundName(selectedRound),
+                        round: selectedRound,
+                        date: fixture.date,
+                        time: fixture.time,
+                        opponent: fixture.awayTeam,
+                        venue: "home",
+                        goalConceded: 0,
+                        goalScored: 0,
+                        matchCompleted: false,
+                        points: 0,
+                        redCards: 0,
+                        yellowCards: 0,
+                        referee: "",
+                        scorers: [],
+                        assistBy: [],
+                        status: "scheduled",
+                        competitionType: "championscup",
+                        isKnockout: true,
+                        leg: fixture.leg || null,
+                        commissioner: fixture.commissioner,
+                        commissionerAssigned: !!fixture.commissioner,
+                        commissionerAssignedAt: currentTimestamp
+                    });
+                    
+                    // Away team record
+                    const awayTeamRef = db.collection("GombeWorriorsCupMatches")
+                        .doc(fixture.awayTeam)
+                        .collection(season)
+                        .doc(fixture.id);
+                    
+                    batch.set(awayTeamRef, {
+                        matchStatus: formatRoundName(selectedRound),
+                        round: selectedRound,
+                        date: fixture.date,
+                        time: fixture.time,
+                        opponent: fixture.homeTeam,
+                        venue: "away",
+                        goalConceded: 0,
+                        goalScored: 0,
+                        matchCompleted: false,
+                        points: 0,
+                        redCards: 0,
+                        yellowCards: 0,
+                        referee: "",
+                        scorers: [],
+                        assistBy: [],
+                        status: "scheduled",
+                        competitionType: "championscup",
+                        isKnockout: true,
+                        leg: fixture.leg || null,
+                        commissioner: fixture.commissioner,
+                        commissionerAssigned: !!fixture.commissioner,
+                        commissionerAssignedAt: currentTimestamp
+                    });
+                    
+                    // Save commissioner assignment if commissioner is selected
+                    if (fixture.commissioner) {
+                        const commissionerRef = db.collection('GombeCommissionerAssignments')
+                            .doc(fixture.commissioner);
+                            
+                        const assignmentData = {
+                            matches: firebase.firestore.FieldValue.arrayUnion({
+                                matchId: fixture.id,
+                                matchType: "championscup",
+                                round: selectedRound,
+                                homeTeam: fixture.homeTeam,
+                                awayTeam: fixture.awayTeam,
+                                date: fixture.date,
+                                time: fixture.time,
+                                assignedAt: currentTimestamp
+                            })
+                        };
+                        
+                        batch.set(commissionerRef, { exists: true }, { merge: true });
+                        batch.set(
+                            commissionerRef.collection(season).doc('assignments'),
+                            assignmentData,
+                            { merge: true }
+                        );
+                    }
+                }
+                
+                // Commit all writes at once
+                await batch.commit();
+                
+                showStatus(`${formatRoundName(selectedRound)} fixtures saved successfully with commissioner assignments!`, 'success');
+                
+            } catch (error) {
+                console.error('Error saving fixtures:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+            } finally {
+                // Reset button state
+                saveLoader.style.display = 'none';
+                saveFixturesBtn.disabled = false;
+            }
+        }
+        
+        // Reset selection
+        function resetSelection() {
+            roundSelect.value = '';
+            teams = [];
+            fixtures = [];
+            commissioners = [];
+            
+            teamsContainer.innerHTML = `
+                <div style="text-align: center; grid-column: 1/-1; padding: 20px; color: #757575;">
+                    <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                    <p>Select a round to load teams</p>
+                </div>
+            `;
+            
+            fixturesCard.style.display = 'none';
+            fixturesContainer.innerHTML = '';
+            statusMessage.style.display = 'none';
+            
+            generateFixturesBtn.disabled = true;
+            totalMatchesInfo.textContent = "0";
+            teamsCountInfo.textContent = "0";
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.style.display = 'block';
+            statusMessage.innerHTML = `
+                <div class="${type}">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            
+            // Auto hide after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

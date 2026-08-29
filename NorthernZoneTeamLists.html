@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>League Zones</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball",
+            storageBucket: "gombefootball.firebasestorage.app",
+            messagingSenderId: "120731655706",
+            appId: "1:120731655706:web:9c99d6831aca3df563bba3",
+            measurementId: "G-8SCVPBSKPG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function fetchData() {
+            const docRef = doc(db, "leaguezones", "northern-zone"); // lowercase now!
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                console.log("Data found:", docSnap.data()); // Debugging
+                const teamsList = document.getElementById("teams-list");
+
+                docSnap.data().teams.forEach((team, index) => {
+    const listItem = document.createElement("li");
+    
+    // Remove leading numbers using regex
+    listItem.textContent = team.replace(/^\d+\.\s*/, ""); 
+    
+    teamsList.appendChild(listItem);
+});
+            } else {
+                console.log("No data found!"); // Debugging
+                document.getElementById("teams-list").innerHTML = "<p>No data found!</p>";
+            }
+        }
+
+        // Ensure the function runs when the page loads
+        document.addEventListener("DOMContentLoaded", fetchData);
+         
+    </script>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>Northern Zone</h1>
+        <ol id="teams-list"></ol>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe Teams Registration Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .print-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .print-container {
+                box-shadow: none;
+                padding: 20px 30px;
+                border-radius: 0;
+                max-width: 100%;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            .form-control {
+                border: none !important;
+                border-bottom: 1px solid #333 !important;
+                background: transparent !important;
+                padding: 5px 0 !important;
+            }
+            
+            select.form-control {
+                -webkit-appearance: none;
+                appearance: none;
+                background: none !important;
+            }
+            
+            .print-header {
+                border-bottom: 3px double #333;
+                padding-bottom: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .zone-map {
+                page-break-inside: avoid;
+            }
+            
+            .zone-card {
+                break-inside: avoid;
+            }
+            
+            .watermark {
+                display: block !important;
+            }
+            
+            .action-buttons {
+                display: none !important;
+            }
+            
+            .save-btn {
+                display: none !important;
+            }
+            
+            .official-use-only {
+                display: none !important;
+            }
+        }
+
+        /* Watermark for print */
+        .watermark {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 80px;
+            color: rgba(0,0,0,0.05);
+            pointer-events: none;
+            z-index: 0;
+            font-weight: bold;
+            letter-spacing: 10px;
+        }
+
+        /* Header Styles */
+        .print-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .print-header h1 {
+            font-size: 2.2rem;
+            color: #1a3a5c;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .print-header .subtitle {
+            font-size: 1.1rem;
+            color: #555;
+            border-top: 2px solid #1a3a5c;
+            border-bottom: 2px solid #1a3a5c;
+            display: inline-block;
+            padding: 5px 20px;
+            margin-top: 5px;
+        }
+
+        .print-header .gov-badge {
+            display: inline-block;
+            background: #1a3a5c;
+            color: white;
+            padding: 4px 20px;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            margin-top: 8px;
+        }
+
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+        .section-title {
+            background: #1a3a5c;
+            color: white;
+            padding: 10px 18px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-radius: 4px;
+        }
+
+        .section-title i {
+            font-size: 1.2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px 40px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #1a3a5c;
+            margin-bottom: 6px;
+        }
+
+        .form-group label .required {
+            color: #c0392b;
+            margin-left: 2px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            background: white;
+            font-size: 1rem;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #1a3a5c;
+            box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.1);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 18px;
+            padding-right: 40px;
+        }
+
+        .form-control[readonly] {
+            background: #f8f9fa;
+            border-style: dashed;
+        }
+
+        .form-control.is-invalid {
+            border-color: #e74c3c;
+        }
+
+        .form-control.is-valid {
+            border-color: #27ae60;
+        }
+
+        .form-control:disabled {
+            background: #e9ecef;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #1a3a5c;
+            padding: 15px 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h4 {
+            color: #1a3a5c;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .info-box ul li {
+            padding: 4px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .info-box ul li:before {
+            content: "✓";
+            color: #27ae60;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Signature Section */
+        .signature-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 10px;
+        }
+
+        .signature-line {
+            border-top: 1px solid #333;
+            padding-top: 5px;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #555;
+            text-align: center;
+        }
+
+        /* Zone Map */
+        .zone-map {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .zone-card {
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background: #fafafa;
+        }
+
+        .zone-card h4 {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            color: #1a3a5c;
+        }
+
+        .zone-card p {
+            font-size: 0.85rem;
+            color: #555;
+            margin: 3px 0;
+        }
+
+        .zone-card .zone-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .zone-badge.northern { background: #3498db; }
+        .zone-badge.central { background: #2ecc71; }
+        .zone-badge.eastern { background: #e67e22; }
+        .zone-badge.southern { background: #9b59b6; }
+
+        /* Footer */
+        .print-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .print-footer .footer-section {
+            text-align: center;
+        }
+
+        .print-footer .footer-section strong {
+            color: #1a3a5c;
+        }
+
+        /* Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-print {
+            background: #1a3a5c;
+            color: white;
+        }
+
+        .btn-print:hover {
+            background: #2c5a7c;
+            transform: translateY(-2px);
+        }
+
+        .btn-download {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-download:hover {
+            background: #2ecc71;
+            transform: translateY(-2px);
+        }
+
+        .btn-save {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 6px;
+            border: 1px solid #c3e6cb;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        /* Official Use Only - Disabled for public */
+        .official-use-only {
+            opacity: 0.6;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .official-use-only .form-control {
+            background: #f8f9fa;
+        }
+
+        .official-use-only .section-title {
+            background: #95a5a6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .print-container {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .signature-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .zone-map {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .print-footer {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .zone-map {
+                grid-template-columns: 1fr;
+            }
+
+            .print-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            setDoc,
+            doc,
+            arrayUnion,
+            serverTimestamp,
+            runTransaction,
+            getDoc,
+            query,
+            where,
+            getDocs
+        } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            databaseURL: "https://gombefootball-default-rtdb.firebaseio.com",
+            projectId: "gombefootball",
+            storageBucket: "gombefootball.firebasestorage.app",
+            messagingSenderId: "120731655706",
+            appId: "1:120731655706:web:9c99d6831aca3df563bba3",
+            measurementId: "G-8SCVPBSKPG"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Make Firebase available to the main script
+        window.firebase = {
+            db,
+            collection,
+            addDoc,
+            setDoc,
+            doc,
+            arrayUnion,
+            serverTimestamp,
+            runTransaction,
+            getDoc,
+            query,
+            where,
+            getDocs
+        };
+        
+        // Start main application after Firebase is ready
+        document.addEventListener('DOMContentLoaded', main);
+    </script>
+</head>
+<body>
+    <!-- Watermark -->
+    <div class="watermark">GOMBE STATE</div>
+
+    <div class="print-container" id="printArea">
+        <!-- Header -->
+        <div class="print-header">
+            <div class="gov-badge">GOMBE FOOTBALL ECOSYSTEM</div>
+            <h1>Gombe Teams Registration Form</h1>
+            <div class="subtitle">Football Championship</div>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: #555;">
+                <i class="fas fa-calendar-alt"></i> Registration Period: September - January 2027
+            </p>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <h4><i class="fas fa-info-circle"></i> Digital Team Management System</h4>
+            <ul>
+                <li>Teams are allowed a maximum of <strong>33 players</strong>, minimum <strong>22 players</strong> of  in the system</li>
+                <li>No player can be registered for the same team twice</li>
+				<li>No one player can be registered for two or more teams</li>
+                <li>Each player must have a <strong>unique jersey number</strong> within the team</li>
+                <li>No two teams can have the same Coach/Manager at the same time</li>
+                <li>This system will digitalise your team management</li>
+            </ul>
+        </div>
+
+        <!-- Section 1: Team Information -->
+        <div class="form-section">
+            <div class="section-title">
+                <i class="fas fa-users"></i> SECTION A: TEAM INFORMATION
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Team Name <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="teamName" placeholder="Enter team name">
+                </div>
+
+                <div class="form-group">
+                    <label>Team Nickname / Alias</label>
+                    <input type="text" class="form-control" id="teamNickname" placeholder="e.g., The Eagles">
+                </div>
+
+                <div class="form-group">
+                    <label>Year Founded <span class="required">*</span></label>
+                    <input type="number" class="form-control" id="teamYear" min="1900" max="2025" placeholder="e.g., 1995">
+                </div>
+
+                <div class="form-group">
+                    <label>Team Colors</label>
+                    <input type="text" class="form-control" id="teamColors" placeholder="e.g., Green & White">
+                </div>
+
+                <div class="form-group">
+                    <label>Home Kit Color</label>
+                    <input type="text" class="form-control" id="homeKit" placeholder="Primary kit color">
+                </div>
+
+                <div class="form-group">
+                    <label>Away Kit Color</label>
+                    <input type="text" class="form-control" id="awayKit" placeholder="Secondary kit color">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Location -->
+        <div class="form-section">
+            <div class="section-title">
+                <i class="fas fa-map-marker-alt"></i> SECTION B: LOCATION DETAILS
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Local Government Area (LGA) <span class="required">*</span></label>
+                    <select class="form-control" id="teamLga" required>
+                        <option value="">-- Select LGA --</option>
+                        <option value="Akko">Akko</option>
+                        <option value="Balanga">Balanga</option>
+                        <option value="Billiri">Billiri</option>
+                        <option value="Dukku">Dukku</option>
+                        <option value="Funakaye">Funakaye</option>
+                        <option value="Gombe">Gombe</option>
+                        <option value="Kaltungo">Kaltungo</option>
+                        <option value="Kwami">Kwami</option>
+                        <option value="Nafada">Nafada</option>
+                        <option value="Shongom">Shongom</option>
+                        <option value="YamaltuDeba">Yamaltu/Deba</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Ward <span class="required">*</span></label>
+                    <select class="form-control" id="teamWard" required disabled>
+                        <option value="">-- Select ward --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Team Location / Address</label>
+                    <input type="text" class="form-control" id="teamLocation" placeholder="Full address or landmark">
+                </div>
+
+                <div class="form-group">
+                    <label>Zone (Auto-assigned based on LGA)</label>
+                    <input type="text" class="form-control" id="teamZone" readonly value="Select LGA first">
+                </div>
+            </div>
+
+            <!-- Zone Map -->
+            <div style="margin-top: 20px;">
+                <p style="font-weight: 600; color: #1a3a5c; margin-bottom: 10px;">
+                    <i class="fas fa-info-circle"></i> Zone Reference Map:
+                </p>
+                <div class="zone-map">
+                    <div class="zone-card">
+                        <h4><span class="zone-badge northern">Northern</span></h4>
+                        <p><strong>LGAs:</strong> Dukku, Funakaye, Nafada</p>
+                        <p style="font-size: 0.8rem;">Borders Yobe State</p>
+                    </div>
+                    <div class="zone-card">
+                        <h4><span class="zone-badge central">Central</span></h4>
+                        <p><strong>LGAs:</strong> Gombe, Akko, Kwami</p>
+                        <p style="font-size: 0.8rem;">Urban centers, state capital</p>
+                    </div>
+                    <div class="zone-card">
+                        <h4><span class="zone-badge eastern">Eastern</span></h4>
+                        <p><strong>LGAs:</strong> Yamaltu/Deba, Balanga</p>
+                        <p style="font-size: 0.8rem;">Gongola River basin</p>
+                    </div>
+                    <div class="zone-card">
+                        <h4><span class="zone-badge southern">Southern</span></h4>
+                        <p><strong>LGAs:</strong> Billiri, Kaltungo, Shongom</p>
+                        <p style="font-size: 0.8rem;">Mountainous terrain</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Team Management - Only Manager Phone -->
+        <div class="form-section">
+            <div class="section-title">
+                <i class="fas fa-phone"></i> SECTION C: CONTACT INFORMATION
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Manager / Coach Phone Number <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="managerPhone" placeholder="e.g., 080XXXXXXXX">
+                    <div class="form-hint">This number will be used for official communication and WhatsApp notifications</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Declaration -->
+        <div class="form-section">
+            <div class="section-title">
+                <i class="fas fa-handshake"></i> SECTION D: DECLARATION
+            </div>
+
+            <div style="background: #f8f9fa; padding: 20px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 20px;">
+                <p style="font-size: 0.95rem; line-height: 1.8;">
+                    <strong>Declaration:</strong> I hereby declare that all information provided in this registration form is 
+                    true and correct to the best of my knowledge. I understand that any false information may result in 
+                    disqualification from the Gombe State Football Championship. I agree to abide by the rules and regulations 
+                    of the competition.
+                </p>
+            </div>
+
+            <div class="signature-section">
+                <div>
+                    <div class="form-group">
+                        <label>Full Name <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="declarantName" placeholder="Declarant full name">
+                    </div>
+                    <div class="signature-line">Signature ____________________</div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Date <span class="required">*</span></label>
+                        <input type="date" class="form-control" id="declarantDate">
+                    </div>
+                    <div class="signature-line">Designation / Title ____________________</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Official Use Only - DISABLED for public -->
+        <div class="form-section official-use-only">
+            <div class="section-title" style="background: #95a5a6;">
+                <i class="fas fa-stamp"></i> FOR OFFICIAL USE ONLY
+            </div>
+            <div style="text-align: center; padding: 10px; background: #f8f9fa; border-radius: 4px; margin-bottom: 15px;">
+                <i class="fas fa-lock" style="color: #95a5a6;"></i>
+                <span style="color: #7f8c8d; margin-left: 8px;">This section is for commission use only</span>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Team ID (Assigned by Commission)</label>
+                    <input type="text" class="form-control" id="teamId" readonly placeholder="GT-_______" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Approval Status</label>
+                    <select class="form-control" id="approvalStatus" disabled>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Approved By</label>
+                    <input type="text" class="form-control" id="approvedBy" placeholder="Officer name" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Date Approved</label>
+                    <input type="date" class="form-control" id="approvedDate" disabled>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">
+            <i class="fas fa-check-circle" style="font-size: 1.5rem; color: #155724;"></i>
+            <h4 style="margin-top: 8px;">Registration Submitted Successfully!</h4>
+            <p>Your team registration has been saved and is pending approval.</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="print-footer">
+            <div class="footer-section">
+                <strong>Gombe Football Ecosystem</strong><br>
+               Private Youth & Sports Development<br>
+                Gombe, Nigeria
+            </div>
+            <div class="footer-section">
+                <strong>Contact</strong><br>
+                Tel: +234 9022 182 074<br>
+                Email: gombefootballecosystem@gmail.com
+            </div>
+            <div class="footer-section">
+                <strong>Registration No.</strong><br>
+                <span id="registrationNumber">GSF-2025-_____</span><br>
+                <span style="font-size: 0.8rem; color: #999;">(Official use only)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons no-print">
+        <button class="btn btn-save" id="saveBtn" onclick="saveForm()">
+            <i class="fas fa-save"></i> Save Draft
+        </button>
+        <button class="btn btn-print" onclick="window.print()">
+            <i class="fas fa-print"></i> Print Form
+        </button>
+        <button class="btn btn-download" onclick="downloadPDF()">
+            <i class="fas fa-file-pdf"></i> Download PDF
+        </button>
+    </div>
+
+    <script>
+        function main() {
+            console.log("DOM fully loaded and Firebase ready");
+            
+            // Complete Ward Data
+            const wardsData = {
+                Akko: ["Akko", "Garko", "Kalshingi", "Kashere", "Kumo Central", 
+                       "Kumo East", "Kumo North", "Kumo West", "Pindiga", "Tumu", "Tukulma"],
+                
+                Balanga: ["Bambam", "Bangu", "Dadiya", "Gelengu/Balanga", "Kindiyo", 
+                          "Kulani Degre", "Mwona", "Nyuwar", "Swa/Ref", "Talasse"],
+                
+                Billiri: ["Baganje North", "Baganje South", "Bare", "Billiri North", 
+                          "Billiri South", "Kalmai", "Tai", "Tanglang", "Todi", "Tudun Kwaya"],
+                
+                Dukku: ["Gombe Abba", "Hashidu", "Jamari", "Kunde", "Lafiya", 
+                        "Malala", "Waziri North", "Waziri South Central", "Wuro Tale", "Zange", "Zaure"],
+                
+                Funakaye: ["Ashaka/Magaba", "Bage", "Bajoga West", "Bajoga East", 
+                           "Bodor/Tilde", "Jillahi", "Kupto", "Ribadu", "Tongo", "Wawa"],
+                
+                Gombe: ["Ajiya", "Bajoga", "Bolari East", "Bolari West", "Dawaki", 
+                        "Herwagana", "Jeka Dafari", "Kumbiya Kumbiya", "Nasarawa", "Pantami", "Shamaki"],
+                
+                Kaltungo: ["Awak", "Bule/Kaltin", "Kaltungo West", "Kaltungo East", 
+                           "Kamo", "Tula Baule", "Tula Wange", "Tula Yiri", "Tungo", "Ture"],
+                
+                Kwami: ["Bojude", "Daban Fulani", "Doho", "Dukul", "Gandam", 
+                        "Jurara", "Komfulata", "Kwami", "Malam Sidi", "Malleri"],
+                
+                Nafada: ["Barwo/Nasarawo", "Barwo Winde", "Birin Bolewa", "Birin Fulani East", 
+                         "Birin Fulani West", "Gudukku", "Jigawa", "Nafada Central", "Nafada East", "Nafada West"],
+                
+                Shongom: ["Bangunji", "Boh", "Burak", "Filiya", "Gundale", 
+                          "Gwandum", "Kulishin", "Kushi", "Lalaipido", "Lapan"],
+                
+                YamaltuDeba: ["Deba", "Difa/Lubo/Kinafa", "Gwani Shinga", "Hilnah", 
+                              "Jalli North", "Jalli South", "Kanawa Wajari", "Kuri Lano", 
+                              "Kwandon/Liji", "Nono Kunwal", "Zambuk Kwali"]
+            };
+
+            // Zone Mapping
+            const zoneMap = {
+                'Dukku': 'Northern Zone',
+                'Funakaye': 'Northern Zone', 
+                'Nafada': 'Northern Zone',
+                'Gombe': 'Central Zone',
+                'Akko': 'Central Zone',
+                'Kwami': 'Central Zone',
+                'YamaltuDeba': 'Eastern Zone',
+                'Balanga': 'Eastern Zone',
+                'Billiri': 'Southern Zone',
+                'Kaltungo': 'Southern Zone',
+                'Shongom': 'Southern Zone'
+            };
+
+            // DOM Elements
+            const lgaSelect = document.getElementById('teamLga');
+            const wardSelect = document.getElementById('teamWard');
+            const zoneInput = document.getElementById('teamZone');
+
+            // LGA Change Handler
+            lgaSelect.addEventListener('change', function() {
+                const selectedLGA = this.value;
+                
+                // Reset and disable ward dropdown
+                wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+                wardSelect.disabled = !selectedLGA;
+                
+                // Update zone
+                zoneInput.value = zoneMap[selectedLGA] || '';
+                
+                // Visual feedback
+                if (selectedLGA) {
+                    this.classList.add('is-valid');
+                    this.classList.remove('is-invalid');
+                    
+                    // Populate wards
+                    if (wardsData[selectedLGA]) {
+                        wardsData[selectedLGA].forEach(ward => {
+                            const option = document.createElement('option');
+                            option.value = ward;
+                            option.textContent = ward;
+                            wardSelect.appendChild(option);
+                        });
+                    }
+                } else {
+                    this.classList.remove('is-valid');
+                }
+            });
+
+            // Ward Change Handler
+            wardSelect.addEventListener('change', function() {
+                if (this.value) {
+                    this.classList.add('is-valid');
+                    this.classList.remove('is-invalid');
+                } else {
+                    this.classList.remove('is-valid');
+                }
+            });
+
+            // Generate registration number
+            function generateRegNumber() {
+                const year = new Date().getFullYear();
+                const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+                document.getElementById('registrationNumber').textContent = `GSF-${year}-${random}`;
+            }
+
+            // Auto-generate registration number on load
+            generateRegNumber();
+
+            // Make save function globally accessible
+            window.saveForm = saveForm;
+        }
+
+        // Save Form Function
+        async function saveForm() {
+            const saveBtn = document.getElementById('saveBtn');
+            const successMsg = document.getElementById('successMessage');
+            
+            // Disable button during save
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            
+            try {
+                // Get all form values
+                const teamName = document.getElementById('teamName').value.trim();
+                const teamNickname = document.getElementById('teamNickname').value.trim();
+                const teamYear = document.getElementById('teamYear').value;
+                const teamColors = document.getElementById('teamColors').value.trim();
+                const homeKit = document.getElementById('homeKit').value.trim();
+                const awayKit = document.getElementById('awayKit').value.trim();
+                const lga = document.getElementById('teamLga').value;
+                const ward = document.getElementById('teamWard').value;
+                const teamLocation = document.getElementById('teamLocation').value.trim();
+                const zone = document.getElementById('teamZone').value;
+                const managerPhone = document.getElementById('managerPhone').value.trim();
+                const declarantName = document.getElementById('declarantName').value.trim();
+                const declarantDate = document.getElementById('declarantDate').value;
+
+                // Validate required fields
+                const requiredFields = ['teamName', 'teamYear', 'teamLga', 'teamWard', 'managerPhone', 'declarantName', 'declarantDate'];
+                let isValid = true;
+                
+                requiredFields.forEach(id => {
+                    const field = document.getElementById(id);
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    alert('Please fill all required fields marked with *');
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
+                    return;
+                }
+
+                // Create team data (without Team ID - will be assigned by admin)
+                const teamData = {
+                    teamName: teamName,
+                    teamNickname: teamNickname || null,
+                    yearFounded: parseInt(teamYear) || null,
+                    teamColors: teamColors || null,
+                    homeKitColor: homeKit || null,
+                    awayKitColor: awayKit || null,
+                    lga: lga,
+                    ward: ward,
+                    location: teamLocation || null,
+                    zone: zone || null,
+                    managerPhone: managerPhone,
+                    declarantName: declarantName,
+                    declarationDate: declarantDate || null,
+                    status: "Pending Approval",
+                    submittedAt: window.firebase.serverTimestamp()
+                };
+
+                // Save to GombeTeamsAwaitingapproval collection
+                const docRef = await window.firebase.addDoc(
+                    window.firebase.collection(
+                        window.firebase.db,
+                        "GombeTeamsAwaitingapproval"
+                    ),
+                    teamData
+                );
+
+                // Show success message
+                successMsg.classList.add('show');
+                successMsg.innerHTML = `
+                    <i class="fas fa-check-circle" style="font-size: 1.5rem; color: #155724;"></i>
+                    <h4 style="margin-top: 8px;">Registration Submitted Successfully!</h4>
+                    <p>Your team registration has been saved and is pending approval.</p>
+                    <!-- <p style="font-size: 0.9rem; margin-top: 5px;"><strong>Reference ID:</strong> ${docRef.id}</p> -->
+                `;
+
+                // Reset form
+                setTimeout(() => {
+                    document.getElementById('teamName').value = '';
+                    document.getElementById('teamNickname').value = '';
+                    document.getElementById('teamYear').value = '';
+                    document.getElementById('teamColors').value = '';
+                    document.getElementById('homeKit').value = '';
+                    document.getElementById('awayKit').value = '';
+                    document.getElementById('teamLga').value = '';
+                    document.getElementById('teamWard').innerHTML = '<option value="">-- Select ward --</option>';
+                    document.getElementById('teamWard').disabled = true;
+                    document.getElementById('teamLocation').value = '';
+                    document.getElementById('teamZone').value = 'Select LGA first';
+                    document.getElementById('managerPhone').value = '';
+                    document.getElementById('declarantName').value = '';
+                    document.getElementById('declarantDate').value = '';
+                    
+                    // Reset validation classes
+                    document.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
+                        el.classList.remove('is-valid', 'is-invalid');
+                    });
+                }, 3000);
+
+            } catch (error) {
+                console.error("Save error:", error);
+                alert(`Failed to save: ${error.message}`);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
+            }
+        }
+
+        // Download as PDF function
+        function downloadPDF() {
+            const printContent = document.getElementById('printArea').innerHTML;
+            const styles = document.querySelector('style').innerHTML;
+            
+            const printWindow = window.open('', '_blank', 'width=1100,height=800');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Gombe Teams Registration Form</title>
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+                    <style>
+                        ${styles}
+                        body {
+                            background: white;
+                            padding: 20px;
+                            margin: 0;
+                        }
+                        .print-container {
+                            box-shadow: none;
+                            padding: 20px 30px;
+                            max-width: 100%;
+                        }
+                        .action-buttons {
+                            display: none !important;
+                        }
+                        .no-print {
+                            display: none !important;
+                        }
+                        .watermark {
+                            display: block !important;
+                        }
+                        .form-control {
+                            border: none !important;
+                            border-bottom: 1px solid #333 !important;
+                            background: transparent !important;
+                            padding: 5px 0 !important;
+                        }
+                        select.form-control {
+                            -webkit-appearance: none;
+                            appearance: none;
+                            background: none !important;
+                        }
+                        .print-header {
+                            border-bottom: 3px double #333;
+                            padding-bottom: 15px;
+                            margin-bottom: 20px;
+                        }
+                        .info-box {
+                            background: #f8f9fa !important;
+                            border: 1px solid #ddd !important;
+                        }
+                        .official-use-only {
+                            display: none !important;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${printContent}
+                    <script>
+                        // Auto-print when loaded
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                setTimeout(function() {
+                                    window.close();
+                                }, 1000);
+                            }, 500);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+    </script>
+</body>
+</html>

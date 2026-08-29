@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Match Assignments | Gombe Football</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #014421, #3a7d44);
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .profile-pic {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #014421;
+      overflow: hidden;
+    }
+    .profile-text h1 {
+      color: #014421;
+      margin-bottom: 5px;
+    }
+    .profile-text p {
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .back-btn {
+      background: #014421;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .back-btn:hover {
+      background: #01311a;
+    }
+    .main-content {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .section-title {
+      color: #014421;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .season-input-group {
+      margin-bottom: 20px;
+    }
+    .season-input-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #014421;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .season-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    .season-input:focus {
+      border-color: #014421;
+      box-shadow: 0 0 0 3px rgba(1, 68, 33, 0.2);
+      outline: none;
+    }
+    .input-hint {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .search-btn {
+      background: #014421;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+    .search-btn:hover {
+      background: #01311a;
+      transform: translateY(-2px);
+    }
+    .fixture-container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e0e0e0;
+      margin-bottom: 40px;
+      position: relative;
+    }
+    .matchday-section {
+      margin-bottom: 30px;
+    }
+    .matchday-header {
+      color: #014421;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .fixture-list {
+      display: grid;
+      gap: 20px;
+    }
+    .fixture-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 25px;
+      border: 1px solid #e0e0e0;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .fixture-card:hover {
+      background: #f0f7ff;
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    .fixture-card.completed {
+      border-left: 4px solid #dc3545;
+    }
+    .fixture-card.upcoming {
+      border-left: 4px solid #ffcc00;
+    }
+    .fixture-card.live {
+      border-left: 4px solid #28a745;
+    }
+    .fixture-teams {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 15px;
+      font-size: 1.2rem;
+    }
+    .fixture-team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .team-name {
+      text-align: center;
+      font-weight: 700;
+    }
+    .team-name.home-team {
+      color: #014421;
+    }
+    .vs-container {
+      margin: 0 20px;
+      background: white;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-size: 1rem;
+      color: #666;
+      border: 2px solid #e0e0e0;
+      font-weight: 700;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    .fixture-details {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px 15px 0;
+      border-top: 1px solid #e0e0e0;
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #666;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .detail-icon {
+      color: #014421;
+      width: 24px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+    .no-fixtures {
+      text-align: center;
+      padding: 40px 30px;
+      color: #666;
+      font-size: 1.2rem;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px 30px;
+      color: #014421;
+    }
+    .loading i {
+      font-size: 2.5rem;
+      animation: spin 1.5s infinite linear;
+      margin-bottom: 15px;
+    }
+    .match-status {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 6px 12px;
+      border-radius: 0 12px 0 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+    }
+    .match-status.completed {
+      background: #dc3545;
+    }
+    .match-status.upcoming {
+      background: #ffcc00;
+      color: #333;
+    }
+    .match-status.live {
+      background: #28a745;
+    }
+    .status-message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .status-message.success {
+      background-color: rgba(40, 167, 69, 0.1);
+      color: #28a745;
+      border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+    .status-message.error {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+      border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      .profile-info {
+        flex-direction: column;
+        text-align: center;
+      }
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .fixture-teams {
+        flex-direction: column;
+        gap: 20px;
+      }
+      .fixture-team {
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+      }
+      .vs-container {
+        margin: 10px 0;
+        padding: 6px 15px;
+      }
+      .fixture-details {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="profile-info">
+        <div class="profile-pic" id="profile-pic">
+          <i class="fas fa-user-tie"></i>
+        </div>
+        <div class="profile-text">
+          <h1 id="commissioner-name">Loading...</h1>
+          <p><i class="fas fa-id-card"></i> <span id="commissioner-psn">PSN: -</span></p>
+          <p><i class="fas fa-map-marker-alt"></i> <span id="commissioner-zone">Zone: -</span></p>
+        </div>
+      </div>
+      <a href="MatchCommissionerProfile.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Profile
+      </a>
+    </header>
+    
+    <div class="main-content">
+      <h2 class="section-title"><i class="fas fa-list-check"></i> My Cup Match Assignments</h2>
+      
+      <div class="season-input-group">
+        <label for="seasonInput" class="season-input-label">
+          <i class="fas fa-calendar-alt"></i> Enter Season
+        </label>
+        <input 
+          type="text" 
+          id="seasonInput" 
+          class="season-input" 
+          placeholder="Format: SeasonYYYY-YY (e.g., Season2024-25)"
+          value="Season2025-26"
+        >
+        <span class="input-hint">Enter the season in the format shown above</span>
+      </div>
+      
+      <button id="searchBtn" class="search-btn">
+        <i class="fas fa-search"></i> Load Cup Matches
+      </button>
+      
+      <div id="statusMessage" class="status-message"></div>
+      
+      <div class="fixture-container">
+        <div class="fixture-list" id="fixtureList">
+          <div class="loading">
+            <i class="fas fa-calendar-alt"></i>
+            <p>Enter a season to view your assigned cup matches</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    const commissionerNameElement = document.getElementById('commissioner-name');
+    const commissionerPsnElement = document.getElementById('commissioner-psn');
+    const commissionerZoneElement = document.getElementById('commissioner-zone');
+    const profilePicElement = document.getElementById('profile-pic');
+    const fixtureList = document.getElementById('fixtureList');
+    const seasonInputElement = document.getElementById('seasonInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const statusMessage = document.getElementById('statusMessage');
+    
+    const commissionerPsn = localStorage.getItem("commissionerPSN");
+    const commissionerName = localStorage.getItem("commissionerName");
+    const commissionerZone = localStorage.getItem("commissionerZone");
+    
+    function validateSeasonFormat(season) {
+      const pattern = /^Season\d{4}-\d{2}$/;
+      return pattern.test(season);
+    }
+    
+    function showStatus(message, type = "") {
+      statusMessage.textContent = message;
+      statusMessage.className = "status-message";
+      if (type) statusMessage.classList.add(type);
+      setTimeout(() => {
+        if (statusMessage.textContent === message) {
+          statusMessage.textContent = '';
+          statusMessage.className = 'status-message';
+        }
+      }, 5000);
+    }
+    
+    function loadingTemplate(message = "Loading cup matches...") {
+      return `<div class="loading"><i class="fas fa-spinner"></i><p>${message}</p></div>`;
+    }
+    
+    function noMatchesTemplate(season, message = "") {
+      return `<div class="no-fixtures">
+        <i class="fas fa-trophy"></i>
+        <p>No cup matches assigned for ${season}</p>
+        ${message ? `<p class="debug-message">${message}</p>` : ''}
+      </div>`;
+    }
+    
+    function errorTemplate(error) {
+      return `<div class="no-fixtures">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Error loading cup matches</p>
+        <p class="debug-message">${error.message}</p>
+      </div>`;
+    }
+    
+    function formatMatchDate(date) {
+      if (!date) return 'Date not set';
+      const matchDate = date.toDate ? date.toDate() : new Date(date);
+      return matchDate.toLocaleDateString('en-GB', {
+        weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+      });
+    }
+    
+    function formatKickoffTime(date) {
+      if (!date) return 'Time not set';
+      const matchDate = date.toDate ? date.toDate() : new Date(date);
+      return matchDate.toLocaleTimeString('en-GB', {
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+    
+   function getCompetitionDetails(matchId, matchStatus) {
+  if (matchId.match(/CHMatch/i)) return { type: "Champions Cup Demo", roundLabel: matchStatus };
+  if (matchId.match(/FMatch/i)) return { type: "FA Cup", roundLabel: matchStatus };
+  if (matchId.match(/WMatch/i)) return { type: "Worriors Cup", roundLabel: matchStatus };
+  return { type: "Other Competition", roundLabel: matchStatus };
+}
+    
+  async function createMatchCard(match) {
+  const card = document.createElement('div');
+  let status;
+  if (match.matchCompleted === true) {
+    status = 'completed';
+  } else if (match.path?.includes('liveMatchControl')) {
+    status = 'live';
+  } else {
+    status = 'upcoming';
+  }
+  const statusText = status === 'completed' ? 'Completed' : 
+                    status === 'live' ? 'Live' : 'Upcoming';
+  
+  // Get scores if match is completed
+  const homeScore = status === 'completed' ? (match.goalScored || 0) : null;
+  const awayScore = status === 'completed' ? (match.goalConceded || 0) : null;
+  
+  const isHomeGame = match.venue === 'home';
+  const homeTeamName = isHomeGame ? (match.teamId || match.homeTeam || 'TBD') : (match.opponent || match.awayTeam || 'TBD');
+  const awayTeamName = isHomeGame ? (match.opponent || match.awayTeam || 'TBD') : (match.teamId || match.homeTeam || 'TBD');
+  
+  // Adjust scores based on perspective
+  const displayHomeScore = isHomeGame ? homeScore : awayScore;
+  const displayAwayScore = isHomeGame ? awayScore : homeScore;
+
+  const { type: competitionType, roundLabel } = getCompetitionDetails(match.matchId, match.matchStatus);
+
+// Check if this is a group stage match and get group value
+  const isGroupStage = match.matchStatus === 'GroupStage';
+  const groupValue = match.group || '';
+  const groupDisplay = isGroupStage && groupValue ? `Group ${groupValue}` : '';
+
+  card.className = `fixture-card ${status}`;
+  card.innerHTML = `
+    <div class="match-status ${status}">${statusText}</div>
+    <div class="fixture-teams">
+      <div class="fixture-team">
+        <div class="team-name home-team">${homeTeamName}</div>
+        <div class="team-badge"><i class="fas ${isHomeGame ? 'fa-home' : 'fa-route'}"></i></div>
+      </div>
+      <div class="vs-container">
+        ${status === 'completed' ? 
+          `${displayHomeScore} - ${displayAwayScore}` : 
+          'VS'}
+      </div>
+      <div class="fixture-team">
+        <div class="team-name">${awayTeamName}</div>
+        <div class="team-badge"><i class="fas ${isHomeGame ? 'fa-route' : 'fa-home'}"></i></div>
+      </div>
+    </div>
+    <div class="fixture-details">
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-calendar-day"></i></div>
+        <div>${formatMatchDate(match.date)}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-hashtag"></i></div>
+        <div>${roundLabel}</div>
+      </div>
+	  <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-layer-group"></i></div>
+        <div>${groupDisplay}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+        <div>${match.venue ? match.venue.charAt(0).toUpperCase() + match.venue.slice(1) : 'TBD'}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-clock"></i></div>
+        <div>Kick-off: ${formatKickoffTime(match.date)}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-trophy"></i></div>
+        <div>${competitionType}</div>
+      </div>
+    </div>
+  `;
+  
+  card.addEventListener('click', () => {
+    if (status === 'completed') {
+      showStatus("Completed matches cannot be edited", "error");
+      return;
+    }
+    localStorage.setItem("currentMatchId", match.matchId || '');
+    localStorage.setItem("currentMatchPath", match.path || '');
+    window.location.href = "MatchCommissionerDetailsCups.html";
+  });
+  
+  return card;
+}
+    
+    async function loadAssignedMatches() {
+      const season = seasonInputElement.value.trim();
+      const seasonShort = season.replace('Season', '').replace('-', '_'); // For Unity Shield format
+      
+      try {
+        fixtureList.innerHTML = loadingTemplate();
+        
+        // 1. Get assignments document
+        const assignmentsRef = db.collection('GombeCommissionerAssignments')
+          .doc(commissionerPsn)
+          .collection(season)
+          .doc('assignments');
+        
+        const assignmentsDoc = await assignmentsRef.get();
+        
+        if (!assignmentsDoc.exists) {
+          fixtureList.innerHTML = noMatchesTemplate(season, "No assignments found");
+          return;
+        }
+        
+        // 2. Filter out LMatchXX and CMatchXX
+        const cupMatches = assignmentsDoc.data().matches.filter(assignment => {
+          return !/^(LMatch|CMatch)\d+$/i.test(assignment.matchId);
+        });
+        
+        if (cupMatches.length === 0) {
+          fixtureList.innerHTML = noMatchesTemplate(season, "No cup matches found in assignments");
+          return;
+        }
+        
+        // 3. Load match details from appropriate collections
+        const matches = await Promise.all(
+          cupMatches.map(async (assignment) => {
+            try {
+              const paths = [];
+              const home = assignment.homeTeam;
+              const away = assignment.awayTeam;
+              
+              // Determine paths based on match ID pattern
+              if (assignment.matchId.includes('CHMatch')) {
+  paths.push(`GombeChampionsCupMatchesDemo/${home}/${season}/${assignment.matchId}`);
+  paths.push(`GombeChampionsCupMatchesDemo/${away}/${season}/${assignment.matchId}`);
+} 
+else if (assignment.matchId.includes('FMatch')) {
+  paths.push(`GombeFAcupsMatch/${home}/${season}/${assignment.matchId}`);
+  paths.push(`GombeFAcupsMatch/${away}/${season}/${assignment.matchId}`);
+}
+else if (assignment.matchId.includes('WMatch')) {
+  paths.push(`GombeWorriorsCupMatches/${home}/${season}/${assignment.matchId}`);
+  paths.push(`GombeWorriorsCupMatches/${away}/${season}/${assignment.matchId}`);
+}
+
+              
+              // Try all possible paths
+              let matchDoc = null;
+              for (const path of paths) {
+                try {
+                  const doc = await db.doc(path).get();
+                  if (doc.exists) {
+                    matchDoc = doc;
+                    break;
+                  }
+                } catch (error) {
+                  console.error(`Error checking path ${path}:`, error);
+                }
+              }
+              
+              if (!matchDoc) {
+                console.warn(`Match ${assignment.matchId} not found at any path: ${paths.join(', ')}`);
+                return null;
+              }
+              
+              return {
+                ...matchDoc.data(),
+                matchId: assignment.matchId,
+                path: matchDoc.ref.path,
+                teamId: matchDoc.ref.path.includes(home) ? home : away,
+                opponent: matchDoc.ref.path.includes(home) ? away : home,
+                venue: matchDoc.ref.path.includes(home) ? 'home' : 'away'
+              };
+              
+            } catch (error) {
+              console.error(`Error loading match ${assignment.matchId}:`, error);
+              return null;
+            }
+          })
+        );
+        
+        // 4. Filter valid matches and group by competition
+        const validMatches = matches.filter(match => match !== null);
+        
+        if (validMatches.length === 0) {
+          fixtureList.innerHTML = noMatchesTemplate(season, "Found assignments but couldn't load match details");
+          return;
+        }
+        
+        // Group by competition type
+        const matchesByCompetition = {};
+        validMatches.forEach(match => {
+          const { type } = getCompetitionDetails(match.matchId);
+          if (!matchesByCompetition[type]) matchesByCompetition[type] = [];
+          matchesByCompetition[type].push(match);
+        });
+        
+        // 5. Display matches grouped by competition
+        fixtureList.innerHTML = '';
+        Object.entries(matchesByCompetition).forEach(([competition, compMatches]) => {
+          const section = document.createElement('div');
+          section.className = 'matchday-section';
+          section.innerHTML = `<h3 class="matchday-header">${competition}</h3><div class="fixture-list"></div>`;
+          
+          compMatches.forEach(match => {
+            createMatchCard(match).then(card => {
+              section.querySelector('.fixture-list').appendChild(card);
+            });
+          });
+          
+          fixtureList.appendChild(section);
+        });
+        
+        showStatus(`Successfully loaded ${validMatches.length} cup matches`, "success");
+        
+      } catch (error) {
+        console.error("Error loading cup matches:", error);
+        fixtureList.innerHTML = errorTemplate(error);
+        showStatus("Failed to load cup matches", "error");
+      }
+    }
+    
+    function initPage() {
+      if (!commissionerPsn) {
+        window.location.href = "MatchCommissionerLogin.html";
+        return;
+      }
+      
+      commissionerNameElement.textContent = commissionerName || "Commissioner";
+      commissionerPsnElement.textContent = `PSN: ${commissionerPsn}`;
+      commissionerZoneElement.textContent = `Zone: ${commissionerZone || 'N/A'}`;
+      
+      db.collection("MatchCommissioners").doc(commissionerPsn).get().then((doc) => {
+        if (doc.exists && doc.data().imageUrl) {
+          profilePicElement.innerHTML = `<img src="${doc.data().imageUrl}" alt="Profile Picture">`;
+        }
+      }).catch(error => {
+        console.error("Error loading commissioner profile:", error);
+      });
+      
+      searchBtn.addEventListener('click', loadAssignedMatches);
+      seasonInputElement.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') loadAssignedMatches();
+      });
+      
+      // Auto-load for the default season
+      setTimeout(loadAssignedMatches, 500);
+    }
+    
+    initPage();
+  </script>
+</body>
+</html>

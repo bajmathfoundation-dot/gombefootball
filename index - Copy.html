@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe LiveScore | Football Scores & Fixtures</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #212121;
+            --secondary-color: #333;
+            --accent-color: #00c853;
+            --text-color: #f5f5f5;
+            --border-color: #444;
+            --card-bg: #2a2a2a;
+            --live-red: #e53935;
+            --hover-color: #383838;
+            --win-green: #4caf50;
+            --draw-orange: #ff9800;
+            --loss-red: #f44336;
+        }
+
+        body {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--secondary-color);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--hover-color);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header-actions i {
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Date Navigation */
+        .date-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            background-color: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .date-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .date-arrow {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .date-arrow:hover {
+            background-color: var(--hover-color);
+        }
+
+        .current-date {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .view-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .view-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .view-btn:hover:not(.active) {
+            background-color: var(--hover-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+
+        .sidebar-section h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--accent-color);
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-color);
+            margin-bottom: 8px;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background-color: var(--hover-color);
+            border-left-color: var(--accent-color);
+        }
+
+        .sidebar-item.active {
+            background-color: var(--hover-color);
+            border-left-color: var(--accent-color);
+        }
+
+        .sidebar-item i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            color: var(--accent-color);
+        }
+
+        /* Tables Section */
+        .tables-section {
+            margin-top: 20px;
+        }
+
+        .table-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: var(--secondary-color);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.3s;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .table-link:hover {
+            background-color: var(--hover-color);
+            transform: translateX(5px);
+        }
+
+        .table-link i {
+            margin-right: 12px;
+            font-size: 18px;
+            color: var(--accent-color);
+        }
+
+        .table-info {
+            flex: 1;
+        }
+
+        .table-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .table-desc {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        /* Match Cards */
+        .matches-section {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            background-color: var(--secondary-color);
+            padding: 12px 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .match-list {
+            padding: 0;
+        }
+
+        .match-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .match-card:hover {
+            background-color: var(--hover-color);
+        }
+
+        .match-time {
+            width: 60px;
+            text-align: center;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .match-teams {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team {
+            display: flex;
+            align-items: center;
+            width: 40%;
+        }
+
+        .team.home {
+            justify-content: flex-end;
+        }
+
+        .team.away {
+            justify-content: flex-start;
+        }
+
+        .team-name {
+            margin: 0 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .team-name:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+        .team-logo {
+            width: 24px;
+            height: 24px;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .match-score {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80px;
+        }
+
+        .score {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .match-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .status-live {
+            background-color: var(--live-red);
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-ft {
+            background-color: #666;
+        }
+
+        .status-upcoming {
+            background-color: #666;
+        }
+
+        .match-competition {
+            width: 150px;
+            text-align: right;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        /* Database Connection Status */
+        .db-status {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .db-connected {
+            background-color: rgba(0, 200, 83, 0.2);
+            border: 1px solid var(--accent-color);
+        }
+
+        .db-disconnected {
+            background-color: rgba(229, 57, 53, 0.2);
+            border: 1px solid var(--live-red);
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Clear Filters Button */
+        .clear-filters {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: var(--secondary-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+
+        .clear-filters:hover {
+            background: var(--hover-color);
+        }
+
+        /* Mobile Sidebar */
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 300px;
+            height: 100%;
+            background: var(--card-bg);
+            z-index: 1000;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+        }
+
+        .mobile-sidebar.active {
+            left: 0;
+        }
+
+        .mobile-sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* No matches message */
+        .no-matches {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+            font-style: italic;
+        }
+
+        /* Error message */
+        .error {
+            text-align: center;
+            padding: 20px;
+            background: rgba(229, 57, 53, 0.1);
+            border: 1px solid var(--live-red);
+            border-radius: 4px;
+            margin: 10px;
+        }
+
+        /* Date grouping */
+        .date-group {
+            margin-bottom: 20px;
+        }
+
+        .date-header {
+            background-color: var(--secondary-color);
+            padding: 10px 15px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Competition badge */
+        .competition-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background-color: var(--secondary-color);
+            border-radius: 12px;
+            font-size: 10px;
+            margin-right: 5px;
+            color: #aaa;
+        }
+
+        /* Last updated indicator */
+        .last-updated {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #aaa;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Live indicator animation */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--secondary-color);
+            margin-top: 40px;
+            padding: 30px 0 20px;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-wrap: wrap;
+            }
+            
+            .nav-links {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 15px;
+                display: none;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .date-nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .view-options {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .match-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .match-teams {
+                width: 100%;
+            }
+            
+            .match-competition {
+                text-align: left;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .logo-text {
+                font-size: 18px;
+            }
+            
+            .header-actions {
+                display: none;
+            }
+            
+            .mobile-sidebar {
+                width: 280px;
+                left: -280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobile-sidebar">
+        <div class="mobile-sidebar-header">
+            <a href="#" class="logo">
+                <div class="logo-img">G</div>
+                <div class="logo-text">Gombe LiveScore</div>
+            </a>
+            <button class="close-sidebar" id="close-sidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile sidebar content -->
+        <div id="mobile-sidebar-content">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-top">
+                <a href="#" class="logo">
+                    <div class="logo-img">G</div>
+                    <div class="logo-text">Gombe LiveScore</div>
+                </a>
+                
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="nav-links" id="nav-links">                  
+                    <a href="#">News</a>                  
+                </div>
+                
+                <div class="header-actions">
+                   <a href="https://www.livesport.com/soccer/nigeria/npfl/#/CYJvtcxK/standings/overall/" style="color: inherit; text-decoration: none;">
+        <i class="fas fa-globe"></i>
+    </a>
+                    <i class="fas fa-cog"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Database Connection Status -->
+        <a href="Home.html" style="text-decoration: none; color: inherit;">
+            <div class="db-status db-connected">
+                <i class="fas fa-database"></i>
+                <span>Gombe first <strong>football app</strong> Click here</span>
+            </div>
+        </a>
+
+        <!-- Date Navigation -->
+        <div class="date-nav">
+            <div class="date-controls">
+                <button class="date-arrow" id="prev-date"><i class="fas fa-chevron-left"></i></button>
+                <span class="current-date" id="current-date">Today, 4 Oct 2025</span>
+                <button class="date-arrow" id="next-date"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="view-options">
+                <button class="view-btn" data-filter="today">Today</button>
+                <button class="view-btn" data-filter="live">Live</button>               
+                <button class="view-btn" data-filter="upcoming">Upcoming</button>
+                <button class="view-btn" data-filter="finished">Finished</button>
+                <button class="view-btn active" data-filter="all">All</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Desktop Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3>Gombe Zonal Leagues</h3>
+                    <a class="sidebar-item" data-filter="region" data-value="Central zone">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Central Zone</span>
+                    </a>
+                    <a class="sidebar-item" data-filter="region" data-value="Northern zone">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Northern Zone</span>
+                    </a>
+                    <a class="sidebar-item" data-filter="region" data-value="Southern Zone">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Southern Zone</span>
+                    </a>
+                    <a class="sidebar-item" data-filter="region" data-value="Eastern zone">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Eastern Zone</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3>Competitions</h3>
+					<a class="sidebar-item" data-filter="competition" data-value="gombe-champions-cup" data-collection="GombeChampionsCupMatchesDemo">
+                        <i class="fas fa-trophy"></i>
+                        <span>Kakaglobal Mega Cup</span>
+                    </a>
+                    <a class="sidebar-item" data-filter="competition" data-value="gombe-champions-cup" data-collection="GombeChampionsCupMatches">
+                        <i class="fas fa-trophy"></i>
+                        <span>Gombe Champions Cup</span>
+                    </a>
+                    <a class="sidebar-item" data-filter="competition" data-value="gombe-worriors-cup" data-collection="GombeWorriorsCupMatches">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Gombe Worriors Cup</span>
+                    </a>
+                    <a class="sidebar-item" data-filter="competition" data-value="fa-cup" data-collection="GombeFAcupsMatch">
+                        <i class="fas fa-crown"></i>
+                        <span>FA Cup</span>
+                    </a>
+                    <a class="sidebar-item" data-filter="competition" data-value="unity-shield" data-collection="UnityShieldMatches">
+                        <i class="fas fa-award"></i>
+                        <span>Unity Shield</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section tables-section">
+                    <h3>League Tables</h3>
+                    <a href="GombeChampionsCupGroupTablesDemo.html" class="table-link">
+                        <i class="fas fa-table"></i>
+                        <div class="table-info">
+                            <div class="table-title">Kakaglobal Mega cup</div>
+                            <div class="table-desc">View Group tables</div>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="GombeChampionsCupGroupTables.html" class="table-link">
+                        <i class="fas fa-table"></i>
+                        <div class="table-info">
+                            <div class="table-title">Gombe Champions Cup</div>
+                            <div class="table-desc">View standings and statistics</div>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="GombeWarriorsCupGroupTables.html" class="table-link">
+                        <i class="fas fa-table"></i>
+                        <div class="table-info">
+                            <div class="table-title">Gombe Worriors Cup</div>
+                            <div class="table-desc">Team rankings and performance</div>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a href="Competitions.html" class="table-link">
+                        <i class="fas fa-table"></i>
+                        <div class="table-info">
+                            <div class="table-title">Gombe Zonal Leagues</div>
+                            <div class="table-desc">Regional division standings</div>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+                
+                <button class="clear-filters" id="clear-filters">
+                    <i class="fas fa-times"></i> Clear All Filters
+                </button>
+            </div>
+
+            <!-- Matches Section -->
+            <div class="matches-section">
+                <div class="section-header">
+                    <span id="matches-title">All Matches</span>
+                    <button class="section-toggle"><i class="fas fa-chevron-down"></i></button>
+                </div>
+                <div class="match-list" id="match-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading matches...</p>
+                    </div>
+                </div>
+                <div class="last-updated" id="last-updated">
+                    Last updated: <span id="update-time">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Gombe Football Ecosystem &copy; 2025 | All Fixtures & Results</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        let db;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.firestore();
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+        }
+
+        // Global variables
+        let currentDate = new Date();
+        let currentFilter = 'all';
+        let currentRegion = null;
+        let currentCompetition = null;
+        let currentTeam = null;
+        let currentSeason = null;
+        let currentCollection = null;
+        let allMatches = [];
+        let teamNameCache = {};
+        let teamIdCache = {};
+        let isLoading = false;
+        let lastLoadTime = 0;
+        const MIN_RELOAD_INTERVAL = 300000; // 5 minutes minimum between reloads
+
+        // Format date for display
+        function formatDate(date) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Format date for comparison (YYYY-MM-DD)
+        function formatDateForComparison(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        // Check if a date is today
+        function isToday(date) {
+            const today = new Date();
+            return formatDateForComparison(date) === formatDateForComparison(today);
+        }
+
+        // Check if a date is in the future
+        function isFutureDate(date) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const matchDate = new Date(date);
+            matchDate.setHours(0, 0, 0, 0);
+            return matchDate > today;
+        }
+
+        // Update current date display
+        function updateDateDisplay() {
+            document.getElementById('current-date').textContent = formatDate(currentDate);
+        }
+
+        // Update last updated time
+        function updateLastUpdatedTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('update-time').textContent = timeString;
+        }
+
+        // Mobile menu functionality
+        function setupMobileMenu() {
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const closeSidebar = document.getElementById('close-sidebar');
+            const mobileSidebar = document.getElementById('mobile-sidebar');
+            const overlay = document.getElementById('overlay');
+            const mobileSidebarContent = document.getElementById('mobile-sidebar-content');
+            
+            // Copy desktop sidebar content to mobile sidebar
+            const desktopSidebar = document.querySelector('.sidebar');
+            if (desktopSidebar) {
+                mobileSidebarContent.innerHTML = desktopSidebar.innerHTML;
+            }
+            
+            // Toggle mobile sidebar
+            mobileMenuToggle.addEventListener('click', function() {
+                mobileSidebar.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Close mobile sidebar
+            function closeMobileSidebar() {
+                mobileSidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            closeSidebar.addEventListener('click', closeMobileSidebar);
+            overlay.addEventListener('click', closeMobileSidebar);
+        }
+
+        // Load all teams for name-to-ID mapping
+        async function loadAllTeams() {
+            try {
+                if (!db) {
+                    console.error('Firestore not initialized');
+                    return;
+                }
+                
+                const teamsSnapshot = await db.collection("GombeTeams").get();
+                
+                teamsSnapshot.forEach(doc => {
+                    const teamData = doc.data();
+                    const teamName = teamData.name;
+                    
+                    // Cache both ID-to-name and name-to-ID mappings
+                    teamNameCache[doc.id] = teamName;
+                    teamIdCache[teamName] = doc.id;
+                });
+                
+                console.log(`Loaded ${Object.keys(teamIdCache).length} teams`);
+            } catch (error) {
+                console.error("Error loading all teams:", error);
+            }
+        }
+
+        // Get competition display name from collection name
+        function getCompetitionDisplayName(collectionName) {
+            const competitionMap = {
+                'GombeChampionsCupMatches': 'Champions Cup',
+                'GombeFAcupsMatch': 'FA Cup',
+                'GombeWorriorsCupMatches': 'Worriors Cup',
+                'UnityShieldMatches': 'Unity Shield',
+                'GombeChampionsCupMatchesDemo': 'Champions Cup Demo',
+                'GombeSeason': 'Zonal League'
+            };
+            
+            return competitionMap[collectionName] || collectionName;
+        }
+
+        // OPTIMIZED: Load matches from all competitions at once
+        async function loadAllMatches() {
+            // Prevent multiple simultaneous loads
+            if (isLoading) {
+                console.log('Already loading matches, skipping...');
+                return;
+            }
+            
+            // Prevent too frequent reloads
+            const now = Date.now();
+            if (now - lastLoadTime < MIN_RELOAD_INTERVAL) {
+                console.log('Skipping reload - too soon since last load');
+                return;
+            }
+            
+            isLoading = true;
+            lastLoadTime = now;
+            
+            const matchList = document.getElementById('match-list');
+            matchList.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading matches...</p></div>';
+
+            try {
+                if (!db) {
+                    throw new Error('Firestore not initialized');
+                }
+
+                // Get current year for season detection
+                const currentYear = new Date().getFullYear();
+                const nextYear = (currentYear + 1).toString().slice(-2);
+                const defaultSeason = `Season${currentYear}-${nextYear}`;
+                
+                console.log(`Using default season: ${defaultSeason}`);
+
+                // OPTIMIZATION: Load all competitions at once instead of per-team
+                const competitions = [
+                    "GombeSeason",
+                    "GombeChampionsCupMatches", 
+                    "GombeFAcupsMatch",
+                    "GombeWorriorsCupMatches",
+                    "UnityShieldMatches",
+                    "GombeChampionsCupMatchesDemo"
+                ];
+
+                allMatches = [];
+                let totalMatchesFound = 0;
+                
+                // Load all teams first to get team names
+                const teamsSnapshot = await db.collection("GombeTeams").get();
+                const teamNames = [];
+                teamsSnapshot.forEach(doc => {
+                    teamNames.push(doc.data().name);
+                });
+                
+                console.log(`Found ${teamNames.length} teams`);
+                
+                // Load matches from each competition collection
+                for (const competition of competitions) {
+                    try {
+                        console.log(`Loading matches from ${competition}...`);
+                        
+                        // Get all documents in the competition collection
+                        const competitionRef = db.collection(competition);
+                        const competitionSnapshot = await competitionRef.get();
+                        
+                        if (!competitionSnapshot.empty) {
+                            console.log(`Found ${competitionSnapshot.size} documents in ${competition}`);
+                            
+                            // For each document (team) in the competition
+                            for (const teamDoc of competitionSnapshot.docs) {
+                                const teamName = teamDoc.id;
+                                
+                                // Try to get the current season subcollection
+                                try {
+                                    const seasonRef = teamDoc.ref.collection(defaultSeason);
+                                    const seasonSnapshot = await seasonRef.get();
+                                    
+                                    if (!seasonSnapshot.empty) {
+                                        console.log(`Found ${seasonSnapshot.size} matches for ${teamName} in ${competition}`);
+                                        
+                                        seasonSnapshot.forEach(doc => {
+                                            const fixture = doc.data();
+                                            // Skip metadata documents
+                                            if (!doc.id.startsWith("_")) {
+                                                allMatches.push({
+                                                    ...fixture,
+                                                    id: doc.id,
+                                                    competition: competition,
+                                                    competitionDisplayName: getCompetitionDisplayName(competition),
+                                                    team: teamName,
+                                                    season: defaultSeason,
+                                                    docPath: doc.ref.path,
+                                                    date: fixture.date || new Date().toISOString(),
+                                                    // Enhanced live match data
+                                                    matchCompleted: fixture.matchCompleted || false,
+                                                    liveMatch: fixture.liveMatch || false,
+                                                    goalScored: fixture.goalScored || 0,
+                                                    goalConceded: fixture.goalConceded || 0,
+                                                    homeScore: fixture.homeScore || 0,
+                                                    awayScore: fixture.awayScore || 0,
+                                                    opponent: fixture.opponent || 'Unknown Team',
+                                                    venue: fixture.venue || 'home',
+                                                    teamPerspective: teamName,
+                                                    // Include events if available
+                                                    events: fixture.events || [],
+                                                    // Include duration for live matches
+                                                    duration: fixture.duration || { minutes: 0, seconds: 0 }
+                                                });
+                                                
+                                                totalMatchesFound++;
+                                            }
+                                        });
+                                    }
+                                } catch (seasonError) {
+                                    // It's normal for teams to not have matches in all competitions
+                                    console.log(`No ${defaultSeason} collection for ${teamName} in ${competition}`);
+                                }
+                            }
+                        }
+                    } catch (competitionError) {
+                        console.error(`Error loading competition ${competition}:`, competitionError);
+                    }
+                }
+
+                console.log(`TOTAL MATCHES LOADED: ${totalMatchesFound}`);
+                
+                if (allMatches.length === 0) {
+                    matchList.innerHTML = `
+                        <div class="no-matches">
+                            No matches found in database.<br><br>
+                            <strong>Current season:</strong> ${defaultSeason}<br>
+                            <strong>Teams found:</strong> ${teamNames.length}
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Update last updated time
+                updateLastUpdatedTime();
+                
+                // Apply current filters
+                applyFilters();
+                
+            } catch (error) {
+                console.error('Error loading matches:', error);
+                matchList.innerHTML = '<div class="error">Failed to load matches: ' + error.message + '</div>';
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        // Apply filters to matches
+        function applyFilters() {
+            let filteredMatches = [...allMatches];
+            
+            // Filter by status
+            if (currentFilter === 'today') {
+                filteredMatches = filteredMatches.filter(match => {
+                    if (!match.date) return false;
+                    return isToday(new Date(match.date));
+                });
+                document.getElementById('matches-title').textContent = "Today's Matches";
+            } 
+            else if (currentFilter === 'live') {
+                filteredMatches = filteredMatches.filter(match => match.liveMatch === true);
+                document.getElementById('matches-title').textContent = "Live Matches";
+            } 
+            else if (currentFilter === 'finished') {
+                filteredMatches = filteredMatches.filter(match => match.matchCompleted === true);
+                document.getElementById('matches-title').textContent = "Finished Matches";
+            } 
+            else if (currentFilter === 'upcoming') {
+                filteredMatches = filteredMatches.filter(match => {
+                    if (!match.date) return false;
+                    return isFutureDate(new Date(match.date)) && !match.matchCompleted && !match.liveMatch;
+                });
+                document.getElementById('matches-title').textContent = "Upcoming Matches";
+            }
+            else {
+                document.getElementById('matches-title').textContent = "All Matches";
+            }
+            
+            // Filter by competition
+            if (currentCompetition) {
+                filteredMatches = filteredMatches.filter(match => 
+                    match.competition.toLowerCase().includes(currentCompetition.toLowerCase())
+                );
+            }
+            
+            displayMatches(filteredMatches);
+        }
+
+        // Display matches in the UI
+        function displayMatches(matches) {
+            const matchList = document.getElementById('match-list');
+            
+            if (matches.length === 0) {
+                matchList.innerHTML = '<div class="no-matches">No matches found for the selected filters</div>';
+                return;
+            }
+
+            // Sort matches by date (most recent first)
+            matches.sort((a, b) => {
+                const dateA = a.date ? new Date(a.date) : new Date(0);
+                const dateB = b.date ? new Date(b.date) : new Date(0);
+                return dateB - dateA;
+            });
+
+            // Group matches by date
+            const matchesByDate = {};
+            matches.forEach(match => {
+                const matchDate = match.date ? new Date(match.date) : new Date();
+                const dateKey = matchDate.toDateString();
+                
+                if (!matchesByDate[dateKey]) {
+                    matchesByDate[dateKey] = [];
+                }
+                
+                matchesByDate[dateKey].push(match);
+            });
+
+            // Create HTML for matches grouped by date
+            matchList.innerHTML = '';
+            
+            Object.keys(matchesByDate).sort((a, b) => new Date(b) - new Date(a)).forEach(dateKey => {
+                const dateGroup = document.createElement('div');
+                dateGroup.className = 'date-group';
+                
+                const dateHeader = document.createElement('div');
+                dateHeader.className = 'date-header';
+                dateHeader.textContent = new Date(dateKey).toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                dateGroup.appendChild(dateHeader);
+                
+                matchesByDate[dateKey].forEach(match => {
+                    const matchCard = createMatchCard(match);
+                    dateGroup.appendChild(matchCard);
+                });
+                
+                matchList.appendChild(dateGroup);
+            });
+        }
+
+       // Create a match card element
+function createMatchCard(match) {
+    const matchCard = document.createElement('div');
+    matchCard.className = 'match-card';
+    matchCard.setAttribute('data-match-id', match.id);
+    
+    // Determine match status and styling
+    let statusText = 'Upcoming';
+    let statusClass = 'status-upcoming';
+    
+    if (match.liveMatch) {
+        statusText = 'LIVE';
+        statusClass = 'status-live';
+    } else if (match.matchCompleted) {
+        statusText = 'FT';
+        statusClass = 'status-ft';
+    }
+    
+    // Format match time
+    let matchTime = 'TBD';
+    if (match.date) {
+        const matchDate = new Date(match.date);
+        matchTime = matchDate.toLocaleTimeString('en-US', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: false 
+        });
+    }
+    
+    // Determine teams and scores
+    const isHome = match.venue === 'home';
+    const homeTeam = isHome ? match.teamPerspective : match.opponent;
+    const awayTeam = isHome ? match.opponent : match.teamPerspective;
+    
+    // Get team IDs for profile linking
+    const homeTeamId = teamIdCache[homeTeam] || '';
+    const awayTeamId = teamIdCache[awayTeam] || '';
+    
+    // For upcoming matches, show VS instead of scores
+    let scoreDisplay = 'VS';
+    if (match.liveMatch || match.matchCompleted) {
+        const homeScore = isHome ? match.goalScored : match.goalConceded;
+        const awayScore = isHome ? match.goalConceded : match.goalScored;
+        scoreDisplay = `${homeScore} - ${awayScore}`;
+    }
+    
+    // Get competition name
+    const competitionName = match.competitionDisplayName || getCompetitionDisplayName(match.competition);
+    
+    matchCard.innerHTML = `
+        <div class="match-time">${matchTime}</div>
+        <div class="match-teams">
+            <div class="team home">
+                <span class="team-name" onclick="event.stopPropagation(); viewTeamProfile('${homeTeamId}', '${homeTeam}')">${homeTeam}</span>
+                <div class="team-logo">${homeTeam.charAt(0)}</div>
+            </div>
+            <div class="match-score">
+                <div class="score">${scoreDisplay}</div>
+                <div class="match-status ${statusClass}">${statusText}</div>
+            </div>
+            <div class="team away">
+                <div class="team-logo">${awayTeam.charAt(0)}</div>
+                <span class="team-name" onclick="event.stopPropagation(); viewTeamProfile('${awayTeamId}', '${awayTeam}')">${awayTeam}</span>
+            </div>
+        </div>
+        <div class="match-competition">
+            <span class="competition-badge">${competitionName}</span>
+            ${match.season || 'Current'}
+            ${match.liveMatch ? '<i class="fas fa-circle" style="color: #e53935; margin-left: 5px; font-size: 8px;"></i>' : ''}
+        </div>
+    `;
+    
+    // Add click event to navigate to MatchLiveUpdate.html
+    matchCard.addEventListener('click', function() {
+        navigateToMatchLiveUpdate(match);
+    });
+    
+    return matchCard;
+}
+        // Navigate to MatchLiveUpdate.html with match data
+        function navigateToMatchLiveUpdate(match) {
+            const homeTeam = match.venue === 'home' ? match.team : match.opponent;
+            const awayTeam = match.venue === 'home' ? match.opponent : match.team;
+            
+            // Prepare match data for the live update page
+            const matchData = {
+                matchId: match.id,
+                seasonId: match.season,
+                competitionType: getCompetitionDisplayName(match.competition),
+                homeTeam: homeTeam,
+                awayTeam: awayTeam,
+                isLive: match.liveMatch || false,
+                isCompleted: match.matchCompleted || false,
+                homeScore: match.homeScore || 0,
+                awayScore: match.awayScore || 0,
+                venue: match.venue || 'home',
+                matchPath: match.docPath,
+                // Add the actual collection name for data retrieval
+                collectionName: match.competition,
+                // Add date for upcoming matches
+                matchDate: match.date || new Date().toISOString()
+            };
+            
+            // Store in localStorage for MatchLiveUpdate.html to access
+            localStorage.setItem('matchLiveUpdateData', JSON.stringify(matchData));
+            
+            // Navigate to MatchLiveUpdate.html with URL parameters
+            const params = new URLSearchParams({
+                matchId: match.id,
+                seasonId: match.season,
+                competitionType: getCompetitionDisplayName(match.competition),
+                homeTeam: homeTeam,
+                awayTeam: awayTeam,
+                isLive: match.liveMatch ? 'true' : 'false',
+                isCompleted: match.matchCompleted ? 'true' : 'false',
+                collectionName: match.competition
+            });
+            
+            // Navigate to MatchLiveUpdate.html
+            window.location.href = 'MatchLiveUpdate.html?' + params.toString();
+        }
+
+        // View team profile
+        function viewTeamProfile(teamId, teamName) {
+            if (teamId) {
+                window.location.href = `GombeTeamsProfileFinal.html?teamId=${teamId}`;
+            } else if (teamName && teamIdCache[teamName]) {
+                window.location.href = `GombeTeamsProfileFinal.html?teamId=${teamIdCache[teamName]}`;
+            } else {
+                alert(`Team profile for ${teamName} is not available. The team may not exist in the database.`);
+            }
+        }
+
+        // Initialize the application
+        function init() {
+            updateDateDisplay();
+            setupMobileMenu();
+            
+            // Load teams first, then matches
+            loadAllTeams().then(() => {
+                loadAllMatches();
+            });
+            
+            // Set up event listeners
+            document.getElementById('prev-date').addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() - 1);
+                updateDateDisplay();
+                applyFilters();
+            });
+            
+            document.getElementById('next-date').addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() + 1);
+                updateDateDisplay();
+                applyFilters();
+            });
+            
+            // View filter buttons
+            document.querySelectorAll('.view-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.getAttribute('data-filter');
+                    applyFilters();
+                });
+            });
+            
+            // Sidebar filters
+            document.querySelectorAll('.sidebar-item[data-filter]').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all items in the same section
+                    const parentSection = this.closest('.sidebar-section');
+                    parentSection.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    const filterType = this.getAttribute('data-filter');
+                    const filterValue = this.getAttribute('data-value');
+                    
+                    if (filterType === 'region') {
+                        currentRegion = filterValue;
+                        currentCompetition = null;
+                    } else if (filterType === 'competition') {
+                        currentCompetition = filterValue;
+                        currentRegion = null;
+                        currentCollection = this.getAttribute('data-collection');
+                    }
+                    
+                    applyFilters();
+                });
+            });
+            
+            // Clear filters button
+            document.getElementById('clear-filters').addEventListener('click', function() {
+                document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+                currentRegion = null;
+                currentCompetition = null;
+                currentCollection = null;
+                currentFilter = 'all';
+                
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-filter') === 'all') {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                applyFilters();
+            });
+            
+            // Auto-refresh matches every 5 minutes
+            setInterval(() => {
+                loadAllMatches();
+            }, 300000); // 5 minutes = 300,000 milliseconds
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

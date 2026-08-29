@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gombe Match Time Assignment</title>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+      color: #333;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+    
+    header {
+      background: linear-gradient(to right, #1a2a6c, #3494e6);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+      position: relative;
+    }
+    
+    h1 {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 10px auto 0;
+      line-height: 1.5;
+    }
+    
+    .controls {
+      padding: 25px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .control-group {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+    
+    .control-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+      color: #1a2a6c;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .control-group select, 
+    .control-group input {
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background: #f8f9fa;
+      transition: all 0.3s ease;
+    }
+    
+    .control-group select:focus, 
+    .control-group input:focus {
+      border-color: #3494e6;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(52, 148, 230, 0.2);
+    }
+    
+    .zone-display {
+      padding: 14px;
+      background: #e8f4fd;
+      border-radius: 8px;
+      border: 2px solid #b3d9ff;
+      font-weight: 600;
+      color: #1a2a6c;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+      grid-column: span 2;
+    }
+    
+    .btn {
+      flex: 1;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn:active {
+      transform: translateY(1px);
+    }
+    
+    .btn-load {
+      background: linear-gradient(to right, #1a2a6c, #3494e6);
+    }
+    
+    .btn-save {
+      background: linear-gradient(to right, #27ae60, #2ecc71);
+    }
+    
+    .btn-saving {
+      background: linear-gradient(to right, #f39c12, #f1c40f);
+    }
+    
+    .btn-saved {
+      background: linear-gradient(to right, #9b59b6, #8e44ad);
+    }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .status {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: 500;
+      min-height: 24px;
+      color: #1a2a6c;
+      grid-column: span 2;
+    }
+    
+    .fixtures-container {
+      padding: 25px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    
+    .fixtures-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e9ecef;
+    }
+    
+    .fixtures-title {
+      font-size: 1.8rem;
+      color: #1a2a6c;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .matchdays-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    .matchday-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      border-left: 5px solid #1a2a6c;
+    }
+    .matchday-header {
+      background: linear-gradient(to right, #3494e6, #1a2a6c);
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .matchday-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .matchday-number {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    
+    .matchday-date {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      margin-top: 3px;
+    }
+    
+    .match-list {
+      padding: 15px;
+    }
+    
+    .match-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+      position: relative;
+      transition: background-color 0.3s;
+    }
+    
+    .match-item.saved {
+      background-color: rgba(46, 204, 113, 0.1);
+      transition: background-color 0.5s;
+    }
+    
+    .match-item:last-child {
+      border-bottom: none;
+    }
+    
+    .team {
+      flex: 1;
+      text-align: center;
+      padding: 0 10px;
+      font-weight: 500;
+    }
+    
+    .home-team {
+      text-align: right;
+      color: #1a2a6c;
+      font-weight: 600;
+    }
+    
+    .away-team {
+      text-align: left;
+      color: #b21f1f;
+      font-weight: 600;
+    }
+    
+    .vs {
+      font-weight: bold;
+      color: #666;
+      font-size: 0.9rem;
+      background: #f0f0f0;
+      padding: 5px 10px;
+      border-radius: 20px;
+      min-width: 40px;
+      text-align: center;
+      margin: 0 10px;
+    }
+    
+    .match-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-left: 15px;
+      min-width: 300px;
+    }
+    
+    .match-time-row {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .date-input, .time-input {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+    }
+    
+    .date-input {
+      width: 140px;
+    }
+    
+    .time-input {
+      width: 90px;
+    }
+    
+    .time-btn {
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .time-btn:hover {
+      background: #2980b9;
+    }
+    
+    .save-match-btn {
+      background: #2ecc71;
+    }
+    
+    .save-match-btn:hover {
+      background: #27ae60;
+    }
+    
+    .postpone-btn {
+      background: #e74c3c;
+    }
+    
+    .postpone-btn:hover {
+      background: #c0392b;
+    }
+    
+    .loading {
+      padding: 40px 0;
+      text-align: center;
+      color: #1a2a6c;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(26, 42, 108, 0.2);
+      border-radius: 50%;
+      border-top-color: #1a2a6c;
+      margin: 0 auto 20px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+    }
+    
+    .summary-item {
+      background: #e3f2fd;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .summary-label {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 5px;
+    }
+    
+    .summary-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1a2a6c;
+    }
+    
+    .success {
+      background: #4CAF50;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    .error {
+      background: #ff6b6b;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .teams-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    
+    .team-tag {
+      background: linear-gradient(to right, #3494e6, #ec6ead);
+      color: white;
+      padding: 6px 15px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: white;
+      background: rgba(0, 0, 0, 0.2);
+      margin-top: 30px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 1000px;
+      font-size: 0.9rem;
+    }
+    
+    .matchday-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .matchday-time {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      width: 90px;
+    }
+    
+    .competition-badge {
+      background: #8e44ad;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-left: 10px;
+    }
+    
+    .status-badge {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    
+    .scheduled {
+      background: #27ae60;
+      color: white;
+    }
+    
+    .postponed {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .save-status {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .saving {
+      background: #f39c12;
+      color: white;
+      opacity: 1;
+    }
+    
+    .saved {
+      background: #2ecc71;
+      color: white;
+      opacity: 1;
+    }
+    
+    .save-error {
+      background: #e74c3c;
+      color: white;
+      opacity: 1;
+    }
+    
+    .explanation-box {
+      background: #e3f2fd;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 4px solid #3498db;
+    }
+    
+    .explanation-title {
+      font-size: 1.2rem;
+      color: #1a2a6c;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .explanation-content {
+      line-height: 1.6;
+    }
+    
+    .explanation-step {
+      display: flex;
+      align-items: flex-start;
+      margin: 15px 0;
+      gap: 10px;
+    }
+    
+    .step-number {
+      background: #3498db;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+      
+      .summary {
+        grid-template-columns: 1fr;
+      }
+      
+      .fixtures-container {
+        padding: 15px;
+      }
+      
+      .controls {
+        grid-template-columns: 1fr;
+      }
+      
+      .match-item {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      
+      .home-team, .away-team {
+        text-align: center;
+      }
+      
+      .match-controls {
+        margin: 10px 0 0;
+        width: 100%;
+        min-width: auto;
+      }
+      
+      .match-time-row {
+        flex-wrap: wrap;
+      }
+      
+      .save-status {
+        position: static;
+        margin-top: 5px;
+        text-align: center;
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        border-radius: 10px;
+      }
+      
+      header {
+        padding: 20px 15px;
+      }
+      
+      h1 {
+        font-size: 1.6rem;
+      }
+      
+      .controls {
+        padding: 15px;
+      }
+      
+      .control-group {
+        padding: 15px;
+      }
+      
+      .fixtures-title {
+        font-size: 1.4rem;
+      }
+      
+      .matchday-header {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .matchday-controls {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-clock"></i> Gombe Match Time Assignment</h1>
+      <p class="subtitle">Assign kick-off times and dates to matches</p>
+    </header>
+    
+    <div class="controls">
+      <div class="control-group">
+        <label for="competitionType"><i class="fas fa-trophy"></i> Competition Type</label>
+        <select id="competitionType">
+          <option value="">Select competition</option>
+          <option value="league">League Phase</option>
+          <option value="championship">Championship</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label><i class="fas fa-map-marker-alt"></i> Zone</label>
+        <div class="zone-display">
+          Northern Zone (Fixed Selection)
+        </div>
+      </div>
+      
+      <div class="btn-group">
+        <button id="loadBtn" class="btn btn-load" disabled>
+          <i class="fas fa-download"></i> Load Fixtures
+        </button>
+        <button id="saveAllBtn" class="btn btn-save" disabled>
+          <i class="fas fa-save"></i> Save All Times
+        </button>
+      </div>
+      
+      <div class="status" id="statusMessage">Select competition type to begin</div>
+    </div>
+    
+    <div class="fixtures-container">
+      <div class="fixtures-header">
+        <h2 class="fixtures-title"><i class="fas fa-list-ol"></i> Fixture Schedule</h2>
+        <div id="teamsCount">0 teams, 0 matches</div>
+      </div>
+      
+      <div id="fixtures">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Fixtures will appear after loading</p>
+        </div>
+      </div>
+      
+      <div class="explanation-box">
+        <h3 class="explanation-title"><i class="fas fa-info-circle"></i> How Saving Works</h3>
+        <div class="explanation-content">
+          <div class="explanation-step">
+            <div class="step-number">1</div>
+            <div>Assign date and time using the inputs next to each match</div>
+          </div>
+          <div class="explanation-step">
+            <div class="step-number">2</div>
+            <div>Click the <strong>Save</strong> button to save a single match or <strong>Save All Times</strong> to save all matches</div>
+          </div>
+          <div class="explanation-step">
+            <div class="step-number">3</div>
+            <div>After saving, the match row will highlight <span style="background: rgba(46, 204, 113, 0.1); padding: 2px 5px;">green</span> briefly</div>
+          </div>
+          <div class="explanation-step">
+            <div class="step-number">4</div>
+            <div>Status badges indicate if a match is <span class="status-badge scheduled">Scheduled</span> or <span class="status-badge postponed">Postponed</span></div>
+          </div>
+          <div class="explanation-step">
+            <div class="step-number">5</div>
+            <div>For postponed matches, clear both date and time before saving</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    <p>Gombe State Football Association | Match Scheduling System | © 2025 All rights reserved</p>
+  </footer>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // DOM elements
+    const competitionSelect = document.getElementById('competitionType');
+    const loadBtn = document.getElementById('loadBtn');
+    const saveAllBtn = document.getElementById('saveAllBtn');
+    const statusMessage = document.getElementById('statusMessage');
+    const fixturesContainer = document.getElementById('fixtures');
+    const teamsCount = document.getElementById('teamsCount');
+    
+    // Current data
+    let currentCompetition = null;
+    let currentZone = "Northern Zone"; // Hardcoded zone value
+    let currentFixtures = [];
+    let currentTeams = [];
+    let seasonLabel = '';
+    let isChampionship = false;
+    
+    // Load available zones based on competition type
+    async function loadZones(competitionType) {
+      try {
+        statusMessage.textContent = "Loading fixtures for Northern Zone...";
+        
+        // Enable load button immediately since zone is fixed
+        loadBtn.disabled = false;
+        statusMessage.textContent = "Click Load Fixtures to continue";
+        
+      } catch (error) {
+        console.error("Error loading zones:", error);
+        statusMessage.textContent = "Failed to load zones. Please try again later.";
+        fixturesContainer.innerHTML = `
+          <div class="error">
+            <i class="fas fa-exclamation-triangle"></i> Error loading zones: ${error.message}
+          </div>
+        `;
+      }
+    }
+    
+    // Load fixtures for the selected zone and competition
+    async function loadFixtures() {
+      const competition = competitionSelect.value;
+      
+      if (!competition) {
+        statusMessage.textContent = "Please select a competition type";
+        return;
+      }
+      
+      // Show loading state
+      fixturesContainer.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading fixtures for Northern Zone...</p>
+        </div>
+      `;
+      
+      try {
+        // Load fixtures from Firestore
+        let docId;
+        if (competition === 'league') {
+          docId = `league_Northern Zone`;
+        } else if (competition === 'championship') {
+          docId = `championship_Northern Zone`;
+        } else {
+          throw new Error("Invalid competition type");
+        }
+        
+        const docRef = db.collection('saved_fixtures').doc(docId);
+        const doc = await docRef.get();
+        
+        if (!doc.exists) {
+          throw new Error(`No fixtures found for Northern Zone ${competition}`);
+        }
+        
+        const fixtureData = doc.data();
+        
+        // Get competition type from document
+        isChampionship = fixtureData.competitionType === 'championship';
+        
+        // Verify competition type matches selection
+        if ((competition === 'championship' && !isChampionship) || 
+            (competition === 'league' && isChampionship)) {
+          statusMessage.textContent = `Fixtures don't match selected competition type`;
+          fixturesContainer.innerHTML = `
+            <div class="error">
+              <i class="fas fa-exclamation-triangle"></i> 
+              <div>Fixture is for ${isChampionship ? 'Championship' : 'League'}, but you selected ${competition === 'championship' ? 'Championship' : 'League'}</div>
+            </div>
+          `;
+          return;
+        }
+        
+        currentFixtures = fixtureData.matchdays;
+        currentTeams = fixtureData.teams;
+        currentCompetition = competition;
+        
+        // Generate season label from startDate
+        const startYear = new Date(fixtureData.startDate).getFullYear();
+        seasonLabel = `Season${startYear}-${(startYear+1).toString().slice(-2)}`;
+        
+        // Display fixtures
+        displayFixtures(fixtureData);
+        
+        // Enable save button
+        saveAllBtn.disabled = false;
+        statusMessage.textContent = "Fixtures loaded successfully! Assign times and dates";
+        
+      } catch (error) {
+        console.error("Error loading fixtures:", error);
+        statusMessage.textContent = `Error loading Northern Zone ${currentCompetition} fixtures: ${error.message}`;
+        fixturesContainer.innerHTML = `
+          <div class="error">
+            <i class="fas fa-exclamation-triangle"></i> ${error.message}
+          </div>
+        `;
+      }
+    }
+    
+    // Display fixtures with time and date inputs
+    function displayFixtures(fixtureData) {
+      const totalMatches = fixtureData.totalMatches;
+      const teamCount = fixtureData.teams.length;
+      const compType = fixtureData.competitionType || 'league';
+      
+      let html = `
+        <div class="summary">
+          <div class="summary-item">
+            <div class="summary-label">Teams</div>
+            <div class="summary-value">${teamCount}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Matchdays</div>
+            <div class="summary-value">${fixtureData.totalMatchdays}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Total Matches</div>
+            <div class="summary-value">${totalMatches}</div>
+          </div>
+        </div>
+        
+        <div class="matchdays-container">
+      `;
+      
+      fixtureData.matchdays.forEach((matchday, index) => {
+        const matchdayNumber = matchday.matchday;
+        const matchDate = new Date(matchday.date);
+        const dateStr = matchDate.toLocaleDateString('en-GB', {
+          weekday: 'short', 
+          day: 'numeric', 
+          month: 'short',
+          year: 'numeric'
+        });
+        
+        html += `
+          <div class="matchday-card">
+            <div class="matchday-header">
+              <div class="matchday-info">
+                <div class="matchday-number">
+                  Matchday ${matchdayNumber}
+                  <span class="competition-badge">
+                    ${compType === 'championship' ? 'Championship' : 'League'}
+                  </span>
+                </div>
+                <div class="matchday-date">${dateStr}</div>
+              </div>
+              <div class="matchday-controls">
+                <input type="time" class="matchday-time" id="matchday-time-${matchdayNumber}" value="15:00">
+                <button class="time-btn" onclick="setAllTimes(${matchdayNumber})">
+                  <i class="fas fa-bolt"></i> Apply Time to All
+                </button>
+              </div>
+            </div>
+            <div class="match-list">
+        `;
+        
+        matchday.matches.forEach(match => {
+          const matchId = `${matchdayNumber}-${match.home}-${match.away}`;
+          const timeValue = match.kickUpTime || "15:00";
+          const dateValue = match.date || matchday.date.split('T')[0];
+          
+          html += `
+            <div class="match-item" id="match-${matchId}">
+              <span class="save-status" id="save-status-${matchId}"></span>
+              
+              <div class="team home-team">${match.home}</div>
+              <div class="vs">vs</div>
+              <div class="team away-team">${match.away}</div>
+              
+              <div class="match-controls">
+                <div class="match-time-row">
+                  <input type="date" class="date-input" id="date-${matchId}" value="${dateValue}">
+                  <input type="time" class="time-input" id="time-${matchId}" value="${timeValue}">
+                  <button class="time-btn save-match-btn" onclick="saveSingleMatch('${matchId}')">
+                    <i class="fas fa-save"></i> Save
+                  </button>
+                  <button class="time-btn postpone-btn" onclick="postponeMatch('${matchId}')">
+                    <i class="fas fa-calendar-times"></i> Postpone
+                  </button>
+                </div>
+                <div id="match-status-${matchId}" class="status-badge ${match.kickUpTime ? 'scheduled' : 'postponed'}">
+                  ${match.kickUpTime ? 'Scheduled' : 'Postponed'}
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        
+        html += `</div></div>`;
+      });
+      
+      html += `</div>`;
+      fixturesContainer.innerHTML = html;
+      teamsCount.textContent = `${teamCount} teams, ${totalMatches} matches`;
+    }
+    
+    // Set the same time for all matches in a matchday
+    function setAllTimes(matchday) {
+      const timeValue = document.getElementById(`matchday-time-${matchday}`).value;
+      if (!timeValue) return;
+      
+      // Find all time inputs for this matchday
+      const inputs = document.querySelectorAll(`input[id^="time-${matchday}-"]`);
+      inputs.forEach(input => {
+        input.value = timeValue;
+      });
+    }
+    
+    // Postpone a match (clear time and date)
+    function postponeMatch(matchId) {
+      document.getElementById(`time-${matchId}`).value = "";
+      document.getElementById(`date-${matchId}`).value = "";
+      updateMatchStatus(matchId, 'postponed');
+    }
+    
+    // Update match status badge
+    function updateMatchStatus(matchId, status) {
+      const badge = document.getElementById(`match-status-${matchId}`);
+      badge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+      badge.className = `status-badge ${status}`;
+    }
+    
+    // Show save status indicator
+    function showSaveStatus(matchId, status) {
+      const indicator = document.getElementById(`save-status-${matchId}`);
+      indicator.textContent = status === 'saving' ? 'Saving...' : 
+                             status === 'saved' ? '✓ Saved!' : 
+                             status === 'error' ? '✗ Error' : '';
+      indicator.className = `save-status ${status}`;
+      
+      // Clear status after delay
+      if (status !== 'saving') {
+        setTimeout(() => {
+          indicator.className = 'save-status';
+          indicator.textContent = '';
+        }, 3000);
+      }
+    }
+    
+    // Highlight match after saving
+    function highlightMatch(matchId) {
+      const matchElement = document.getElementById(`match-${matchId}`);
+      matchElement.classList.add('saved');
+      
+      setTimeout(() => {
+        matchElement.classList.remove('saved');
+      }, 2000);
+    }
+    
+    // Save single match to GombeSeason collection
+    async function saveSingleMatch(matchId) {
+      const [matchday, home, away] = matchId.split('-');
+      const timeValue = document.getElementById(`time-${matchId}`).value;
+      const dateValue = document.getElementById(`date-${matchId}`).value;
+      
+      showSaveStatus(matchId, 'saving');
+      
+      try {
+        // Determine status based on time input
+        const status = timeValue ? 'scheduled' : 'postponed';
+        
+        // Update match status badge
+        updateMatchStatus(matchId, status);
+        
+        // Update both team records
+        await updateTeamRecords(home, away, matchday, dateValue, timeValue, status);
+        
+        // Show success
+        highlightMatch(matchId);
+        showSaveStatus(matchId, 'saved');
+        
+      } catch (error) {
+        console.error("Error saving single match:", error);
+        showSaveStatus(matchId, 'error');
+        statusMessage.textContent = `Error saving match: ${error.message}`;
+      }
+    }
+    
+    // Update team records in GombeSeason collection
+    async function updateTeamRecords(homeTeam, awayTeam, matchday, date, time, status) {
+      const matchdayNum = parseInt(matchday);
+      
+      // Get match ID prefix based on competition type
+      const matchIdPrefix = isChampionship ? 'CMatch' : 'LMatch';
+      const matchDocId = `${matchIdPrefix}${matchdayNum.toString().padStart(2, '0')}`;
+      
+      // Prepare update data
+      const updateData = {
+        date: status === 'scheduled' ? date : null,
+        kickUpTime: status === 'scheduled' ? time : null,
+        status: status,
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      
+      // Update home team record
+      const homeTeamRef = db.collection('GombeSeason').doc(homeTeam).collection(seasonLabel).doc(matchDocId);
+      await homeTeamRef.set(updateData, { merge: true });
+      
+      // Update away team record
+      const awayTeamRef = db.collection('GombeSeason').doc(awayTeam).collection(seasonLabel).doc(matchDocId);
+      await awayTeamRef.set(updateData, { merge: true });
+    }
+    
+    // Save all match times and dates to GombeSeason
+    async function saveAllTimes() {
+      if (!currentFixtures || currentFixtures.length === 0) {
+        statusMessage.textContent = "No fixtures to save. Please load fixtures first.";
+        return;
+      }
+
+      try {
+        // Update button state
+        saveAllBtn.disabled = true;
+        saveAllBtn.classList.remove('btn-save');
+        saveAllBtn.classList.add('btn-saving');
+        saveAllBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        statusMessage.textContent = "Saving all match times to GombeSeason...";
+        
+        // Create batch operation
+        const batch = db.batch();
+        let matchCount = 0;
+        let postponedCount = 0;
+        
+        // Get match ID prefix based on competition type
+        const matchIdPrefix = isChampionship ? 'CMatch' : 'LMatch';
+        
+        // Process all matches
+        for (const matchday of currentFixtures) {
+          const matchdayNum = matchday.matchday;
+          const matchDocId = `${matchIdPrefix}${matchdayNum.toString().padStart(2, '0')}`;
+          
+          for (const match of matchday.matches) {
+            const matchId = `${matchdayNum}-${match.home}-${match.away}`;
+            const timeInput = document.getElementById(`time-${matchId}`);
+            const dateInput = document.getElementById(`date-${matchId}`);
+            
+            if (!timeInput || !dateInput) continue;
+            
+            const timeValue = timeInput.value;
+            const dateValue = dateInput.value;
+            const status = timeValue ? 'scheduled' : 'postponed';
+            
+            // Update match status badge
+            updateMatchStatus(matchId, status);
+            
+            // Prepare update data
+            const updateData = {
+              date: status === 'scheduled' ? dateValue : null,
+              kickUpTime: status === 'scheduled' ? timeValue : null,
+              status: status,
+              lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            // Update home team record
+            const homeTeamRef = db.collection('GombeSeason').doc(match.home).collection(seasonLabel).doc(matchDocId);
+            batch.set(homeTeamRef, updateData, { merge: true });
+            
+            // Update away team record
+            const awayTeamRef = db.collection('GombeSeason').doc(match.away).collection(seasonLabel).doc(matchDocId);
+            batch.set(awayTeamRef, updateData, { merge: true });
+            
+            matchCount++;
+            if (status === 'postponed') postponedCount++;
+          }
+        }
+        
+        // Commit batch operation
+        await batch.commit();
+        
+        // Update UI
+        saveAllBtn.disabled = false;
+        saveAllBtn.classList.remove('btn-saving');
+        saveAllBtn.classList.add('btn-saved');
+        saveAllBtn.innerHTML = '<i class="fas fa-check-circle"></i> All Times Saved!';
+        
+        statusMessage.textContent = `Successfully saved ${matchCount} matches (${postponedCount} postponed)`;
+        
+        // Reset button after delay
+        setTimeout(() => {
+          saveAllBtn.classList.remove('btn-saved');
+          saveAllBtn.classList.add('btn-save');
+          saveAllBtn.innerHTML = '<i class="fas fa-save"></i> Save All Times';
+        }, 3000);
+        
+      } catch (error) {
+        console.error("Error saving all times:", error);
+        saveAllBtn.disabled = false;
+        saveAllBtn.classList.remove('btn-saving');
+        saveAllBtn.classList.add('btn-save');
+        saveAllBtn.innerHTML = '<i class="fas fa-save"></i> Save All Times';
+        statusMessage.textContent = `Error saving times: ${error.message}`;
+      }
+    }
+    
+    // Event listeners
+    competitionSelect.addEventListener('change', function() {
+      if (this.value) {
+        loadZones(this.value);
+      } else {
+        loadBtn.disabled = true;
+        saveAllBtn.disabled = true;
+        statusMessage.textContent = "Please select a competition type";
+      }
+    });
+    
+    loadBtn.addEventListener('click', loadFixtures);
+    saveAllBtn.addEventListener('click', saveAllTimes);
+    
+    // Initialize UI
+    loadBtn.disabled = true;
+    saveAllBtn.disabled = true;
+  </script>
+</body>
+</html>

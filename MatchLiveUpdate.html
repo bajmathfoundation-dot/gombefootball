@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Match Viewer | Gombe Football</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0d3b1e, #2a6e37);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .match-info {
+            background-color: white;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px 0;
+        }
+
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+
+        .team-logo {
+            width: 100px;
+            height: 100px;
+            background-color: #f0f0f0;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: #666;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 3px solid #fff;
+        }
+
+        .home-logo {
+            background: linear-gradient(135deg, #0d3b1e, #2a6e37);
+            color: white;
+        }
+
+        .away-logo {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+        }
+
+        .team-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .score {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0 20px;
+            color: #0d3b1e;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .match-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .match-details p {
+            margin-bottom: 0;
+            margin-right: 20px;
+        }
+
+        .match-status {
+            display: inline-block;
+            padding: 6px 15px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+        }
+
+        .match-status.live {
+            background-color: #28a745;
+            animation: pulse 1.5s infinite;
+        }
+
+        .match-status.pending {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .match-status.ended {
+            background-color: #dc3545;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 12px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid #0d3b1e;
+            color: #0d3b1e;
+        }
+
+        .tab:hover {
+            color: #0d3b1e;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Pitch Styles */
+        .pitch-container {
+            position: relative;
+            height: 700px;
+            background: linear-gradient(135deg, #2d5a2d, #1e3e1e);
+            border: 3px solid #fff;
+            margin: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Pitch Markings */
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+        }
+
+        .center-spot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+        }
+
+        .halfway-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .penalty-area {
+            position: absolute;
+            width: 130px;
+            height: 400px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .penalty-area.left {
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .penalty-area.right {
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .goal-area {
+            position: absolute;
+            width: 60px;
+            height: 200px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .goal-area.left {
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .goal-area.right {
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Player Styles */
+        .player {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        .player.home {
+            background: linear-gradient(135deg, #0d3b1e, #2a6e37);
+            border: 2px solid #fff;
+        }
+
+        .player.away {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid #fff;
+        }
+
+        .player:hover {
+            transform: scale(1.1);
+            z-index: 100;
+        }
+
+        /* Player positions - will be dynamically set */
+        .player[data-position="GK"] { left: 40px; top: 50%; }
+        .player[data-position="RB"] { left: 100px; top: 20%; }
+        .player[data-position="RCB"] { left: 100px; top: 35%; }
+        .player[data-position="LCB"] { left: 100px; top: 65%; }
+        .player[data-position="LB"] { left: 100px; top: 80%; }
+        .player[data-position="RCM"] { left: 200px; top: 25%; }
+        .player[data-position="CDM"] { left: 200px; top: 50%; }
+        .player[data-position="LCM"] { left: 200px; top: 75%; }
+        .player[data-position="RW"] { left: 320px; top: 20%; }
+        .player[data-position="ST"] { left: 320px; top: 50%; }
+        .player[data-position="LW"] { left: 320px; top: 80%; }
+
+        /* Away team positions */
+        .player.away[data-position="GK"] { right: 40px; top: 50%; }
+        .player.away[data-position="RB"] { right: 100px; top: 20%; }
+        .player.away[data-position="RCB"] { right: 100px; top: 35%; }
+        .player.away[data-position="LCB"] { right: 100px; top: 65%; }
+        .player.away[data-position="LB"] { right: 100px; top: 80%; }
+        .player.away[data-position="RDM"] { right: 180px; top: 35%; }
+        .player.away[data-position="LDM"] { right: 180px; top: 65%; }
+        .player.away[data-position="RAM"] { right: 260px; top: 25%; }
+        .player.away[data-position="CAM"] { right: 260px; top: 50%; }
+        .player.away[data-position="LAM"] { right: 260px; top: 75%; }
+        .player.away[data-position="ST"] { right: 340px; top: 50%; }
+
+        /* Player Info Tooltip */
+        .player-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            pointer-events: none;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-left: 4px solid;
+            display: none;
+        }
+
+        .player-tooltip.home { border-color: #0d3b1e; }
+        .player-tooltip.away { border-color: #1a1a2e; }
+
+        .player-tooltip .name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .player-tooltip .position {
+            color: #ccc;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .player-tooltip .stats {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        /* Formation Labels */
+        .formation-label {
+            position: absolute;
+            bottom: 20px;
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .formation-label.home {
+            left: 20px;
+            border-left: 4px solid #0d3b1e;
+        }
+
+        .formation-label.away {
+            right: 20px;
+            border-right: 4px solid #1a1a2e;
+        }
+
+        /* Team Lineups */
+        .lineups-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+        }
+
+        .team-lineup {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-lineup h3 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid;
+        }
+
+        .team-lineup.home h3 { border-color: #0d3b1e; color: #0d3b1e; }
+        .team-lineup.away h3 { border-color: #1a1a2e; color: #1a1a2e; }
+
+        .player-row {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .player-row:hover {
+            background: #f8f9fa;
+        }
+
+        .player-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 12px;
+            color: white;
+        }
+
+        .home .player-number { background: #0d3b1e; }
+        .away .player-number { background: #1a1a2e; }
+
+        /* Substitutes Section */
+        .substitutes {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .substitutes h4 {
+            margin-bottom: 10px;
+            color: #555;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .substitute-row {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .substitute-row:hover {
+            background: #f8f9fa;
+        }
+
+        .substitute-number {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11px;
+            margin-right: 10px;
+            color: white;
+            background: #888;
+        }
+
+        /* Match Events */
+        .match-events {
+            margin-top: 20px;
+        }
+
+        .event {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+
+        .event:hover {
+            background-color: #f9f9f9;
+        }
+
+        .event-time {
+            width: 50px;
+            font-weight: bold;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .event-icon {
+            width: 28px;
+            height: 28px;
+            margin: 0 12px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .goal {
+            background-color: #28a745;
+        }
+
+        .yellow {
+            background-color: #ffc107;
+        }
+
+        .red {
+            background-color: #dc3545;
+        }
+
+        .substitution {
+            background-color: #2196F3;
+        }
+
+        .match-event {
+            background-color: #6c757d;
+        }
+
+        .event-description {
+            flex: 1;
+        }
+
+        .event-player {
+            font-weight: bold;
+        }
+
+        .officials-container {
+            background: #e9f5eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #0d3b1e;
+        }
+
+        .officials-title {
+            color: #0d3b1e;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .officials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .official-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .official-icon {
+            color: #0d3b1e;
+            width: 30px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .competition-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: #3a7d44;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .group-badge {
+            background: #1976d2;
+            margin-left: 8px;
+        }
+
+        /* Match States */
+        .match-state-message {
+            text-align: center;
+            padding: 40px 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .match-state-message h3 {
+            color: #0d3b1e;
+            margin-bottom: 15px;
+        }
+
+        .match-state-message p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .upcoming-info, .finished-info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .pitch-container {
+                height: 500px;
+            }
+            
+            .player {
+                width: 40px;
+                height: 40px;
+                font-size: 12px;
+            }
+            
+            .lineups-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .teams {
+                flex-direction: column;
+            }
+            
+            .score {
+                margin: 15px 0;
+                font-size: 36px;
+            }
+        }
+
+        .refresh-info {
+            text-align: center;
+            padding: 10px;
+            background: #e9f5eb;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: #0d3b1e;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #0d3b1e;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .back-button:hover {
+            background: #2a6e37;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Live Match Viewer</h1>
+            <p>Real-time match updates from Gombe Football</p>
+        </header>
+        
+        <div class="match-info">
+            <div class="teams">
+                <div class="team">
+                    <div class="team-logo home-logo" id="homeLogo">H</div>
+                    <div class="team-name" id="homeTeam">Loading...</div>
+                    <div class="formation-info" id="homeFormation"></div>
+                </div>
+                
+                <div class="score" id="score">0 - 0</div>
+                
+                <div class="team">
+                    <div class="team-logo away-logo" id="awayLogo">A</div>
+                    <div class="team-name" id="awayTeam">Loading...</div>
+                    <div class="formation-info" id="awayFormation"></div>
+                </div>
+            </div>
+            
+            <div class="match-details">
+                <div>
+                    <p><span class="match-status pending" id="matchStatus">LOADING</span></p>
+                    <p><strong>Competition:</strong> <span id="competitionName">Loading...</span></p>
+                    <p><strong>Venue:</strong> <span id="venue">TBD</span></p>
+                </div>
+                <div>
+                    <p><strong>Date:</strong> <span id="matchDate">Loading...</span></p>
+                    <p><strong>Kick-off:</strong> <span id="kickoffTime">Loading...</span></p>
+                    <p><strong>Referee:</strong> <span id="referee">Loading...</span></p>
+                </div>
+            </div>
+
+            <div class="refresh-info" id="refreshInfo">
+                <i class="fas fa-sync-alt"></i> Live updates every 10 seconds
+            </div>
+            
+            <!-- Match State Messages -->
+            <div class="match-state-message" id="upcomingMessage" style="display: none;">
+                <h3><i class="fas fa-clock"></i> Match Not Started</h3>
+                <p>This match is scheduled for the future. Check back closer to kick-off time for live updates.</p>
+                <div class="upcoming-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Scheduled Date:</span>
+                            <span class="info-value" id="scheduledDate">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Kick-off Time:</span>
+                            <span class="info-value" id="scheduledTime">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Venue:</span>
+                            <span class="info-value" id="scheduledVenue">-</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="index.html" class="back-button">Back to Matches</a>
+            </div>
+
+            <div class="match-state-message" id="finishedMessage" style="display: none;">
+                <h3><i class="fas fa-flag-checkered"></i> Match Finished</h3>
+                <p>This match has been completed. Below you can view the final result and match details.</p>
+                <div class="finished-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Final Score:</span>
+                            <span class="info-value" id="finalScore">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Match Date:</span>
+                            <span class="info-value" id="finishedDate">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Competition:</span>
+                            <span class="info-value" id="finishedCompetition">-</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="index.html" class="back-button">Back to Matches</a>
+            </div>
+            
+            <div class="tabs" id="liveTabs">
+                <div class="tab active" data-tab="lineups">Lineups & Formations</div>
+                <div class="tab" data-tab="events">Match Events</div>
+                <div class="tab" data-tab="officials">Match Officials</div>
+            </div>
+            
+            <div class="tab-content active" id="lineups">
+                <!-- Single Pitch with Both Formations -->
+                <div class="pitch-container" id="pitchContainer">
+                    <!-- Pitch Markings -->
+                    <div class="center-circle"></div>
+                    <div class="center-spot"></div>
+                    <div class="halfway-line"></div>
+                    <div class="penalty-area left"></div>
+                    <div class="penalty-area right"></div>
+                    <div class="goal-area left"></div>
+                    <div class="goal-area right"></div>
+
+                    <!-- Players will be dynamically added here -->
+                    
+                    <!-- Formation Labels -->
+                    <div class="formation-label home" id="homeFormationLabel">Formation</div>
+                    <div class="formation-label away" id="awayFormationLabel">Formation</div>
+                </div>
+
+                <!-- Team Lineups Panel -->
+                <div class="lineups-panel" id="lineupsPanel">
+                    <!-- Lineups will be dynamically added here -->
+                </div>
+            </div>
+            
+            <div class="tab-content" id="events">
+                <div class="match-events" id="matchEvents">
+                    <!-- Events will be dynamically added here -->
+                </div>
+            </div>
+
+            <div class="tab-content" id="officials">
+                <div class="officials-container">
+                    <div class="officials-title">
+                        <i class="fas fa-whistle"></i> Match Officials
+                    </div>
+                    <div class="officials-grid" id="matchOfficials">
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-whistle"></i></div>
+                            <div><strong>Referee:</strong> <span id="mainReferee">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-flag"></i></div>
+                            <div><strong>Linesman 1:</strong> <span id="linesman1">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-flag"></i></div>
+                            <div><strong>Linesman 2:</strong> <span id="linesman2">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-network-wired"></i></div>
+                            <div><strong>Netman 1:</strong> <span id="netman1">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-network-wired"></i></div>
+                            <div><strong>Netman 2:</strong> <span id="netman2">Not assigned</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="player-tooltip"></div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Global state
+        const matchState = {
+            homeTeam: "",
+            awayTeam: "",
+            homeScore: 0,
+            awayScore: 0,
+            minutes: 0,
+            seconds: 0,
+            isLive: false,
+            isCompleted: false,
+            isUpcoming: true,
+            events: [],
+            homeStarters: [],
+            awayStarters: [],
+            homeSubstitutes: [],
+            awaySubstitutes: [],
+            playerPositions: {},
+            matchId: "",
+            seasonId: "",
+            competitionType: "",
+            matchStatus: "",
+            collectionName: "",
+            matchDate: "",
+            venue: "home",
+            refreshInterval: null,
+            mainReferee: "",
+            linesman1: "",
+            linesman2: "",
+            netman1: "",
+            netman2: ""
+        };
+
+        // DOM Elements
+        const homeTeamElement = document.getElementById('homeTeam');
+        const awayTeamElement = document.getElementById('awayTeam');
+        const scoreElement = document.getElementById('score');
+        const matchStatusElement = document.getElementById('matchStatus');
+        const homeFormationElement = document.getElementById('homeFormation');
+        const awayFormationElement = document.getElementById('awayFormation');
+        const homeFormationLabel = document.getElementById('homeFormationLabel');
+        const awayFormationLabel = document.getElementById('awayFormationLabel');
+        const pitchContainer = document.getElementById('pitchContainer');
+        const lineupsPanel = document.getElementById('lineupsPanel');
+        const matchEventsElement = document.getElementById('matchEvents');
+        const competitionNameElement = document.getElementById('competitionName');
+        const matchDateElement = document.getElementById('matchDate');
+        const kickoffTimeElement = document.getElementById('kickoffTime');
+        const venueElement = document.getElementById('venue');
+        const refreshInfoElement = document.getElementById('refreshInfo');
+        const liveTabsElement = document.getElementById('liveTabs');
+        const upcomingMessageElement = document.getElementById('upcomingMessage');
+        const finishedMessageElement = document.getElementById('finishedMessage');
+        const scheduledDateElement = document.getElementById('scheduledDate');
+        const scheduledTimeElement = document.getElementById('scheduledTime');
+        const scheduledVenueElement = document.getElementById('scheduledVenue');
+        const finalScoreElement = document.getElementById('finalScore');
+        const finishedDateElement = document.getElementById('finishedDate');
+        const finishedCompetitionElement = document.getElementById('finishedCompetition');
+        const mainRefereeElement = document.getElementById('mainReferee');
+        const linesman1Element = document.getElementById('linesman1');
+        const linesman2Element = document.getElementById('linesman2');
+        const netman1Element = document.getElementById('netman1');
+        const netman2Element = document.getElementById('netman2');
+
+        // Function to get URL parameters
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                matchId: params.get('matchId'),
+                seasonId: params.get('seasonId'),
+                competitionType: params.get('competitionType') || 'Champions Cup Demo',
+                homeTeam: params.get('homeTeam'),
+                awayTeam: params.get('awayTeam'),
+                isLive: params.get('isLive') === 'true',
+                isCompleted: params.get('isCompleted') === 'true',
+                collectionName: params.get('collectionName')
+            };
+        }
+
+        // Function to initialize the app
+        async function initApp() {
+            const urlParams = getUrlParams();
+            
+            // Check if we have required parameters
+            if (!urlParams.matchId || !urlParams.seasonId || !urlParams.homeTeam || !urlParams.awayTeam) {
+                // Try to get data from localStorage as fallback
+                const storedData = localStorage.getItem('matchLiveUpdateData');
+                if (storedData) {
+                    const matchData = JSON.parse(storedData);
+                    urlParams.matchId = matchData.matchId;
+                    urlParams.seasonId = matchData.seasonId;
+                    urlParams.competitionType = matchData.competitionType;
+                    urlParams.homeTeam = matchData.homeTeam;
+                    urlParams.awayTeam = matchData.awayTeam;
+                    urlParams.isLive = matchData.isLive;
+                    urlParams.isCompleted = matchData.isCompleted;
+                    urlParams.collectionName = matchData.collectionName;
+                } else {
+                    showError('Missing required parameters. Please access this page from the match list.');
+                    return;
+                }
+            }
+            
+            // Set match state from URL parameters
+            matchState.matchId = urlParams.matchId;
+            matchState.seasonId = urlParams.seasonId;
+            matchState.competitionType = urlParams.competitionType;
+            matchState.homeTeam = urlParams.homeTeam;
+            matchState.awayTeam = urlParams.awayTeam;
+            matchState.isLive = urlParams.isLive;
+            matchState.isCompleted = urlParams.isCompleted;
+            matchState.collectionName = urlParams.collectionName || getCompetitionCollection(urlParams.competitionType);
+            
+            // Update UI with basic info
+            homeTeamElement.textContent = matchState.homeTeam;
+            awayTeamElement.textContent = matchState.awayTeam;
+            competitionNameElement.textContent = matchState.competitionType;
+            
+            // Set team logos with first letters
+            document.getElementById('homeLogo').textContent = matchState.homeTeam.charAt(0);
+            document.getElementById('awayLogo').textContent = matchState.awayTeam.charAt(0);
+            
+            // Load match data
+            await loadMatchData();
+            
+            // Determine match state and update UI accordingly
+            updateMatchStateUI();
+            
+            // Set up auto-refresh for live matches
+            if (matchState.isLive) {
+                startLiveUpdates();
+            }
+        }
+
+        // Function to update UI based on match state
+        function updateMatchStateUI() {
+            if (matchState.isLive) {
+                // Live match - show all tabs and enable auto-refresh
+                liveTabsElement.style.display = 'flex';
+                refreshInfoElement.style.display = 'block';
+                upcomingMessageElement.style.display = 'none';
+                finishedMessageElement.style.display = 'none';
+            } else if (matchState.isCompleted) {
+                // Finished match - show tabs but disable auto-refresh, show finished message
+                liveTabsElement.style.display = 'flex';
+                refreshInfoElement.style.display = 'none';
+                upcomingMessageElement.style.display = 'none';
+                finishedMessageElement.style.display = 'block';
+                
+                // Update finished match info
+                finalScoreElement.textContent = `${matchState.homeScore} - ${matchState.awayScore}`;
+                finishedDateElement.textContent = matchState.matchDate ? new Date(matchState.matchDate).toLocaleDateString() : 'Unknown';
+                finishedCompetitionElement.textContent = matchState.competitionType;
+            } else {
+                // Upcoming match - hide tabs, show upcoming message
+                liveTabsElement.style.display = 'none';
+                refreshInfoElement.style.display = 'none';
+                upcomingMessageElement.style.display = 'block';
+                finishedMessageElement.style.display = 'none';
+                
+                // Update upcoming match info
+                if (matchState.matchDate) {
+                    const matchDate = new Date(matchState.matchDate);
+                    scheduledDateElement.textContent = matchDate.toLocaleDateString();
+                    scheduledTimeElement.textContent = matchDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                } else {
+                    scheduledDateElement.textContent = 'To be announced';
+                    scheduledTimeElement.textContent = 'To be announced';
+                }
+                scheduledVenueElement.textContent = matchState.venue === 'home' ? `${matchState.homeTeam} Home Ground` : `${matchState.awayTeam} Home Ground`;
+            }
+        }
+
+        // Function to start listening for live updates
+        function startLiveUpdates() {
+            // Clear any existing interval
+            if (matchState.refreshInterval) {
+                clearInterval(matchState.refreshInterval);
+            }
+            
+            // Set up interval to refresh data every 10 seconds
+            matchState.refreshInterval = setInterval(() => {
+                loadMatchData();
+            }, 10000);
+        }
+
+        // Function to load match data from Firebase
+        async function loadMatchData() {
+            try {
+                const collectionName = matchState.collectionName;
+                
+                if (!collectionName) {
+                    console.error('No collection name specified');
+                    return;
+                }
+
+                console.log(`Loading match data from collection: ${collectionName}`);
+                console.log(`Home Team: ${matchState.homeTeam}, Season: ${matchState.seasonId}, Match: ${matchState.matchId}`);
+
+                const homeDocRef = db.collection(collectionName)
+                    .doc(matchState.homeTeam)
+                    .collection(matchState.seasonId)
+                    .doc(matchState.matchId);
+
+                const doc = await homeDocRef.get();
+                
+                if (doc.exists) {
+                    const data = doc.data();
+                    console.log('Match data found:', data);
+                    
+                    // Update match state with real data
+                    matchState.homeScore = data.homeScore || 0;
+                    matchState.awayScore = data.awayScore || 0;
+                    matchState.minutes = data.duration?.minutes || 0;
+                    matchState.seconds = data.duration?.seconds || 0;
+                    matchState.isLive = data.liveMatch || false;
+                    matchState.isCompleted = data.matchCompleted || false;
+                    matchState.events = data.events || [];
+                    matchState.matchDate = data.date || matchState.matchDate;
+                    matchState.venue = data.venue || 'home';
+                    
+                    // Load lineup data if available
+                    if (data.homeLineup && data.awayLineup) {
+                        console.log('Lineup data found in match document');
+                        await loadLineupData(data);
+                    } else {
+                        console.log('No lineup data in match document, trying to load from team data');
+                        await loadLineupFromTeamData();
+                    }
+                    
+                    // Update match status
+                    updateMatchStatus();
+                    
+                    // Update scores
+                    updateScores();
+                    
+                    // Update events
+                    renderEvents();
+                    
+                    // Update date and time displays
+                    if (matchState.matchDate) {
+                        const matchDate = new Date(matchState.matchDate);
+                        matchDateElement.textContent = matchDate.toLocaleDateString();
+                        kickoffTimeElement.textContent = matchDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    }
+                    
+                    venueElement.textContent = matchState.venue === 'home' ? `${matchState.homeTeam} Home Ground` : `${matchState.awayTeam} Home Ground`;
+                    
+                    // Load officials data
+                    await loadOfficialsData(data);
+                    
+                    // Re-evaluate match state after data load
+                    matchState.isUpcoming = !matchState.isLive && !matchState.isCompleted;
+                    updateMatchStateUI();
+                    
+                    console.log('Match data updated successfully');
+                } else {
+                    console.log('No match data found');
+                    // If no data found, treat as upcoming match
+                    matchState.isUpcoming = true;
+                    matchState.isLive = false;
+                    matchState.isCompleted = false;
+                    updateMatchStateUI();
+                }
+            } catch (error) {
+                console.error('Error loading match data:', error);
+            }
+        }
+
+        // Function to load lineup data from match document
+        async function loadLineupData(matchData) {
+            try {
+                // Get player details for home team
+                matchState.homeStarters = await getPlayerDetails(matchData.homeLineup.starters || []);
+                matchState.homeSubstitutes = await getPlayerDetails(
+                    (matchData.homeLineup.squad || []).filter(id => !(matchData.homeLineup.starters || []).includes(id))
+                );
+                
+                // Get player details for away team
+                matchState.awayStarters = await getPlayerDetails(matchData.awayLineup.starters || []);
+                matchState.awaySubstitutes = await getPlayerDetails(
+                    (matchData.awayLineup.squad || []).filter(id => !(matchData.awayLineup.starters || []).includes(id))
+                );
+                
+                // Identify player positions
+                await identifyPlayerPositions();
+                
+                // Render pitch and lineups
+                renderPitch();
+                renderLineups();
+                
+                console.log('Lineup data loaded successfully');
+            } catch (error) {
+                console.error('Error loading lineup data:', error);
+                createPlaceholderLineups();
+            }
+        }
+
+        // Function to load lineup data from team documents
+        async function loadLineupFromTeamData() {
+            try {
+                // Try to load from GombeTeams collection
+                const homeTeamDoc = await db.collection('GombeTeams')
+                    .where('name', '==', matchState.homeTeam)
+                    .get();
+                
+                const awayTeamDoc = await db.collection('GombeTeams')
+                    .where('name', '==', matchState.awayTeam)
+                    .get();
+                
+                if (!homeTeamDoc.empty && !awayTeamDoc.empty) {
+                    const homeTeamData = homeTeamDoc.docs[0].data();
+                    const awayTeamData = awayTeamDoc.docs[0].data();
+                    
+                    // Get player IDs from team data
+                    const homePlayerIds = homeTeamData.players || [];
+                    const awayPlayerIds = awayTeamData.players || [];
+                    
+                    // Get player details
+                    matchState.homeStarters = await getPlayerDetails(homePlayerIds.slice(0, 11));
+                    matchState.homeSubstitutes = await getPlayerDetails(homePlayerIds.slice(11));
+                    
+                    matchState.awayStarters = await getPlayerDetails(awayPlayerIds.slice(0, 11));
+                    matchState.awaySubstitutes = await getPlayerDetails(awayPlayerIds.slice(11));
+                    
+                    // Identify player positions
+                    await identifyPlayerPositions();
+                    
+                    // Render pitch and lineups
+                    renderPitch();
+                    renderLineups();
+                    
+                    console.log('Lineup data loaded from team documents');
+                } else {
+                    console.log('No team data found, using placeholders');
+                    createPlaceholderLineups();
+                }
+            } catch (error) {
+                console.error('Error loading lineup from team data:', error);
+                createPlaceholderLineups();
+            }
+        }
+
+        // Function to load officials data
+        async function loadOfficialsData(matchData) {
+            try {
+                // Try to get officials from match data first
+                if (matchData.referee) {
+                    matchState.mainReferee = matchData.referee;
+                }
+                if (matchData.linesman1) {
+                    matchState.linesman1 = matchData.linesman1;
+                }
+                if (matchData.linesman2) {
+                    matchState.linesman2 = matchData.linesman2;
+                }
+                if (matchData.netman) {
+                    matchState.netman1 = matchData.netman;
+                }
+                
+                // Update officials UI
+                mainRefereeElement.textContent = matchState.mainReferee || 'Not assigned';
+                linesman1Element.textContent = matchState.linesman1 || 'Not assigned';
+                linesman2Element.textContent = matchState.linesman2 || 'Not assigned';
+                netman1Element.textContent = matchState.netman1 || 'Not assigned';
+                netman2Element.textContent = matchState.netman2 || 'Not assigned';
+                
+            } catch (error) {
+                console.error('Error loading officials data:', error);
+            }
+        }
+
+        // Function to get competition collection name
+        function getCompetitionCollection(competitionType) {
+            switch(competitionType) {
+                case "Champions Cup":
+                case "Champions Cup Demo":
+                    return "GombeChampionsCupMatchesDemo";
+                case "FA Cup":
+                    return "GombeFAcupsMatch";
+                case "Worriors Cup":
+                    return "GombeWorriorsCupMatches";
+                case "Unity Shield":
+                    return "UnityShieldMatches";
+                case "League":
+                    return "GombeSeason";
+                default:
+                    return "GombeChampionsCupMatchesDemo";
+            }
+        }
+
+        // Function to get player details
+        async function getPlayerDetails(playerIds) {
+            if (!playerIds || !playerIds.length) return [];
+            
+            try {
+                const playerPromises = playerIds.map(id => 
+                    db.collection('playerRegistry').doc(id).get()
+                );
+                
+                const playerSnapshots = await Promise.all(playerPromises);
+                return playerSnapshots
+                    .filter(doc => doc.exists)
+                    .map(doc => ({
+                        id: doc.id,
+                        name: doc.data().name,
+                        jerseyNumber: doc.data().jerseyNumber
+                    }));
+            } catch (error) {
+                console.error('Error fetching players:', error);
+                return [];
+            }
+        }
+
+        // Function to identify player positions
+        async function identifyPlayerPositions() {
+            try {
+                const allPlayerIds = [
+                    ...matchState.homeStarters.map(p => p.id),
+                    ...matchState.homeSubstitutes.map(p => p.id),
+                    ...matchState.awayStarters.map(p => p.id),
+                    ...matchState.awaySubstitutes.map(p => p.id)
+                ];
+                
+                const playerPromises = allPlayerIds.map(id => 
+                    db.collection('playerRegistry').doc(id).get()
+                );
+                
+                const playerSnapshots = await Promise.all(playerPromises);
+                
+                matchState.playerPositions = {};
+                playerSnapshots.forEach(snapshot => {
+                    if (snapshot.exists) {
+                        const data = snapshot.data();
+                        matchState.playerPositions[snapshot.id] = data.position || 'Unknown';
+                    }
+                });
+                
+                console.log("Player positions identified");
+            } catch (error) {
+                console.error('Error identifying player positions:', error);
+            }
+        }
+
+        // Function to create placeholder lineups when no data is available
+        function createPlaceholderLineups() {
+            // Create placeholder players for home team
+            matchState.homeStarters = Array.from({length: 11}, (_, i) => ({
+                id: `home-${i+1}`,
+                name: `Player ${i+1}`,
+                jerseyNumber: i+1
+            }));
+            
+            // Create placeholder players for away team
+            matchState.awayStarters = Array.from({length: 11}, (_, i) => ({
+                id: `away-${i+1}`,
+                name: `Player ${i+1}`,
+                jerseyNumber: i+1
+            }));
+            
+            // Set placeholder positions
+            matchState.playerPositions = {};
+            matchState.homeStarters.forEach((player, index) => {
+                const positions = ['GK', 'RB', 'RCB', 'LCB', 'LB', 'RCM', 'CDM', 'LCM', 'RW', 'ST', 'LW'];
+                matchState.playerPositions[player.id] = positions[index] || 'Unknown';
+            });
+            
+            matchState.awayStarters.forEach((player, index) => {
+                const positions = ['GK', 'RB', 'RCB', 'LCB', 'LB', 'RDM', 'LDM', 'RAM', 'CAM', 'LAM', 'ST'];
+                matchState.playerPositions[player.id] = positions[index] || 'Unknown';
+            });
+            
+            // Render pitch and lineups
+            renderPitch();
+            renderLineups();
+        }
+
+        // Function to update match status
+        function updateMatchStatus() {
+            const statusElement = document.getElementById('matchStatus');
+            
+            if (matchState.isLive) {
+                statusElement.textContent = `LIVE ${matchState.minutes}'`;
+                statusElement.className = 'match-status live';
+            } else if (matchState.isCompleted) {
+                statusElement.textContent = 'FULL TIME';
+                statusElement.className = 'match-status ended';
+            } else {
+                statusElement.textContent = 'NOT STARTED';
+                statusElement.className = 'match-status pending';
+            }
+        }
+
+        // Function to update scores
+        function updateScores() {
+            scoreElement.textContent = `${matchState.homeScore} - ${matchState.awayScore}`;
+        }
+
+        // Function to render events
+        function renderEvents() {
+            matchEventsElement.innerHTML = '';
+            
+            if (matchState.events.length === 0) {
+                matchEventsElement.innerHTML = '<div class="no-events">No events recorded yet</div>';
+                return;
+            }
+            
+            // Sort events by time (newest first)
+            const sortedEvents = [...matchState.events].sort((a, b) => {
+                const timeA = parseInt(a.time.split(':')[0]) * 60 + parseInt(a.time.split(':')[1]);
+                const timeB = parseInt(b.time.split(':')[0]) * 60 + parseInt(b.time.split(':')[1]);
+                return timeB - timeA;
+            });
+            
+            sortedEvents.forEach(event => {
+                const eventElement = document.createElement('div');
+                eventElement.className = 'event';
+                
+                let eventIcon = '';
+                let eventClass = '';
+                let description = event.details || '';
+                
+                switch(event.type) {
+                    case 'goal': 
+                        eventIcon = '⚽'; 
+                        eventClass = 'goal';
+                        break;
+                    case 'yellow': 
+                        eventIcon = '🟨'; 
+                        eventClass = 'yellow';
+                        break;
+                    case 'red': 
+                        eventIcon = '🟥'; 
+                        eventClass = 'red';
+                        break;
+                    case 'sub': 
+                        eventIcon = '🔄'; 
+                        eventClass = 'substitution';
+                        break;
+                    case 'match': 
+                        eventIcon = '⚽'; 
+                        eventClass = 'match-event';
+                        break;
+                }
+                
+                eventElement.innerHTML = `
+                    <div class="event-time">${event.time}'</div>
+                    <div class="event-icon ${eventClass}">${eventIcon}</div>
+                    <div class="event-description">${description}</div>
+                `;
+                
+                matchEventsElement.appendChild(eventElement);
+            });
+        }
+
+        // Function to render pitch with players
+        function renderPitch() {
+            // Clear existing players
+            const existingPlayers = pitchContainer.querySelectorAll('.player');
+            existingPlayers.forEach(player => player.remove());
+            
+            // Add home team players
+            matchState.homeStarters.forEach((player, index) => {
+                const position = matchState.playerPositions[player.id] || 'Unknown';
+                const playerElement = document.createElement('div');
+                playerElement.className = `player home`;
+                playerElement.setAttribute('data-position', position);
+                playerElement.setAttribute('data-player-id', player.id);
+                playerElement.textContent = player.jerseyNumber || (index + 1);
+                
+                // Add hover effect
+                playerElement.addEventListener('mouseenter', (e) => showPlayerTooltip(e, player, 'home'));
+                playerElement.addEventListener('mouseleave', hidePlayerTooltip);
+                
+                pitchContainer.appendChild(playerElement);
+            });
+            
+            // Add away team players
+            matchState.awayStarters.forEach((player, index) => {
+                const position = matchState.playerPositions[player.id] || 'Unknown';
+                const playerElement = document.createElement('div');
+                playerElement.className = `player away`;
+                playerElement.setAttribute('data-position', position);
+                playerElement.setAttribute('data-player-id', player.id);
+                playerElement.textContent = player.jerseyNumber || (index + 1);
+                
+                // Add hover effect
+                playerElement.addEventListener('mouseenter', (e) => showPlayerTooltip(e, player, 'away'));
+                playerElement.addEventListener('mouseleave', hidePlayerTooltip);
+                
+                pitchContainer.appendChild(playerElement);
+            });
+            
+            // Update formation labels
+            const homeFormation = calculateFormation(matchState.homeStarters);
+            const awayFormation = calculateFormation(matchState.awayStarters);
+            
+            homeFormationLabel.textContent = `${homeFormation}`;
+            awayFormationLabel.textContent = `${awayFormation}`;
+            
+            homeFormationElement.textContent = `Formation: ${homeFormation}`;
+            awayFormationElement.textContent = `Formation: ${awayFormation}`;
+        }
+
+        // Function to calculate formation
+        function calculateFormation(players) {
+            // This is a simplified calculation
+            // In a real app, you would use actual player positions
+            const playerCount = players.length;
+            
+            if (playerCount === 11) return "4-4-2";
+            if (playerCount === 10) return "4-4-1";
+            if (playerCount === 9) return "4-3-2";
+            if (playerCount === 8) return "3-3-2";
+            
+            return `${playerCount} players`;
+        }
+
+        // Function to render lineups
+        function renderLineups() {
+            lineupsPanel.innerHTML = `
+                <div class="team-lineup home">
+                    <h3>${matchState.homeTeam}</h3>
+                    <div class="starting-lineup">
+                        ${renderPlayerList(matchState.homeStarters, 'home')}
+                    </div>
+                    <div class="substitutes">
+                        <h4>Substitutes</h4>
+                        ${matchState.homeSubstitutes.length > 0 ? 
+                          renderSubstituteList(matchState.homeSubstitutes, 'home') : 
+                          '<div class="no-substitutes">No substitutes available</div>'}
+                    </div>
+                </div>
+                <div class="team-lineup away">
+                    <h3>${matchState.awayTeam}</h3>
+                    <div class="starting-lineup">
+                        ${renderPlayerList(matchState.awayStarters, 'away')}
+                    </div>
+                    <div class="substitutes">
+                        <h4>Substitutes</h4>
+                        ${matchState.awaySubstitutes.length > 0 ? 
+                          renderSubstituteList(matchState.awaySubstitutes, 'away') : 
+                          '<div class="no-substitutes">No substitutes available</div>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Function to render player list
+        function renderPlayerList(players, team) {
+            if (players.length === 0) {
+                return '<div class="no-players">No players available</div>';
+            }
+            
+            return players.map(player => {
+                const position = matchState.playerPositions[player.id] || 'Unknown';
+                return `
+                    <div class="player-row">
+                        <div class="player-number">${player.jerseyNumber || '?'}</div>
+                        <div class="player-info">
+                            <div class="player-name">${player.name}</div>
+                            <div class="player-position">${position}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Function to render substitute list
+        function renderSubstituteList(players, team) {
+            if (players.length === 0) {
+                return '<div class="no-substitutes">No substitutes available</div>';
+            }
+            
+            return players.map(player => {
+                const position = matchState.playerPositions[player.id] || 'Unknown';
+                return `
+                    <div class="substitute-row">
+                        <div class="substitute-number">${player.jerseyNumber || '?'}</div>
+                        <div class="player-info">
+                            <div class="player-name">${player.name}</div>
+                            <div class="player-position">${position}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Function to show player tooltip
+        function showPlayerTooltip(e, player, team) {
+            const tooltip = document.querySelector('.player-tooltip');
+            const position = matchState.playerPositions[player.id] || 'Unknown';
+            
+            tooltip.className = `player-tooltip ${team}`;
+            tooltip.innerHTML = `
+                <div class="name">${player.name}</div>
+                <div class="position">${position}</div>
+                <div class="stats">Jersey: ${player.jerseyNumber || 'N/A'}</div>
+            `;
+            
+            tooltip.style.display = 'block';
+            
+            // Position tooltip near the player
+            const rect = e.target.getBoundingClientRect();
+            tooltip.style.left = `${rect.left + window.scrollX}px`;
+            tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight - 10}px`;
+        }
+
+        // Function to hide player tooltip
+        function hidePlayerTooltip() {
+            const tooltip = document.querySelector('.player-tooltip');
+            tooltip.style.display = 'none';
+        }
+
+        // Function to show error message
+        function showError(message) {
+            const container = document.querySelector('.container');
+            container.innerHTML = `
+                <div class="error-container" style="text-align: center; padding: 40px;">
+                    <h2 style="color: #dc3545;">Error</h2>
+                    <p style="margin: 20px 0;">${message}</p>
+                    <a href="index.html" class="back-button">Return to Home</a>
+                </div>
+            `;
+        }
+
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

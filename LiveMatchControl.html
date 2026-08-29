@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Commissioner Portal | Gombe Football</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0d3b1e, #2a6e37);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #0d3b1e, #2a6e37);
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        h1 {
+            color: #0d3b1e;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .subtitle {
+            color: #2a6e37;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: #0d3b1e;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e7e1;
+        }
+        
+        .card-header i {
+            background: #0d3b1e;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .card-header h2 {
+            color: #0d3b1e;
+            font-size: 1.6rem;
+        }
+        
+        .match-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e7e1;
+        }
+        
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .team-name {
+            font-weight: bold;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: #0d3b1e;
+        }
+        
+        .team-coach {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        
+        .team-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2a6e37;
+            background: #e9f5eb;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .vs {
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin: 0 15px;
+            color: #0d3b1e;
+        }
+        
+        .match-time {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .timer {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #0d3b1e;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            background: #e9f5eb;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .match-status {
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .status-pending {
+            background: #ffcc00;
+            color: #333;
+        }
+        
+        .status-live {
+            background: #28a745;
+            color: white;
+        }
+        
+        .status-ended {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .officials-container {
+            background: #e9f5eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #0d3b1e;
+        }
+        
+        .officials-title {
+            color: #0d3b1e;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .officials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .official-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .official-icon {
+            color: #0d3b1e;
+            width: 30px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: #0d3b1e;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0a2e17;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-pause {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .btn-pause:hover {
+            background: #e0a800;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #a71d2c;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1d7a34;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .events-container {
+            margin-top: 20px;
+        }
+        
+        .event-log {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .event-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            align-items: center;
+            border-left: 4px solid #0d3b1e;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .event-time {
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 50px;
+            color: #0d3b1e;
+        }
+        
+        .event-type {
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .goal { background: #d4edda; color: #155724; }
+        .yellow { background: #fff3cd; color: #856404; }
+        .red { background: #f8d7da; color: #721c24; }
+        .sub { background: #cce5ff; color: #004085; }
+        .assist { background: #e2e3f3; color: #3d3d6d; }
+        
+        .event-details {
+            flex: 1;
+        }
+        
+        .event-player {
+            font-weight: bold;
+        }
+        
+        .no-events {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            background: #f0f2f5;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 120px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .action-btn i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .goal-btn { color: #28a745; }
+        .yellow-btn { color: #ffc107; }
+        .red-btn { color: #dc3545; }
+        .sub-btn { color: #0d3b1e; }
+        
+        .action-btn:hover.goal-btn { background: #d4edda; }
+        .action-btn:hover.yellow-btn { background: #fff3cd; }
+        .action-btn:hover.red-btn { background: #f8d7da; }
+        .action-btn:hover.sub-btn { background: #cce5ff; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-header h2 {
+            color: #0d3b1e;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #777;
+            transition: all 0.2s;
+        }
+        
+        .close-modal:hover {
+            color: #0d3b1e;
+            transform: scale(1.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #0d3b1e;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f8f9fa;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #0d3b1e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #0a2e17;
+            transform: translateY(-2px);
+        }
+        
+        .confirmation {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .confirmation i {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        
+        .confirmation h2 {
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #0d3b1e;
+            font-size: 1.1rem;
+        }
+        
+        .loading i {
+            font-size: 2.5rem;
+            animation: spin 1.5s infinite linear;
+            margin-bottom: 15px;
+            color: #0d3b1e;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: #dc3545;
+            background-color: rgba(220, 53, 69, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+            font-size: 1rem;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #0d3b1e, #2a6e37);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .status-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .disabled-player {
+            opacity: 0.5;
+            text-decoration: line-through;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-whistle"></i> Match Commissioner Portal</h1>
+            <p class="subtitle">Manage live match events, record scores, cards, and substitutions in real-time</p>
+        </header>
+        
+        <div class="main-content">
+            <!-- Match Control Panel -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-futbol"></i>
+                    <h2>Match Control</h2>
+                </div>
+                
+                <div class="match-info">
+                    <div class="team">
+                        <div class="team-name" id="homeTeam">Loading...</div>
+                        <div class="team-coach" id="homeCoach"></div>
+                        <div class="team-score" id="homeScore">0</div>
+                    </div>
+                    
+                    <div class="vs">VS</div>
+                    
+                    <div class="team">
+                        <div class="team-name" id="awayTeam">Loading...</div>
+                        <div class="team-coach" id="awayCoach"></div>
+                        <div class="team-score" id="awayScore">0</div>
+                    </div>
+                </div>
+                
+                <div class="match-time">
+                    <div class="timer" id="timer">00:00</div>
+                    <div class="match-status status-pending" id="match-status">MATCH NOT STARTED</div>
+                </div>
+                
+                <div class="officials-container">
+                    <div class="officials-title">
+                        <i class="fas fa-whistle"></i> Match Officials
+                    </div>
+                    <div class="officials-grid" id="matchOfficials">
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-whistle"></i></div>
+                            <div><strong>Referee:</strong> <span id="mainReferee">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-flag"></i></div>
+                            <div><strong>Linesman 1:</strong> <span id="linesman1">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-flag"></i></div>
+                            <div><strong>Linesman 2:</strong> <span id="linesman2">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-network-wired"></i></div>
+                            <div><strong>Netman 1:</strong> <span id="netman1">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-network-wired"></i></div>
+                            <div><strong>Netman 2:</strong> <span id="netman2">Not assigned</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" id="start-pause-btn">
+                        <i class="fas fa-play"></i> Start Match
+                    </button>
+                    <button class="btn btn-pause" id="pause-btn" style="display:none">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="btn btn-danger" id="stop-btn" disabled>
+                        <i class="fas fa-stop"></i> End Match
+                    </button>
+                </div>
+                
+                <div class="events-container">
+                    <h3><i class="fas fa-list"></i> Match Events</h3>
+                    <div class="event-log" id="event-log">
+                        <div class="no-events">No events recorded yet</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actions Panel -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-tasks"></i>
+                    <h2>Match Actions</h2>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn goal-btn" id="goal-btn">
+                        <i class="fas fa-futbol"></i>
+                        Record Goal
+                    </button>
+                    
+                    <button class="action-btn yellow-btn" id="yellow-btn">
+                        <i class="fas fa-card"></i>
+                        Yellow Card
+                    </button>
+                    
+                    <button class="action-btn red-btn" id="red-btn">
+                        <i class="fas fa-card"></i>
+                        Red Card
+                    </button>
+                    
+                    <button class="action-btn sub-btn" id="sub-btn">
+                        <i class="fas fa-exchange-alt"></i>
+                        Substitution
+                    </button>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-success" id="confirm-btn" disabled>
+                        <i class="fas fa-check-circle"></i> Confirm Final Result
+                    </button>
+                </div>
+                
+                <div id="dataError" class="error-message" style="display: none;"></div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+                <div class="status-container">
+                    <span id="current-status">Ready to start match</span>
+                    <span id="status-percentage">0%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Match Commissioner Portal &copy; 2023 | Gombe Football Association</p>
+        </div>
+    </div>
+    
+    <!-- Modal for Event Recording -->
+    <div class="modal" id="event-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Record Event</h2>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            <div id="modal-body">
+                <!-- Content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Global state
+        const matchState = {
+            isLive: false,
+            isPaused: false,
+            minutes: 0,
+            seconds: 0,
+            timer: null,
+            homeScore: 0,
+            awayScore: 0,
+            events: [],
+            homeTeam: "",
+            awayTeam: "",
+            homeCoach: "",
+            awayCoach: "",
+            homeCoachId: "",
+            awayCoachId: "",
+            homeStarters: [],
+            awayStarters: [],
+            homeSubstitutes: [],
+            awaySubstitutes: [],
+            matchPath: "",
+            matchId: "",
+            seasonId: "",
+            mainRefereeId: "",
+            linesman1Id: "",
+            linesman2Id: "",
+            netman1Id: "",
+            netman2Id: "",
+            redCardedPlayers: [],
+            playerPositions: {}
+        };
+        
+        // DOM Elements
+        const timerElement = document.getElementById('timer');
+        const matchStatusElement = document.getElementById('match-status');
+        const homeTeamElement = document.getElementById('homeTeam');
+        const awayTeamElement = document.getElementById('awayTeam');
+        const homeCoachElement = document.getElementById('homeCoach');
+        const awayCoachElement = document.getElementById('awayCoach');
+        const homeScoreElement = document.getElementById('homeScore');
+        const awayScoreElement = document.getElementById('awayScore');
+        const eventLogElement = document.getElementById('event-log');
+        const startPauseButton = document.getElementById('start-pause-btn');
+        const pauseButton = document.getElementById('pause-btn');
+        const stopButton = document.getElementById('stop-btn');
+        const confirmButton = document.getElementById('confirm-btn');
+        const goalButton = document.getElementById('goal-btn');
+        const yellowButton = document.getElementById('yellow-btn');
+        const redButton = document.getElementById('red-btn');
+        const subButton = document.getElementById('sub-btn');
+        const eventModal = document.getElementById('event-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const closeModal = document.getElementById('close-modal');
+        const dataErrorElement = document.getElementById('dataError');
+        const mainRefereeElement = document.getElementById('mainReferee');
+        const linesman1Element = document.getElementById('linesman1');
+        const linesman2Element = document.getElementById('linesman2');
+        const netman1Element = document.getElementById('netman1');
+        const netman2Element = document.getElementById('netman2');
+        const progressBar = document.getElementById('progress-bar');
+        const currentStatus = document.getElementById('current-status');
+        const statusPercentage = document.getElementById('status-percentage');
+        
+        // Initialize the app
+        async function initApp() {
+            // Get match data from localStorage
+            const matchData = JSON.parse(localStorage.getItem('liveMatchData'));
+            if (!matchData) {
+                showDataError('No match data found. Please start from the match details page.');
+                return;
+            }
+            
+            console.log("Loaded match data from localStorage:", matchData);
+            
+            // Set basic match information
+            matchState.homeTeam = matchData.homeTeam;
+            matchState.awayTeam = matchData.awayTeam;
+            matchState.matchPath = matchData.matchPath;
+            matchState.matchId = matchData.matchId;
+            matchState.seasonId = matchData.seasonId;
+            matchState.mainRefereeId = matchData.mainRefereeId || "";
+            matchState.linesman1Id = matchData.linesman1Id || "";
+            matchState.linesman2Id = matchData.linesman2Id || "";
+            matchState.netman1Id = matchData.netman1Id || "";
+            matchState.netman2Id = matchData.netman2Id || "";
+            
+            // Update UI with basic info
+            homeTeamElement.textContent = matchData.homeTeam;
+            awayTeamElement.textContent = matchData.awayTeam;
+            mainRefereeElement.textContent = matchData.mainReferee || 'Not assigned';
+            linesman1Element.textContent = matchData.linesman1 || 'Not assigned';
+            linesman2Element.textContent = matchData.linesman2 || 'Not assigned';
+            netman1Element.textContent = matchData.netman1 || 'Not assigned';
+            netman2Element.textContent = matchData.netman2 || 'Not assigned';
+            
+            // Load coaches
+            await findCoaches();
+            
+            // Load player data from the passed lineup data
+            await loadPlayerDataFromMatchData(matchData);
+            
+            // Identify player positions
+            await identifyPlayerPositions();
+            
+            updateTimerDisplay();
+            updateScores();
+            updateMatchStatus();
+            
+            console.log("App initialized successfully");
+            console.log("Home starters:", matchState.homeStarters);
+            console.log("Away starters:", matchState.awayStarters);
+        }
+        
+        // Function to identify player positions
+        async function identifyPlayerPositions() {
+            try {
+                // Get all player IDs from both teams
+                const allPlayerIds = [
+                    ...matchState.homeStarters.map(p => p.id),
+                    ...matchState.homeSubstitutes.map(p => p.id),
+                    ...matchState.awayStarters.map(p => p.id),
+                    ...matchState.awaySubstitutes.map(p => p.id)
+                ];
+                
+                // Batch fetch player details
+                const playerPromises = allPlayerIds.map(id => 
+                    db.collection('playerRegistry').doc(id).get()
+                );
+                
+                const playerSnapshots = await Promise.all(playerPromises);
+                
+                // Create a map of player positions
+                matchState.playerPositions = {};
+                playerSnapshots.forEach(snapshot => {
+                    if (snapshot.exists) {
+                        const data = snapshot.data();
+                        matchState.playerPositions[snapshot.id] = data.position || 'Unknown';
+                    }
+                });
+                
+                console.log("Player positions identified:", matchState.playerPositions);
+            } catch (error) {
+                console.error('Error identifying player positions:', error);
+            }
+        }
+        
+        // Load player data from the saved match data
+        async function loadPlayerDataFromMatchData(matchData) {
+            try {
+                console.log("Loading player data from match data...");
+                
+                // Check if we have lineup data in the matchData
+                if (matchData.homeLineup && matchData.awayLineup) {
+                    console.log("Using lineup data from matchData");
+                    
+                    // Get player details for home team
+                    matchState.homeStarters = await getPlayerDetails(matchData.homeLineup.starters || []);
+                    matchState.homeSubstitutes = await getPlayerDetails(
+                        (matchData.homeLineup.squad || []).filter(id => !(matchData.homeLineup.starters || []).includes(id))
+                    );
+                    
+                    // Get player details for away team
+                    matchState.awayStarters = await getPlayerDetails(matchData.awayLineup.starters || []);
+                    matchState.awaySubstitutes = await getPlayerDetails(
+                        (matchData.awayLineup.squad || []).filter(id => !(matchData.awayLineup.starters || []).includes(id))
+                    );
+                    
+                    console.log("Player data loaded from match data");
+                } else {
+                    // Fallback to original method if lineup data isn't available
+                    console.log("No lineup data in matchData, falling back to original load method");
+                    await loadPlayerData();
+                }
+            } catch (error) {
+                console.error('Error loading player data from match data:', error);
+                showDataError('Failed to load player information from saved data');
+                // Try fallback method
+                await loadPlayerData();
+            }
+        }
+        
+        // Get player details from playerRegistry
+        async function getPlayerDetails(playerIds) {
+            if (!playerIds || !playerIds.length) return [];
+            
+            try {
+                // Batch requests for efficiency
+                const playerPromises = playerIds.map(id => 
+                    db.collection('playerRegistry').doc(id).get()
+                );
+                
+                const playerSnapshots = await Promise.all(playerPromises);
+                return playerSnapshots
+                    .filter(doc => doc.exists)
+                    .map(doc => ({
+                        id: doc.id,
+                        name: doc.data().name,
+                        jerseyNumber: doc.data().jerseyNumber
+                    }));
+            } catch (error) {
+                console.error('Error fetching players:', error);
+                return [];
+            }
+        }
+        
+        // Find coaches for both teams
+        async function findCoaches() {
+            try {
+                // Get home team coach
+                const homeCoachQuery = await db.collection('GombeCoaches')
+                    .where('teamName', '==', matchState.homeTeam)
+                    .get();
+                
+                if (!homeCoachQuery.empty) {
+                    const homeCoachDoc = homeCoachQuery.docs[0];
+                    matchState.homeCoach = homeCoachDoc.data().name;
+                    matchState.homeCoachId = homeCoachDoc.id;
+                    homeCoachElement.textContent = `Coach: ${matchState.homeCoach}`;
+                } else {
+                    homeCoachElement.textContent = "Coach: Not assigned";
+                }
+                
+                // Get away team coach
+                const awayCoachQuery = await db.collection('GombeCoaches')
+                    .where('teamName', '==', matchState.awayTeam)
+                    .get();
+                
+                if (!awayCoachQuery.empty) {
+                    const awayCoachDoc = awayCoachQuery.docs[0];
+                    matchState.awayCoach = awayCoachDoc.data().name;
+                    matchState.awayCoachId = awayCoachDoc.id;
+                    awayCoachElement.textContent = `Coach: ${matchState.awayCoach}`;
+                } else {
+                    awayCoachElement.textContent = "Coach: Not assigned";
+                }
+            } catch (error) {
+                console.error('Error fetching coaches:', error);
+                showDataError('Failed to load coach information');
+            }
+        }
+        
+        // Show data error message
+        function showDataError(message) {
+            dataErrorElement.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            dataErrorElement.style.display = 'block';
+        }
+        
+        // Update progress bar and status
+        function updateProgress(percentage, message) {
+            progressBar.style.width = `${percentage}%`;
+            statusPercentage.textContent = `${percentage}%`;
+            currentStatus.textContent = message;
+        }
+        
+        // Timer functions
+        function startMatch() {
+            if (matchState.isLive) return;
+            
+            matchState.isLive = true;
+            startPauseButton.style.display = 'none';
+            pauseButton.style.display = 'inline-flex';
+            stopButton.disabled = false;
+            confirmButton.disabled = false;
+            
+            matchState.timer = setInterval(() => {
+                matchState.seconds++;
+                if (matchState.seconds >= 60) {
+                    matchState.minutes++;
+                    matchState.seconds = 0;
+                }
+                updateTimerDisplay();
+            }, 1000);
+            
+            addEvent('match', 'Match started');
+            updateMatchStatus();
+        }
+        
+        function pauseMatch() {
+            if (!matchState.isLive || matchState.isPaused) return;
+            
+            clearInterval(matchState.timer);
+            matchState.isPaused = true;
+            pauseButton.innerHTML = '<i class="fas fa-play"></i> Resume';
+            pauseButton.classList.remove('btn-pause');
+            pauseButton.classList.add('btn-primary');
+            
+            addEvent('match', 'Match paused');
+        }
+        
+        function resumeMatch() {
+            if (!matchState.isLive || !matchState.isPaused) return;
+            
+            matchState.timer = setInterval(() => {
+                matchState.seconds++;
+                if (matchState.seconds >= 60) {
+                    matchState.minutes++;
+                    matchState.seconds = 0;
+                }
+                updateTimerDisplay();
+            }, 1000);
+            
+            matchState.isPaused = false;
+            pauseButton.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            pauseButton.classList.remove('btn-primary');
+            pauseButton.classList.add('btn-pause');
+            
+            addEvent('match', 'Match resumed');
+        }
+        
+        function stopMatch() {
+            if (!matchState.isLive) return;
+            
+            clearInterval(matchState.timer);
+            matchState.isLive = false;
+            matchState.isPaused = false;
+            stopButton.disabled = true;
+            pauseButton.style.display = 'none';
+            startPauseButton.style.display = 'inline-flex';
+            startPauseButton.disabled = true;
+            
+            addEvent('match', 'Match ended');
+            updateMatchStatus();
+        }
+        
+        function updateTimerDisplay() {
+            const mins = matchState.minutes.toString().padStart(2, '0');
+            const secs = matchState.seconds.toString().padStart(2, '0');
+            timerElement.textContent = `${mins}:${secs}`;
+        }
+        
+        function updateMatchStatus() {
+            if (matchState.isLive) {
+                matchStatusElement.textContent = 'MATCH LIVE';
+                matchStatusElement.className = 'match-status status-live';
+            } else if (matchState.minutes > 0 || matchState.seconds > 0) {
+                matchStatusElement.textContent = 'MATCH ENDED';
+                matchStatusElement.className = 'match-status status-ended';
+            } else {
+                matchStatusElement.textContent = 'MATCH NOT STARTED';
+                matchStatusElement.className = 'match-status status-pending';
+            }
+        }
+        
+        function updateScores() {
+            homeScoreElement.textContent = matchState.homeScore;
+            awayScoreElement.textContent = matchState.awayScore;
+        }
+        
+        // Event handling
+        function addEvent(type, details, playerId = null, team = null, assistPlayerId = null, chanceCreatorId = null) {
+            const time = `${matchState.minutes.toString().padStart(2, '0')}:${matchState.seconds.toString().padStart(2, '0')}`;
+            const event = { 
+                type, 
+                details, 
+                time, 
+                playerId, 
+                team,
+                assistPlayerId,
+                chanceCreatorId
+            };
+            matchState.events.push(event);
+            renderEvent(event);
+        }
+        
+        function renderEvent(event) {
+            if (eventLogElement.querySelector('.no-events')) {
+                eventLogElement.innerHTML = '';
+            }
+            
+            const eventElement = document.createElement('div');
+            eventElement.className = 'event-item';
+            
+            let eventClass = '';
+            let eventIcon = '';
+            let eventDetails = event.details;
+            
+            switch(event.type) {
+                case 'goal': 
+                    eventClass = 'goal'; 
+                    eventIcon = '<i class="fas fa-futbol"></i>'; 
+                    if (event.assistPlayerId) {
+                        const assistPlayer = findPlayerById(event.assistPlayerId);
+                        if (assistPlayer) {
+                            eventDetails += ` (Assist: ${assistPlayer.name})`;
+                        }
+                    }
+                    if (event.chanceCreatorId) {
+                        const chanceCreator = findPlayerById(event.chanceCreatorId);
+                        if (chanceCreator) {
+                            eventDetails += ` (Chance created by: ${chanceCreator.name})`;
+                        }
+                    }
+                    break;
+                case 'yellow': 
+                    eventClass = 'yellow'; 
+                    eventIcon = '<i class="fas fa-card"></i>'; 
+                    break;
+                case 'red': 
+                    eventClass = 'red'; 
+                    eventIcon = '<i class="fas fa-card"></i>'; 
+                    // Add a visual indicator for red card
+                    if (event.playerId) {
+                        eventDetails += ' ❌';
+                    }
+                    break;
+                case 'sub': 
+                    eventClass = 'sub'; 
+                    eventIcon = '<i class="fas fa-exchange-alt"></i>'; 
+                    break;
+                case 'match': 
+                    eventClass = 'sub'; 
+                    eventIcon = '<i class="fas fa-whistle"></i>'; 
+                    break;
+            }
+            
+            eventElement.innerHTML = `
+                <div class="event-time">${event.time}'</div>
+                <div class="event-type ${eventClass}">${eventIcon} ${event.type.toUpperCase()}</div>
+                 <div class="event-details">${eventDetails}</div>
+            `;
+            
+            eventLogElement.prepend(eventElement);
+        }
+        
+        function findPlayerById(playerId) {
+            // Search both teams for player
+            const allPlayers = [
+                ...matchState.homeStarters,
+                ...matchState.homeSubstitutes,
+                ...matchState.awayStarters,
+                ...matchState.awaySubstitutes
+            ];
+            
+            return allPlayers.find(player => player.id === playerId);
+        }
+        
+        // Modal functions
+        function openModal(title, content) {
+            modalTitle.textContent = title;
+            modalBody.innerHTML = content;
+            eventModal.style.display = 'flex';
+        }
+        
+        function closeEventModal() {
+            eventModal.style.display = 'none';
+        }
+        
+        // Form handling
+        function recordGoal() {
+            const content = `
+                <div class="form-group">
+                    <label>Select Team</label>
+                    <select class="form-control" id="goal-team">
+                        <option value="home">${matchState.homeTeam}</option>
+                        <option value="away">${matchState.awayTeam}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Goalscorer</label>
+                    <select class="form-control" id="goal-player"></select>
+                </div>
+                <div class="form-group">
+                    <label>Assist (Optional)</label>
+                    <select class="form-control" id="assist-player">
+                        <option value="">No Assist</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Chance Creator (Optional - if different from assist)</label>
+                    <select class="form-control" id="chance-creator">
+                        <option value="">No Chance Creator</option>
+                    </select>
+                </div>
+                <button class="submit-btn" id="submit-goal">Record Goal</button>
+            `;
+            
+            openModal('Record Goal', content);
+            
+            // Populate players for default team
+            populateGoalPlayers('home');
+            
+            // Update players when team changes
+            document.getElementById('goal-team').addEventListener('change', (e) => {
+                populateGoalPlayers(e.target.value);
+            });
+            
+            document.getElementById('submit-goal').addEventListener('click', () => {
+                const team = document.getElementById('goal-team').value;
+                const playerId = document.getElementById('goal-player').value;
+                const assistPlayerId = document.getElementById('assist-player').value || null;
+                const chanceCreatorId = document.getElementById('chance-creator').value || null;
+                
+                if (!playerId) {
+                    alert('Please select a goalscorer');
+                    return;
+                }
+                
+                // Find player details
+                const players = team === 'home' ? matchState.homeStarters : matchState.awayStarters;
+                const player = players.find(p => p.id === playerId);
+                const assistPlayer = assistPlayerId ? findPlayerById(assistPlayerId) : null;
+                const chanceCreator = chanceCreatorId ? findPlayerById(chanceCreatorId) : null;
+                
+                if (player) {
+                    if (team === 'home') {
+                        matchState.homeScore++;
+                    } else {
+                        matchState.awayScore++;
+                    }
+                    
+                    updateScores();
+                    
+                    let eventDetails = `${player.name} scored for ${team === 'home' ? matchState.homeTeam : matchState.awayTeam}`;
+                    if (assistPlayer) {
+                        eventDetails += ` (Assist: ${assistPlayer.name})`;
+                    }
+                    if (chanceCreator) {
+                        eventDetails += ` (Chance created by: ${chanceCreator.name})`;
+                    }
+                    
+                    addEvent('goal', eventDetails, playerId, team, assistPlayerId, chanceCreatorId);
+                }
+                
+                closeEventModal();
+            });
+        }
+        
+        function populateGoalPlayers(team) {
+            const playerSelect = document.getElementById('goal-player');
+            const assistSelect = document.getElementById('assist-player');
+            const chanceSelect = document.getElementById('chance-creator');
+            playerSelect.innerHTML = '';
+            assistSelect.innerHTML = '<option value="">No Assist</option>';
+            chanceSelect.innerHTML = '<option value="">No Chance Creator</option>';
+            
+            const players = team === 'home' ? matchState.homeStarters : matchState.awayStarters;
+            
+            players.forEach(player => {
+                // Skip if player has a red card
+                if (matchState.redCardedPlayers.includes(player.id)) {
+                    return;
+                }
+                
+                const option = document.createElement('option');
+                option.value = player.id;
+                option.textContent = `#${player.jerseyNumber} ${player.name}`;
+                playerSelect.appendChild(option);
+                
+                // Add to assist dropdown, excluding the goalscorer
+                if (playerSelect.value !== player.id) {
+                    const assistOption = option.cloneNode(true);
+                    assistSelect.appendChild(assistOption);
+                }
+                
+                // Add to chance creator dropdown
+                const chanceOption = option.cloneNode(true);
+                chanceSelect.appendChild(chanceOption);
+            });
+        }
+        
+        function recordCard(type) {
+            const cardName = type === 'yellow' ? 'Yellow Card' : 'Red Card';
+            
+            const content = `
+                <div class="form-group">
+                    <label>Select Team</label>
+                    <select class="form-control" id="card-team">
+                        <option value="home">${matchState.homeTeam}</option>
+                        <option value="away">${matchState.awayTeam}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Participant</label>
+                    <select class="form-control" id="card-participant"></select>
+                </div>
+                <div class="form-group">
+                    <label>Offense</label>
+                    <input type="text" class="form-control" id="card-offense" placeholder="Enter offense description">
+                </div>
+                <button class="submit-btn" id="submit-card">Record ${cardName}</button>
+            `;
+            
+            openModal(`Record ${cardName}`, content);
+            
+            // Populate participants for default team
+            populateCardParticipants('home');
+            
+            // Update participants when team changes
+            document.getElementById('card-team').addEventListener('change', (e) => {
+                populateCardParticipants(e.target.value);
+            });
+            
+            document.getElementById('submit-card').addEventListener('click', () => {
+                const team = document.getElementById('card-team').value;
+                const participantValue = document.getElementById('card-participant').value;
+                const offense = document.getElementById('card-offense').value || 'Unknown offense';
+                
+                if (!participantValue) {
+                    alert('Please select a participant');
+                    return;
+                }
+                
+                let participantName = '';
+                let participantType = 'Player';
+                let playerId = null;
+                
+                if (participantValue.startsWith('player-')) {
+                    playerId = participantValue.split('-')[1];
+                    const player = findPlayerById(playerId);
+                    if (player) participantName = player.name;
+                } else {
+                    participantType = 'Coach';
+                    participantName = team === 'home' ? matchState.homeCoach : matchState.awayCoach;
+                }
+                
+                if (participantName) {
+                    addEvent(type, `${cardName} for ${participantName} (${participantType}) - ${offense}`, playerId, team);
+                    
+                    // If it's a red card and a player (not coach), add to red-carded list
+                    if (type === 'red' && playerId) {
+                        matchState.redCardedPlayers.push(playerId);
+                        console.log(`Player ${playerId} added to red-carded list`);
+                    }
+                }
+                
+                closeEventModal();
+            });
+        }
+        
+        function populateCardParticipants(team) {
+            const participantSelect = document.getElementById('card-participant');
+            participantSelect.innerHTML = '';
+            
+            // Add players
+            const players = team === 'home' ? matchState.homeStarters : matchState.awayStarters;
+            players.forEach(player => {
+                // Skip if player has a red card
+                if (matchState.redCardedPlayers.includes(player.id)) {
+                    return;
+                }
+                
+                const option = document.createElement('option');
+                option.value = `player-${player.id}`;
+                
+                // Add disabled class for red-carded players
+                if (matchState.redCardedPlayers.includes(player.id)) {
+                    option.className = 'disabled-player';
+                    option.textContent = `#${player.jerseyNumber} ${player.name} (Player) - RED CARDED`;
+                    option.disabled = true;
+                } else {
+                    option.textContent = `#${player.jerseyNumber} ${player.name} (Player)`;
+                }
+                
+                participantSelect.appendChild(option);
+            });
+            
+            // Add coaches
+            const coach = team === 'home' ? matchState.homeCoach : matchState.awayCoach;
+            if (coach) {
+                const option = document.createElement('option');
+                option.value = 'coach';
+                option.textContent = `${coach} (Coach)`;
+                participantSelect.appendChild(option);
+            }
+        }
+        
+        function recordSubstitution() {
+            const content = `
+                <div class="form-group">
+                    <label>Select Team</label>
+                    <select class="form-control" id="sub-team">
+                        <option value="home">${matchState.homeTeam}</option>
+                        <option value="away">${matchState.awayTeam}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Player Coming Off</label>
+                    <select class="form-control" id="player-out"></select>
+                </div>
+                <div class="form-group">
+                    <label>Player Coming On</label>
+                    <select class="form-control" id="player-in"></select>
+                </div>
+                <button class="submit-btn" id="submit-sub">Record Substitution</button>
+            `;
+            
+            openModal('Record Substitution', content);
+            
+            // Populate players for default team
+            populateSubstitutionPlayers('home');
+            
+            // Update players when team changes
+            document.getElementById('sub-team').addEventListener('change', (e) => {
+                populateSubstitutionPlayers(e.target.value);
+            });
+            
+            document.getElementById('submit-sub').addEventListener('click', () => {
+                const team = document.getElementById('sub-team').value;
+                const playerOutId = document.getElementById('player-out').value;
+                const playerInId = document.getElementById('player-in').value;
+                
+                if (!playerOutId || !playerInId) {
+                    alert('Please select both players');
+                    return;
+                }
+                
+                const starters = team === 'home' ? matchState.homeStarters : matchState.awayStarters;
+                const substitutes = team === 'home' ? matchState.homeSubstitutes : matchState.awaySubstitutes;
+                
+                const playerOut = starters.find(p => p.id === playerOutId);
+                const playerIn = substitutes.find(p => p.id === playerInId);
+                
+                if (playerOut && playerIn) {
+                    // Update team rosters
+                    matchState[team === 'home' ? 'homeStarters' : 'awayStarters'] = 
+                        starters.filter(p => p.id !== playerOutId).concat([playerIn]);
+                    
+                    matchState[team === 'home' ? 'homeSubstitutes' : 'awaySubstitutes'] = 
+                        substitutes.filter(p => p.id !== playerInId).concat([playerOut]);
+                    
+                    addEvent('sub', `Substitution: ${playerOut.name} off, ${playerIn.name} on for ${team === 'home' ? matchState.homeTeam : matchState.awayTeam}`, playerOutId, team);
+                }
+                
+                closeEventModal();
+            });
+        }
+        
+        function populateSubstitutionPlayers(team) {
+            const playerOutSelect = document.getElementById('player-out');
+            const playerInSelect = document.getElementById('player-in');
+            playerOutSelect.innerHTML = '';
+            playerInSelect.innerHTML = '';
+            
+            // Players coming off (starters)
+            const starters = team === 'home' ? matchState.homeStarters : matchState.awayStarters;
+            starters.forEach(player => {
+                // Skip if player has a red card
+                if (matchState.redCardedPlayers.includes(player.id)) {
+                    return;
+                }
+                
+                const option = document.createElement('option');
+                option.value = player.id;
+                option.textContent = `#${player.jerseyNumber} ${player.name}`;
+                playerOutSelect.appendChild(option);
+            });
+            
+            // Players coming on (substitutes)
+            const substitutes = team === 'home' ? matchState.homeSubstitutes : matchState.awaySubstitutes;
+            substitutes.forEach(player => {
+                // Skip if player has a red card
+                if (matchState.redCardedPlayers.includes(player.id)) {
+                    return;
+                }
+                
+                const option = document.createElement('option');
+                option.value = player.id;
+                option.textContent = `#${player.jerseyNumber} ${player.name}`;
+                playerInSelect.appendChild(option);
+            });
+        }
+        
+        async function confirmResults() {
+            const content = `
+                <div class="confirmation">
+                    <i class="fas fa-check-circle"></i>
+                    <h2>Confirm Final Result</h2>
+                    <p>${matchState.homeTeam}: ${matchState.homeScore} - ${matchState.awayTeam}: ${matchState.awayScore}</p>
+                    <p>Are you sure you want to finalize this result?</p>
+                    <button class="submit-btn" id="final-confirm">Confirm Final Result</button>
+                </div>
+            `;
+            
+            openModal('Confirm Final Result', content);
+            
+            document.getElementById('final-confirm').addEventListener('click', async () => {
+                try {
+                    updateProgress(0, "Starting result confirmation...");
+                    
+                    // Save to both team documents
+                    updateProgress(20, "Saving match results...");
+                    await saveMatchResults();
+                    
+                    // Update standings
+                    updateProgress(40, "Updating league standings...");
+                    await updateStandings();
+                    
+                    // Update coaches' records
+                    updateProgress(60, "Updating coaches' records...");
+                    await updateCoachesRecords();
+                    
+                    // Update referees' records
+                    updateProgress(70, "Updating referees' records...");
+                    await updateRefereesRecords();
+                    
+                    // Update player stats
+                    updateProgress(80, "Updating player statistics...");
+                    await updatePlayerStats();
+                    
+                    // Save season records
+                    updateProgress(90, "Saving season records...");
+                    await saveSeasonRecords();
+                    
+                    updateProgress(100, "Results confirmed successfully!");
+                    
+                    addEvent('match', 'Final result confirmed');
+                    setTimeout(() => {
+                        alert('Match results have been confirmed and submitted!');
+                        closeEventModal();
+                    }, 1000);
+                } catch (error) {
+                    console.error('Error saving match results:', error);
+                    alert('Failed to save match results. Please try again.');
+                }
+            });
+        }
+        
+        // FIXED: Preserve existing match data when updating
+        async function saveMatchResults() {
+            try {
+                // Calculate match stats
+                const { homeYellowCards, homeRedCards, homeScorers, homeAssists, homeChanceCreators,
+                        awayYellowCards, awayRedCards, awayScorers, awayAssists, awayChanceCreators } = calculateMatchStats();
+                
+                // Determine match result
+                const homeWon = matchState.homeScore > matchState.awayScore;
+                const awayWon = matchState.awayScore > matchState.homeScore;
+                const isDraw = matchState.homeScore === matchState.awayScore;
+
+                // FIRST: Get the existing match data for both teams to preserve all existing fields
+                const homeDocRef = db.collection('GombeSeason')
+                    .doc(matchState.homeTeam)
+                    .collection(matchState.seasonId)
+                    .doc(matchState.matchId);
+                
+                const awayDocRef = db.collection('GombeSeason')
+                    .doc(matchState.awayTeam)
+                    .collection(matchState.seasonId)
+                    .doc(matchState.matchId);
+
+                // Get existing documents
+                const [homeDoc, awayDoc] = await Promise.all([
+                    homeDocRef.get(),
+                    awayDocRef.get()
+                ]);
+
+                // Prepare match data - ONLY ADD new fields, preserve existing ones
+                const homeMatchData = {
+                    matchCompleted: true,
+                    homeScore: matchState.homeScore,
+                    awayScore: matchState.awayScore,
+                    events: matchState.events,
+                    goalScored: homeWon ? matchState.homeScore : matchState.awayScore,
+                    goalConceded: homeWon ? matchState.awayScore : matchState.homeScore,
+                    points: homeWon ? 3 : awayWon ? 0 : 1,
+                    yellowCards: homeYellowCards,
+                    redCards: homeRedCards,
+                    scorers: homeScorers,
+                    assists: homeAssists,
+                    chanceCreators: homeChanceCreators,
+                    // Preserve existing data by merging with existing document
+                    ...(homeDoc.exists ? homeDoc.data() : {})
+                };
+
+                const awayMatchData = {
+                    matchCompleted: true,
+                    homeScore: matchState.homeScore,
+                    awayScore: matchState.awayScore,
+                    events: matchState.events,
+                    goalScored: awayWon ? matchState.awayScore : matchState.homeScore,
+                    goalConceded: awayWon ? matchState.homeScore : matchState.awayScore,
+                    points: awayWon ? 3 : homeWon ? 0 : 1,
+                    yellowCards: awayYellowCards,
+                    redCards: awayRedCards,
+                    scorers: awayScorers,
+                    assists: awayAssists,
+                    chanceCreators: awayChanceCreators,
+                    // Preserve existing data by merging with existing document
+                    ...(awayDoc.exists ? awayDoc.data() : {})
+                };
+
+                // Update both documents with preserved data
+                await Promise.all([
+                    homeDocRef.set(homeMatchData),
+                    awayDocRef.set(awayMatchData)
+                ]);
+                
+                console.log('Match results saved successfully with preserved data');
+            } catch (error) {
+                console.error('Error saving match results:', error);
+                throw error;
+            }
+        }
+        
+        function calculateMatchStats() {
+            const stats = {
+                homeYellowCards: [],
+                homeRedCards: [],
+                homeScorers: [],
+                homeAssists: [],
+                homeChanceCreators: [],
+                awayYellowCards: [],
+                awayRedCards: [],
+                awayScorers: [],
+                awayAssists: [],
+                awayChanceCreators: []
+            };
+            
+            matchState.events.forEach(event => {
+                if (!event.team) return;
+                
+                if (event.type === 'yellow' && event.playerId) {
+                    if (event.team === 'home') stats.homeYellowCards.push({playerId: event.playerId, count: 1});
+                    else if (event.team === 'away') stats.awayYellowCards.push({playerId: event.playerId, count: 1});
+                } 
+                else if (event.type === 'red' && event.playerId) {
+                    if (event.team === 'home') stats.homeRedCards.push({playerId: event.playerId, count: 1});
+                    else if (event.team === 'away') stats.awayRedCards.push({playerId: event.playerId, count: 1});
+                } 
+                else if (event.type === 'goal') {
+                    if (event.team === 'home') {
+                        stats.homeScorers.push({playerId: event.playerId, count: 1});
+                        if (event.assistPlayerId) stats.homeAssists.push({playerId: event.assistPlayerId, count: 1});
+                        if (event.chanceCreatorId) stats.homeChanceCreators.push({playerId: event.chanceCreatorId, count: 1});
+                    } else {
+                        stats.awayScorers.push({playerId: event.playerId, count: 1});
+                        if (event.assistPlayerId) stats.awayAssists.push({playerId: event.assistPlayerId, count: 1});
+                        if (event.chanceCreatorId) stats.awayChanceCreators.push({playerId: event.chanceCreatorId, count: 1});
+                    }
+                }
+            });
+            
+            return stats;
+        }
+        
+        async function updateStandings() {
+            try {
+                // Determine competition type
+                const isLeague = matchState.matchId.startsWith('LMatch');
+                const collectionName = isLeague ? 'league_division' : 'Championship_division';
+                
+                // Get match result
+                const homeWon = matchState.homeScore > matchState.awayScore;
+                const awayWon = matchState.awayScore > matchState.homeScore;
+                const isDraw = matchState.homeScore === matchState.awayScore;
+                
+                // Update both teams in their zones
+                await updateTeamStanding(collectionName, matchState.homeTeam, {
+                    M: 1,
+                    W: homeWon ? 1 : 0,
+                    D: isDraw ? 1 : 0,
+                    L: awayWon ? 1 : 0,
+                    GS: matchState.homeScore,
+                    GA: matchState.awayScore
+                });
+                
+                await updateTeamStanding(collectionName, matchState.awayTeam, {
+                    M: 1,
+                    W: awayWon ? 1 : 0,
+                    D: isDraw ? 1 : 0,
+                    L: homeWon ? 1 : 0,
+                    GS: matchState.awayScore,
+                    GA: matchState.homeScore
+                });
+                
+                console.log('Standings updated successfully');
+            } catch (error) {
+                console.error('Error updating standings:', error);
+            }
+        }
+        
+        async function updateTeamStanding(collectionName, teamName, stats) {
+            const zonesSnapshot = await db.collection(collectionName).get();
+            
+            for (const zoneDoc of zonesSnapshot.docs) {
+                const zoneData = zoneDoc.data();
+                const teamIndex = zoneData.teams.findIndex(t => t.name === teamName);
+                
+                if (teamIndex !== -1) {
+                    const updatedTeams = [...zoneData.teams];
+                    const team = updatedTeams[teamIndex];
+                    
+                    // Update stats
+                    team.M = (team.M || 0) + stats.M;
+                    team.W = (team.W || 0) + stats.W;
+                    team.D = (team.D || 0) + stats.D;
+                    team.L = (team.L || 0) + stats.L;
+                    team.GS = (team.GS || 0) + stats.GS;
+                    team.GA = (team.GA || 0) + stats.GA;
+                    team.GD = team.GS - team.GA;
+                    team.points = (team.points || 0) + (stats.W * 3) + (stats.D * 1);
+                    
+                    // Re-sort teams
+                    updatedTeams.sort((a, b) => {
+                        const pA = parseInt(a.points) || 0;
+                        const pB = parseInt(b.points) || 0;
+                        const gdA = parseInt(a.GD) || 0;
+                        const gdB = parseInt(b.GD) || 0;
+                        const gsA = parseInt(a.GS) || 0;
+                        const gsB = parseInt(b.GS) || 0;
+                        return pB - pA || gdB - gdA || gsB - gsA;
+                    });
+                    
+                    await zoneDoc.ref.update({ teams: updatedTeams });
+                    break;
+                }
+            }
+        }
+        
+        async function updateCoachesRecords() {
+            try {
+                const homeWon = matchState.homeScore > matchState.awayScore;
+                const awayWon = matchState.awayScore > matchState.homeScore;
+                const isDraw = matchState.homeScore === matchState.awayScore;
+                
+                // Prepare updates
+                const homeUpdate = {};
+                const awayUpdate = {};
+                
+                if (homeWon) {
+                    homeUpdate.Wins = firebase.firestore.FieldValue.increment(1);
+                    awayUpdate.Loss = firebase.firestore.FieldValue.increment(1);
+                } else if (awayWon) {
+                    awayUpdate.Wins = firebase.firestore.FieldValue.increment(1);
+                    homeUpdate.Loss = firebase.firestore.FieldValue.increment(1);
+                } else {
+                    homeUpdate.Draws = firebase.firestore.FieldValue.increment(1);
+                    awayUpdate.Draws = firebase.firestore.FieldValue.increment(1);
+                }
+                
+                // Apply updates - NOW DIRECTLY TO COACH DOCUMENT
+                if (matchState.homeCoachId) {
+                    const homeCoachRef = db.collection('GombeCoaches').doc(matchState.homeCoachId);
+                    await homeCoachRef.set(homeUpdate, { merge: true });
+                }
+                
+                if (matchState.awayCoachId) {
+                    const awayCoachRef = db.collection('GombeCoaches').doc(matchState.awayCoachId);
+                    await awayCoachRef.set(awayUpdate, { merge: true });
+                }
+                
+                console.log('Coaches records updated');
+            } catch (error) {
+                console.error('Error updating coaches records:', error);
+            }
+        }
+        
+        async function updateRefereesRecords() {
+            try {
+                // Get card counts
+                const cardCounts = matchState.events.reduce((counts, event) => {
+                    if (event.type === 'yellow') counts.yellow++;
+                    if (event.type === 'red') counts.red++;
+                    return counts;
+                }, { yellow: 0, red: 0 });
+                
+                // Update referee
+                if (matchState.mainRefereeId) {
+                    await db.collection('MatchReferees').doc(matchState.mainRefereeId).update({
+                        matcheshandled: firebase.firestore.FieldValue.increment(1),
+                        yellowCards: firebase.firestore.FieldValue.increment(cardCounts.yellow),
+                        redCards: firebase.firestore.FieldValue.increment(cardCounts.red)
+                    });
+                }
+                
+                // Update other officials (only matches handled)
+                const otherOfficials = [
+                    matchState.linesman1Id,
+                    matchState.linesman2Id,
+                    matchState.netman1Id,
+                    matchState.netman2Id
+                ].filter(id => id);
+                
+                const updates = otherOfficials.map(id => 
+                    db.collection('MatchReferees').doc(id).update({
+                        matcheshandled: firebase.firestore.FieldValue.increment(1)
+                    })
+                );
+                
+                await Promise.all(updates);
+                console.log('Referees records updated');
+            } catch (error) {
+                console.error('Error updating referees records:', error);
+            }
+        }
+        
+        async function updatePlayerStats() {
+            try {
+                const batch = db.batch();
+                const playerRegistry = db.collection('playerRegistry');
+                
+                // Prepare minutes played for all participants
+                const allPlayers = [
+                    ...matchState.homeStarters,
+                    ...matchState.homeSubstitutes,
+                    ...matchState.awayStarters,
+                    ...matchState.awaySubstitutes
+                ];
+                
+                // Check for clean sheets
+                const homeCleanSheet = matchState.awayScore === 0;
+                const awayCleanSheet = matchState.homeScore === 0;
+                
+                // Process events
+                matchState.events.forEach(event => {
+                    if (event.playerId) {
+                        const playerRef = playerRegistry.doc(event.playerId);
+                        let update = {};
+                        
+                        switch(event.type) {
+                            case 'goal': 
+                                update.goals = firebase.firestore.FieldValue.increment(1);
+                                break;
+                            case 'yellow': 
+                                update.yellowCards = firebase.firestore.FieldValue.increment(1);
+                                break;
+                            case 'red': 
+                                update.redCards = firebase.firestore.FieldValue.increment(1);
+                                break;
+                        }
+                        
+                        if (Object.keys(update).length) {
+                            batch.set(playerRef, update, { merge: true });
+                        }
+                    }
+                    
+                    if (event.assistPlayerId) {
+                        const playerRef = playerRegistry.doc(event.assistPlayerId);
+                        batch.set(playerRef, {
+                            assists: firebase.firestore.FieldValue.increment(1)
+                        }, { merge: true });
+                    }
+                    
+                    // Track chances created
+                    if (event.chanceCreatorId) {
+                        const playerRef = playerRegistry.doc(event.chanceCreatorId);
+                        batch.set(playerRef, {
+                            chancesCreated: firebase.firestore.FieldValue.increment(1)
+                        }, { merge: true });
+                    }
+                });
+                
+                // Add clean sheets for goalkeepers and defenders
+                allPlayers.forEach(player => {
+                    const playerRef = playerRegistry.doc(player.id);
+                    const position = matchState.playerPositions[player.id];
+                    const isGoalkeeper = position === 'Goalkeeper';
+                    const isDefender = position === 'Defender';
+                    
+                    let update = {
+                        minutesPlayed: firebase.firestore.FieldValue.increment(matchState.minutes),
+                        matchesPlayed: firebase.firestore.FieldValue.increment(1)
+                    };
+                    
+                    // Add clean sheet for goalkeepers and defenders
+                    if (isGoalkeeper || isDefender) {
+                        const team = matchState.homeStarters.some(p => p.id === player.id) || 
+                                    matchState.homeSubstitutes.some(p => p.id === player.id) ? 
+                                    'home' : 'away';
+                        
+                        const hasCleanSheet = (team === 'home' && homeCleanSheet) || 
+                                            (team === 'away' && awayCleanSheet);
+                        
+                        if (hasCleanSheet) {
+                            update.cleanSheets = firebase.firestore.FieldValue.increment(1);
+                        }
+                    }
+                    
+                    batch.set(playerRef, update, { merge: true });
+                });
+                
+                await batch.commit();
+                console.log('Player stats updated');
+            } catch (error) {
+                console.error('Error updating player stats:', error);
+            }
+        }
+        
+        // Function to save season records
+        async function saveSeasonRecords() {
+            try {
+                // Determine competition type and get zone ID
+                const isLeague = matchState.matchId.startsWith('LMatch');
+                const division = isLeague ? 'league_division' : 'Championship_division';
+                
+                // Find zone ID for the teams
+                const zonesSnapshot = await db.collection(division).get();
+                let zoneId = null;
+                
+                for (const zoneDoc of zonesSnapshot.docs) {
+                    const zoneData = zoneDoc.data();
+                    const teams = zoneData.teams || [];
+                    
+                    if (teams.some(team => team.name === matchState.homeTeam) || 
+                        teams.some(team => team.name === matchState.awayTeam)) {
+                        zoneId = zoneDoc.id;
+                        break;
+                    }
+                }
+                
+                if (!zoneId) {
+                    console.error('Could not find zone for teams');
+                    return;
+                }
+                
+                // Reference to the season records document
+                const seasonRecordsRef = db.collection('GombeSeasonRecord')
+                    .doc(division)
+                    .collection(zoneId)
+                    .doc(matchState.seasonId);
+                
+                // Get current records
+                const seasonRecordsDoc = await seasonRecordsRef.get();
+                let currentRecords = seasonRecordsDoc.exists ? seasonRecordsDoc.data() : {};
+                
+                // Initialize records if they don't exist
+                if (!currentRecords.topScorers) currentRecords.topScorers = [];
+                if (!currentRecords.topAssists) currentRecords.topAssists = [];
+                if (!currentRecords.mostYellowCards) currentRecords.mostYellowCards = [];
+                if (!currentRecords.mostRedCards) currentRecords.mostRedCards = [];
+                if (!currentRecords.topCleanSheets) currentRecords.topCleanSheets = [];
+                if (!currentRecords.topCoaches) currentRecords.topCoaches = [];
+                if (!currentRecords.mostChancesCreated) currentRecords.mostChancesCreated = [];
+                
+                // Process match events to update records
+                const { homeScorers, homeAssists, homeYellowCards, homeRedCards, homeChanceCreators,
+                        awayScorers, awayAssists, awayYellowCards, awayRedCards, awayChanceCreators } = calculateMatchStats();
+                
+                // Update top scorers
+                await updatePlayerRecords(currentRecords.topScorers, [...homeScorers, ...awayScorers], 'goals');
+                
+                // Update top assists
+                await updatePlayerRecords(currentRecords.topAssists, [...homeAssists, ...awayAssists], 'assists');
+                
+                // Update most yellow cards
+                await updatePlayerRecords(currentRecords.mostYellowCards, [...homeYellowCards, ...awayYellowCards], 'yellowCards');
+                
+                // Update most red cards
+                await updatePlayerRecords(currentRecords.mostRedCards, [...homeRedCards, ...awayRedCards], 'redCards');
+                
+                // Update most chances created
+                await updatePlayerRecords(currentRecords.mostChancesCreated, [...homeChanceCreators, ...awayChanceCreators], 'chancesCreated');
+                
+                // Update clean sheets for goalkeepers and defenders
+                await updateCleanSheets(currentRecords.topCleanSheets);
+                
+                // Update top coaches
+                await updateCoachRecords(currentRecords.topCoaches);
+                
+                // Save updated records
+                await seasonRecordsRef.set(currentRecords);
+                console.log('Season records saved successfully');
+                
+            } catch (error) {
+                console.error('Error saving season records:', error);
+            }
+        }
+
+        // Helper function to update player records
+        async function updatePlayerRecords(recordsArray, playerStats, statType) {
+            for (const { playerId, count } of playerStats) {
+                if (!playerId) continue;
+                
+                // Get player details
+                const playerDoc = await db.collection('playerRegistry').doc(playerId).get();
+                if (!playerDoc.exists) continue;
+                
+                const playerData = playerDoc.data();
+                const playerName = playerData.name;
+                const jerseyNumber = playerData.jerseyNumber || 'N/A';
+                const teamName = playerData.team || 'Unknown';
+                
+                // Check if player already exists in records
+                const existingRecord = recordsArray.find(record => record.playerId === playerId);
+                
+                if (existingRecord) {
+                    existingRecord.count += count;
+                } else {
+                    recordsArray.push({
+                        playerId: playerId,
+                        playerName: playerName,
+                        jerseyNumber: jerseyNumber,
+                        team: teamName,
+                        count: count,
+                        statType: statType
+                    });
+                }
+            }
+            
+            // Sort by count descending
+            recordsArray.sort((a, b) => b.count - a.count);
+        }
+
+        // Helper function to update clean sheets
+        async function updateCleanSheets(cleanSheetsArray) {
+            const homeCleanSheet = matchState.awayScore === 0;
+            const awayCleanSheet = matchState.homeScore === 0;
+            
+            // Process home team clean sheets
+            if (homeCleanSheet) {
+                for (const player of [...matchState.homeStarters, ...matchState.homeSubstitutes]) {
+                    const position = matchState.playerPositions[player.id];
+                    if (position === 'Goalkeeper' || position === 'Defender') {
+                        await updatePlayerRecord(cleanSheetsArray, player.id, 'cleanSheets');
+                    }
+                }
+            }
+            
+            // Process away team clean sheets
+            if (awayCleanSheet) {
+                for (const player of [...matchState.awayStarters, ...matchState.awaySubstitutes]) {
+                    const position = matchState.playerPositions[player.id];
+                    if (position === 'Goalkeeper' || position === 'Defender') {
+                        await updatePlayerRecord(cleanSheetsArray, player.id, 'cleanSheets');
+                    }
+                }
+            }
+            
+            // Sort by count descending
+            cleanSheetsArray.sort((a, b) => b.count - a.count);
+        }
+        
+        // Helper function to update individual player record
+        async function updatePlayerRecord(recordsArray, playerId, statType) {
+            // Get player details
+            const playerDoc = await db.collection('playerRegistry').doc(playerId).get();
+            if (!playerDoc.exists) return;
+            
+            const playerData = playerDoc.data();
+            const playerName = playerData.name;
+            const jerseyNumber = playerData.jerseyNumber || 'N/A';
+            const teamName = playerData.team || 'Unknown';
+            
+            // Check if player already exists in records
+            const existingRecord = recordsArray.find(record => record.playerId === playerId);
+            
+            if (existingRecord) {
+                existingRecord.count += 1;
+            } else {
+                recordsArray.push({
+                    playerId: playerId,
+                    playerName: playerName,
+                    jerseyNumber: jerseyNumber,
+                    team: teamName,
+                    count: 1,
+                    statType: statType
+                });
+            }
+        }
+
+        // Helper function to update coach records
+        async function updateCoachRecords(coachesArray) {
+            const homeWon = matchState.homeScore > matchState.awayScore;
+            const isDraw = matchState.homeScore === matchState.awayScore;
+            
+            if (homeWon && matchState.homeCoachId) {
+                await updateCoachRecord(coachesArray, matchState.homeCoachId, matchState.homeCoach, matchState.homeTeam);
+            } else if (!isDraw && matchState.awayCoachId) {
+                await updateCoachRecord(coachesArray, matchState.awayCoachId, matchState.awayCoach, matchState.awayTeam);
+            }
+            
+            // Sort by wins descending
+            coachesArray.sort((a, b) => b.wins - a.wins);
+        }
+
+        // Helper function to update individual coach record
+        async function updateCoachRecord(coachesArray, coachId, coachName, teamName) {
+            const existingRecord = coachesArray.find(record => record.coachId === coachId);
+            
+            if (existingRecord) {
+                existingRecord.wins += 1;
+            } else {
+                coachesArray.push({
+                    coachId: coachId,
+                    coachName: coachName,
+                    team: teamName,
+                    wins: 1
+                });
+            }
+        }
+        
+        // Event listeners
+        startPauseButton.addEventListener('click', startMatch);
+        pauseButton.addEventListener('click', function() {
+            if (matchState.isPaused) {
+                resumeMatch();
+            } else {
+                pauseMatch();
+            }
+        });
+        stopButton.addEventListener('click', stopMatch);
+        goalButton.addEventListener('click', recordGoal);
+        yellowButton.addEventListener('click', () => recordCard('yellow'));
+        redButton.addEventListener('click', () => recordCard('red'));
+        subButton.addEventListener('click', recordSubstitution);
+        confirmButton.addEventListener('click', confirmResults);
+        closeModal.addEventListener('click', closeEventModal);
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === eventModal) {
+                closeEventModal();
+            }
+        });
+        
+        // Initialize the app
+        initApp();
+    </script>
+</body>
+</html>

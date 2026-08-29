@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Match Details | Gombe Football</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #0d3b1e, #2a6e37);
+      min-height: 100vh;
+      color: #333;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(90deg, #0d3b1e, #2a6e37);
+    }
+    
+    .back-btn {
+      background: #0d3b1e;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 25px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .back-btn:hover {
+      background: #0a2e17;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .match-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .match-header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, #0d3b1e, #2a6e37);
+    }
+    
+    .teams {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      font-size: 1.3rem;
+    }
+    
+    .team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 180px;
+    }
+    
+    .team-name {
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 1.4rem;
+      text-align: center;
+    }
+    
+    .home-team .team-name {
+      color: #0d3b1e;
+    }
+    
+    .away-team .team-name {
+      color: #1e5a2d;
+    }
+    
+    .team-venue {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+      color: #555;
+      padding: 6px 15px;
+      border-radius: 20px;
+      background: #e9f5eb;
+    }
+    
+    .vs {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #0d3b1e;
+      padding: 0 15px;
+    }
+    
+    .match-date {
+      background: #0d3b1e;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 250px;
+    }
+    
+    .match-info {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      border: 1px solid #e9ecef;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .section-title {
+      color: #0d3b1e;
+      margin: 25px 0 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e0e7e1;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .section-title i {
+      background: #e9f5eb;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid #0d3b1e;
+    }
+    
+    .group-info .info-item {
+      border-left: 4px solid #1976d2;
+    }
+    
+    .info-icon {
+      color: #0d3b1e;
+      width: 30px;
+      text-align: center;
+      font-size: 1.3rem;
+    }
+    
+    .group-info .info-icon {
+      color: #1976d2;
+    }
+    
+    .lineups-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    
+    .lineup {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 10px;
+      border: 1px solid #e9ecef;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .lineup::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: #0d3b1e;
+    }
+    
+    .lineup-title {
+      color: #0d3b1e;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    
+    .formation {
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+      padding: 8px;
+      background: #e9f5eb;
+      border-radius: 6px;
+      display: inline-block;
+      width: 100%;
+    }
+    
+    .players-section {
+      margin-bottom: 25px;
+    }
+    
+    .players-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 2px solid #0d3b1e;
+      margin-bottom: 15px;
+    }
+    
+    .players-header h4 {
+      color: #0d3b1e;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .players-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    
+    .player {
+      padding: 10px 15px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transition: all 0.2s;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .player:hover {
+      background-color: #f0f8f1;
+      transform: translateX(5px);
+    }
+    
+    .player-number {
+      background: #0d3b1e;
+      color: white;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+      font-size: 1.1rem;
+    }
+    
+    .player.substitute .player-number {
+      background: #2a6e37;
+    }
+    
+    .player-info {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+    
+    .player-name {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    
+    .player-position {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .submit-btn {
+      background: linear-gradient(to right, #0d3b1e, #2a6e37);
+      color: white;
+      border: none;
+      padding: 16px 30px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+      width: 100%;
+      justify-content: center;
+      font-size: 1.1rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .error-message {
+      color: #dc3545;
+      background-color: rgba(220, 53, 69, 0.1);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      text-align: center;
+      border: 1px solid rgba(220, 53, 69, 0.2);
+      font-size: 1rem;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: #0d3b1e;
+      font-size: 1.1rem;
+    }
+    
+    .loading i {
+      font-size: 2.5rem;
+      animation: spin 1.5s infinite linear;
+      margin-bottom: 15px;
+      color: #0d3b1e;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 900px) {
+      .lineups-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .teams {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .match-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .status-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    
+    .status-upcoming {
+      background: #ffcc00;
+      color: #333;
+    }
+    
+    .status-completed {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .status-live {
+      background: #28a745;
+      color: white;
+    }
+    
+    .team-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #e9f5eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #0d3b1e;
+      margin-bottom: 10px;
+    }
+    
+    .competition-badge {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: #3a7d44;
+      color: white;
+    }
+    
+    .group-stage-badge {
+      background: #1976d2;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+    
+    .group-info {
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="back-btn" onclick="window.history.back()">
+      <i class="fas fa-arrow-left"></i> Back to Matches
+    </button>
+    
+    <div class="match-header">
+      <div class="competition-badge" id="competitionBadge">Competition</div>
+      <div class="teams">
+        <div class="team home-team">
+          <div class="team-logo">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="team-name" id="homeTeam">Loading...</div>
+          <div class="team-venue"><i class="fas fa-home"></i> Home</div>
+        </div>
+        <div class="vs">VS</div>
+        <div class="team away-team">
+          <div class="team-logo">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="team-name" id="awayTeam">Loading...</div>
+          <div class="team-venue"><i class="fas fa-route"></i> Away</div>
+        </div>
+      </div>
+      <div class="match-date" id="matchDate">matchStatus: Loading...</div>
+      <div class="status-badge status-upcoming" id="statusBadge">Upcoming</div>
+    </div>
+    
+    <div class="match-info">
+      <h2 class="section-title"><i class="fas fa-whistle"></i> Match Officials</h2>
+      <div class="info-grid" id="officials">
+        <div class="info-item">
+          <div class="info-icon"><i class="fas fa-whistle"></i></div>
+          <div><strong>Referee:</strong> Loading...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon"><i class="fas fa-flag"></i></div>
+          <div><strong>Linesman 1:</strong> Loading...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon"><i class="fas fa-flag"></i></div>
+          <div><strong>Linesman 2:</strong> Loading...</div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon"><i class="fas fa-network-wired"></i></div>
+          <div><strong>Netman:</strong> Loading...</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Group Stage Information Section -->
+    <div class="match-info group-info" id="groupInfo" style="display: none;">
+      <h2 class="section-title"><i class="fas fa-layer-group"></i> Group Stage Information</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-icon"><i class="fas fa-users"></i></div>
+          <div><strong>Group:</strong> <span id="groupValue">Loading...</span></div>
+        </div>
+      </div>
+    </div>
+    
+    <h2 class="section-title"><i class="fas fa-users"></i> Team Lineups</h2>
+    <div id="lineupError" class="error-message" style="display: none;"></div>
+    
+    <div class="lineups-container">
+      <!-- Home Team Lineup -->
+      <div class="lineup">
+        <h3 class="lineup-title" id="homeLineupTitle">Home Team</h3>
+        <div class="formation" id="homeFormation">Formation: Loading...</div>
+        
+        <div class="players-section">
+          <div class="players-header">
+            <h4><i class="fas fa-star"></i> Starting XI</h4>
+            <span id="homeStartersCount">0 players</span>
+          </div>
+          <div class="players-list" id="homeStarters">
+            <div class="loading">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Loading starters...</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="players-section">
+          <div class="players-header">
+            <h4><i class="fas fa-exchange-alt"></i> Substitutes</h4>
+            <span id="homeSubstitutesCount">0 players</span>
+          </div>
+          <div class="players-list" id="homeSubstitutes">
+            <div class="loading">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Loading substitutes...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Away Team Lineup -->
+      <div class="lineup">
+        <h3 class="lineup-title" id="awayLineupTitle">Away Team</h3>
+        <div class="formation" id="awayFormation">Formation: Loading...</div>
+        
+        <div class="players-section">
+          <div class="players-header">
+            <h4><i class="fas fa-star"></i> Starting XI</h4>
+            <span id="awayStartersCount">0 players</span>
+          </div>
+          <div class="players-list" id="awayStarters">
+            <div class="loading">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Loading starters...</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="players-section">
+          <div class="players-header">
+            <h4><i class="fas fa-exchange-alt"></i> Substitutes</h4>
+            <span id="awaySubstitutesCount">0 players</span>
+          </div>
+          <div class="players-list" id="awaySubstitutes">
+            <div class="loading">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Loading substitutes...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitToLiveBtn">
+      <i class="fas fa-paper-plane"></i> Submit to Live Match
+    </button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // Function to determine competition type from match ID
+    function getCompetitionType(matchId) {
+      if (matchId.match(/CHMatch/i)) return "Champions Cup Demo";
+      if (matchId.match(/FMatch/i)) return "FA Cup";
+      if (matchId.match(/WMatch/i)) return "Worriors Cup";
+      if (matchId.match(/LMatch/i)) return "League";
+      if (matchId.match(/CMatch/i)) return "Community Shield";
+      return "Other Competition";
+    }
+    
+    // Function to get the correct collection path based on competition type
+    function getCompetitionCollection(competitionType) {
+      switch(competitionType) {
+        case "Champions Cup":
+          return "GombeChampionsCupMatchesDemo";
+        case "FA Cup":
+          return "GombeFAcupsMatch";
+        case "Worriors Cup":
+          return "GombeWorriorsCupMatches";
+        case "League":
+          return "GombeMatches";
+        case "Community Shield":
+          return "GombeCommunityShieldMatches";
+        default:
+          return "GombeMatches";
+      }
+    }
+    
+    // Function to get the correct lineup collection path based on competition type
+    function getLineupCollection(competitionType, teamName, seasonId, matchId) {
+      switch(competitionType) {
+        case "Champions Cup":
+        case "FA Cup":
+        case "Worriors Cup":
+        case "Community Shield":
+          // For cup competitions, lineups are stored in GombeSeason collection
+          return db.collection("GombeSeason")
+            .doc(teamName)
+            .collection(seasonId)
+            .doc(matchId);
+        case "League":
+        default:
+          // For league matches, lineups are stored in GombeLineups collection
+          return db.collection("GombeLineups")
+            .doc(teamName)
+            .collection(seasonId)
+            .doc(matchId);
+      }
+    }
+    
+    // Load match details with proper lineup loading
+    async function loadMatchDetails() {
+      const matchId = localStorage.getItem("currentMatchId");
+      const matchPath = localStorage.getItem("currentMatchPath");
+      
+      if (!matchId || !matchPath) {
+        showLineupError('Match information not found in local storage');
+        window.location.href = "MatchCommissionerAssignedMatches.html";
+        return;
+      }
+      
+      try {
+        // Get the match document
+        const docRef = db.doc(matchPath);
+        const doc = await docRef.get();
+        
+        if (!doc.exists) {
+          throw new Error('Match document not found at: ' + matchPath);
+        }
+        
+        const match = doc.data();
+        console.log("Match data:", match);
+        
+        // Determine competition type
+        const competitionType = getCompetitionType(matchId);
+        document.getElementById('competitionBadge').textContent = competitionType;
+        
+        // Extract team names and season from path
+        const pathParts = matchPath.split('/');
+        if (pathParts.length < 4) {
+          throw new Error('Invalid match path format');
+        }
+        
+        const collectionName = pathParts[0]; // Collection name
+        const teamId = pathParts[1];         // Team ID (home or away)
+        const seasonId = pathParts[2];       // Season ID
+        const matchIdFromPath = pathParts[3]; // Match ID
+        
+        const opponentName = match.opponent || 'Opponent';
+        
+        // Set home/away teams based on venue
+        const isHomeGame = match.venue === 'home';
+        const homeTeamName = isHomeGame ? teamId : opponentName;
+        const awayTeamName = isHomeGame ? opponentName : teamId;
+        
+        // Update match header
+        document.getElementById('homeTeam').textContent = homeTeamName;
+        document.getElementById('awayTeam').textContent = awayTeamName;
+        
+        // Update status badge
+        const status = match.status || 'upcoming';
+        const statusBadge = document.getElementById('statusBadge');
+        statusBadge.className = 'status-badge';
+        if (status === 'completed') {
+          statusBadge.classList.add('status-completed');
+          statusBadge.textContent = 'Completed';
+        } else if (status === 'live') {
+          statusBadge.classList.add('status-live');
+          statusBadge.textContent = 'Live';
+        } else {
+          statusBadge.classList.add('status-upcoming');
+          statusBadge.textContent = 'Upcoming';
+        }
+        
+        // Fix date display - handle both timestamp and string formats
+        let matchDate;
+        if (match.date?.seconds) {
+          matchDate = new Date(match.date.seconds * 1000);
+        } else if (match.date) {
+          matchDate = new Date(match.date);
+        } else {
+          matchDate = new Date();
+        }
+        
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('matchDate').textContent = `matchStatus ${match.matchStatus || 'N/A'} - ${matchDate.toLocaleDateString('en-US', options)}`;
+        
+        // Update officials - handle different field names across competitions
+        const officialsContainer = document.getElementById('officials');
+        officialsContainer.innerHTML = `
+          <div class="info-item">
+            <div class="info-icon"><i class="fas fa-whistle"></i></div>
+            <div><strong>Referee:</strong> ${match.referee || match.Referee || 'Not assigned'}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><i class="fas fa-flag"></i></div>
+            <div><strong>Linesman 1:</strong> ${match.linesman1 || match.Linesman1 || 'Not assigned'}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><i class="fas fa-flag"></i></div>
+            <div><strong>Linesman 2:</strong> ${match.linesman2 || match.Linesman2 || 'Not assigned'}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><i class="fas fa-network-wired"></i></div>
+            <div><strong>Netman:</strong> ${match.netman || match.Netman || 'Not assigned'}</div>
+          </div>
+        `;
+        
+        // Handle Group Stage Information
+        const groupInfoElement = document.getElementById('groupInfo');
+        const groupValueElement = document.getElementById('groupValue');
+        
+        // Check if this is a group stage match and display group info
+        if (match.matchStatus === 'GroupStage' && match.group) {
+          groupInfoElement.style.display = 'block';
+          groupValueElement.textContent = match.group;
+          
+          // Add group badge to competition badge
+          const competitionBadge = document.getElementById('competitionBadge');
+          competitionBadge.innerHTML = `${competitionType} <span class="group-stage-badge">Group ${match.group}</span>`;
+        } else {
+          groupInfoElement.style.display = 'none';
+        }
+        
+        // Update lineup titles
+        document.getElementById('homeLineupTitle').textContent = homeTeamName;
+        document.getElementById('awayLineupTitle').textContent = awayTeamName;
+        
+        // Function to get player details with error handling
+        async function getPlayerDetails(playerId) {
+          try {
+            const playerDoc = await db.collection("playerRegistry").doc(playerId).get();
+            if (!playerDoc.exists) {
+              console.warn("Player not found in registry:", playerId);
+              return { name: "Unknown Player", jerseyNumber: "?", position: "N/A" };
+            }
+            return playerDoc.data();
+          } catch (error) {
+            console.error("Error fetching player:", playerId, error);
+            return { name: "Unknown Player", jerseyNumber: "?", position: "N/A" };
+          }
+        }
+        
+        // Function to load and display lineup and substitutes
+        async function loadTeamLineup(teamName, prefix) {
+          try {
+            // Get the correct lineup collection based on competition type
+            const lineupDocRef = getLineupCollection(competitionType, teamName, seasonId, matchId);
+            const lineupDoc = await lineupDocRef.get();
+            
+            if (!lineupDoc.exists) {
+              throw new Error(`Lineup document not found for ${teamName}`);
+            }
+            
+            const lineupData = lineupDoc.data();
+            console.log(`${prefix} lineup data:`, lineupData);
+            
+            // Check for both possible key formats across different competitions
+            const lineup = lineupData.Lineup || lineupData.lineup || lineupData;
+            
+            if (!lineup) {
+              throw new Error(`Lineup data missing for ${teamName}`);
+            }
+            
+            // Check for both capitalized and lowercase keys across competitions
+            const formation = lineup.Formation || lineup.formation || 'N/A';
+            const squad = lineup.Squad || lineup.squad || lineup.players || [];
+            const starters = lineup.Starters || lineup.starters || lineup.startingXI || [];
+            
+            document.getElementById(`${prefix}Formation`).textContent = `Formation: ${formation}`;
+            
+            // Get all player details in parallel
+            const playerPromises = squad.map(playerId => getPlayerDetails(playerId));
+            const players = await Promise.all(playerPromises);
+            
+            // Create a map for quick player lookup
+            const playerMap = new Map();
+            squad.forEach((playerId, index) => {
+              playerMap.set(playerId, players[index]);
+            });
+            
+            // Display starters
+            const startersContainer = document.getElementById(`${prefix}Starters`);
+            const startersCount = document.getElementById(`${prefix}StartersCount`);
+            startersContainer.innerHTML = '';
+            
+            if (starters.length === 0) {
+              startersContainer.innerHTML = '<div class="player">No starters selected</div>';
+              startersCount.textContent = '0 players';
+            } else {
+              starters.forEach(playerId => {
+                const player = playerMap.get(playerId);
+                
+                const playerEl = document.createElement('div');
+                playerEl.className = 'player';
+                playerEl.innerHTML = `
+                  <div class="player-number">${player.jerseyNumber}</div>
+                  <div class="player-info">
+                    <div class="player-name">${player.name}</div>
+                    <div class="player-position">${player.position}</div>
+                  </div>
+                `;
+                startersContainer.appendChild(playerEl);
+              });
+              startersCount.textContent = `${starters.length} players`;
+            }
+            
+            // Display substitutes (squad minus starters)
+            const substitutesContainer = document.getElementById(`${prefix}Substitutes`);
+            const substitutesCount = document.getElementById(`${prefix}SubstitutesCount`);
+            substitutesContainer.innerHTML = '';
+            
+            const substitutes = squad.filter(playerId => !starters.includes(playerId));
+            
+            if (substitutes.length === 0) {
+              substitutesContainer.innerHTML = '<div class="player">No substitutes available</div>';
+              substitutesCount.textContent = '0 players';
+            } else {
+              substitutes.forEach(playerId => {
+                const player = playerMap.get(playerId);
+                
+                const playerEl = document.createElement('div');
+                playerEl.className = 'player substitute';
+                playerEl.innerHTML = `
+                  <div class="player-number">${player.jerseyNumber}</div>
+                  <div class="player-info">
+                    <div class="player-name">${player.name}</div>
+                    <div class="player-position">${player.position}</div>
+                  </div>
+                `;
+                substitutesContainer.appendChild(playerEl);
+              });
+              substitutesCount.textContent = `${substitutes.length} players`;
+            }
+            
+            // Return the lineup data for live match
+            return {
+              squad: squad,
+              starters: starters,
+              formation: formation
+            };
+            
+          } catch (error) {
+            console.error(`Error loading ${prefix} lineup:`, error);
+            document.getElementById(`${prefix}Formation`).textContent = 'Formation: Not available';
+            document.getElementById(`${prefix}Starters`).innerHTML = `
+              <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Failed to load lineup: ${error.message}</p>
+              </div>
+            `;
+            document.getElementById(`${prefix}Substitutes`).innerHTML = '';
+            showLineupError(`Failed to load ${prefix} team lineup: ${error.message}`);
+            return { squad: [], starters: [], formation: 'N/A' };
+          }
+        }
+        
+        // Load both lineups and store the data for live match
+        const [homeLineupData, awayLineupData] = await Promise.all([
+          loadTeamLineup(homeTeamName, 'home'),
+          loadTeamLineup(awayTeamName, 'away')
+        ]);
+        
+        // Store the complete lineup data for live match
+        window.matchLineupData = {
+          homeLineup: homeLineupData,
+          awayLineup: awayLineupData,
+          homeTeam: homeTeamName,
+          awayTeam: awayTeamName,
+          seasonId: seasonId,
+          matchId: matchId,
+          competitionType: competitionType,
+          group: match.group || ""
+        };
+        
+      } catch (error) {
+        console.error("Error loading match details:", error);
+        showLineupError(`Failed to load match details: ${error.message}`);
+        window.location.href = "MatchCommissionerAssignedMatches.html";
+      }
+    }
+    
+    // Show lineup error message
+    function showLineupError(message) {
+      const errorElement = document.getElementById('lineupError');
+      errorElement.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+      errorElement.style.display = 'block';
+      setTimeout(() => {
+        errorElement.style.display = 'none';
+      }, 8000);
+    }
+    
+    // Handle submit to live match
+    document.getElementById('submitToLiveBtn').addEventListener('click', function() {
+      const matchId = localStorage.getItem("currentMatchId");
+      const matchPath = localStorage.getItem("currentMatchPath");
+      
+      if (!matchId || !matchPath) {
+        showLineupError('No match selected');
+        return;
+      }
+      
+      if (!window.matchLineupData) {
+        showLineupError('Lineup data not loaded yet. Please wait.');
+        return;
+      }
+      
+      try {
+        // Get the match document to access official data
+        db.doc(matchPath).get().then((doc) => {
+          if (!doc.exists) {
+            throw new Error('Match document not found');
+          }
+          
+          const match = doc.data();
+          
+          // Collect ALL necessary data for live match
+          const liveMatchData = {
+            matchId: matchId,
+            matchPath: matchPath,
+            seasonId: window.matchLineupData.seasonId,
+            homeTeam: window.matchLineupData.homeTeam,
+            awayTeam: window.matchLineupData.awayTeam,
+            homeLineup: window.matchLineupData.homeLineup,
+            awayLineup: window.matchLineupData.awayLineup,
+            competitionType: window.matchLineupData.competitionType,
+            referee: match.referee || match.Referee || 'Not assigned',
+            linesman1: match.linesman1 || match.Linesman1 || 'Not assigned',
+            linesman2: match.linesman2 || match.Linesman2 || 'Not assigned',
+            netman: match.netman || match.Netman || 'Not assigned',
+            refereeId: match.refereeId || "",
+            linesman1Id: match.linesman1Id || "",
+            linesman2Id: match.linesman2Id || "",
+            netmanId: match.netmanId || "",
+            // Add group information
+            matchStatus: match.matchStatus || "",
+            group: match.group || ""
+          };
+          
+          console.log("Saving to localStorage for live match:", liveMatchData);
+          
+          // Store complete data for live match page
+          localStorage.setItem('liveMatchData', JSON.stringify(liveMatchData));
+          
+          // Redirect to live match handling page
+          window.location.href = 'LiveMatchControlCups.html';
+        }).catch((error) => {
+          showLineupError(`Error loading match data: ${error.message}`);
+        });
+        
+      } catch (error) {
+        console.error("Error preparing for live match:", error);
+        showLineupError(`Error preparing for live match: ${error.message}`);
+      }
+    });
+    
+    // Load the match details when page loads
+    window.addEventListener('DOMContentLoaded', loadMatchDetails);
+  </script>
+</body>
+</html>

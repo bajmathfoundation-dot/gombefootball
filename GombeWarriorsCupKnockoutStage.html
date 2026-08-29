@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe Warriors Cup - Knockout Stage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FFD700, #C0C0C0, #CD7F32);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .tournament-banner {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .trophy {
+            font-size: 3rem;
+            color: #FFD700;
+            text-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .round-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .round-btn {
+            padding: 10px 20px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .round-btn.active {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .refresh-btn {
+            padding: 10px 20px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: #1b5e20;
+        }
+
+        .content-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1100px) {
+            .content-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .teams-card, .fixtures-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #c8e6c9;
+            transition: transform 0.3s ease;
+        }
+
+        .teams-card:hover, .fixtures-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+
+        .card-header {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #1b5e20;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #c8e6c9;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .round-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f1f8e9;
+            border-radius: 10px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .round-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #4caf50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .round-details {
+            flex: 1;
+        }
+
+        .round-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1b5e20;
+        }
+
+        .round-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #2e7d32;
+        }
+
+        .teams-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #c8e6c9;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+            background: #f9fdf9;
+        }
+
+        .team-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #4caf50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .team-info {
+            flex: 1;
+        }
+
+        .team-name {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .team-details {
+            font-size: 0.8rem;
+            color: #757575;
+        }
+
+        .fixtures-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .match-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #c8e6c9;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .match-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        .match-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e8f5e9;
+        }
+
+        .match-id {
+            font-weight: bold;
+            color: #1b5e20;
+            font-size: 1.1rem;
+        }
+
+        .match-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-scheduled {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-completed {
+            background: #4caf50;
+            color: white;
+        }
+
+        .status-live {
+            background: #ff9800;
+            color: white;
+        }
+
+        .match-body {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .team-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .team-display:hover {
+            background: #f9fdf9;
+        }
+
+        .team-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #4caf50;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .team-name-large {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .team-record {
+            font-size: 0.8rem;
+            color: #757575;
+        }
+
+        .vs-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .vs-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .match-date {
+            font-size: 0.9rem;
+            color: #757575;
+        }
+
+        .match-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #e8f5e9;
+            font-size: 0.9rem;
+        }
+
+        .match-info {
+            display: flex;
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #757575;
+        }
+
+        .score-display {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1b5e20;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(46, 125, 50, 0.3);
+            border-radius: 50%;
+            border-top-color: #2e7d32;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 25px;
+            color: #2e7d32;
+            font-size: 1rem;
+            background: #e8f5e9;
+            border-radius: 15px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .status-container {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-weight: 500;
+            padding: 15px;
+            border-radius: 8px;
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            font-size: 1rem;
+        }
+
+        .success {
+            color: #1b5e20;
+            font-weight: 500;
+            padding: 15px;
+            border-radius: 8px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            font-size: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #757575;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .round-selector {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .teams-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .match-body {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .vs-container {
+                order: -1;
+                margin-bottom: 10px;
+            }
+            
+            .match-footer {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-trophy"></i> Gombe Warriors Cup</h1>
+            <p>Knockout Stage - Teams & Fixtures</p>
+        </header>
+        
+        <div class="tournament-banner">
+            <div class="trophy"><i class="fas fa-trophy"></i></div>
+            <div class="trophy"><i class="fas fa-futbol"></i></div>
+            <div class="trophy"><i class="fas fa-trophy"></i></div>
+        </div>
+        
+        <div class="controls">
+            <div class="round-selector">
+                <button class="round-btn active" data-round="RoundOf16">Round of 16</button>
+                <button class="round-btn" data-round="quarterfinals">Quarterfinals</button>
+                <button class="round-btn" data-round="semifinals">Semifinals</button>
+                <button class="round-btn" data-round="final">Final</button>
+            </div>
+            
+            <button id="refreshBtn" class="refresh-btn">
+                <i class="fas fa-sync-alt"></i> Refresh Data
+            </button>
+        </div>
+        
+        <div class="content-container">
+            <div class="teams-card">
+                <div class="card-header">
+                    <span><i class="fas fa-users"></i> Qualified Teams</span>
+                    <span id="teamsCount" class="team-badge">0</span>
+                </div>
+                
+                <div class="round-info">
+                    <div class="round-icon">
+                        <i class="fas fa-futbol" id="roundIcon"></i>
+                    </div>
+                    <div class="round-details">
+                        <div class="round-name" id="roundName">Round of 16</div>
+                        <div class="round-stats">
+                            <span><i class="fas fa-futbol"></i> <span id="matchesCount">0</span> matches</span>
+                            <span><i class="fas fa-calendar"></i> <span id="datesRange">-</span></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="teams-container" id="teamsContainer">
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <p>Select a round to view qualified teams</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="fixtures-card">
+                <div class="card-header">
+                    <span><i class="fas fa-calendar-alt"></i> Fixtures</span>
+                    <span id="fixturesCount" class="team-badge">0</span>
+                </div>
+                
+                <div class="fixtures-container" id="fixturesContainer">
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-day"></i>
+                        <p>No fixtures available for this round</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-container" id="statusMessage" style="display: none;"></div>
+        
+        <footer>
+            <p>Gombe Football Association &copy; 2025 | Warriors Cup Tournament</p>
+            <p>Knockout Stage - Teams & Fixtures Display</p>
+        </footer>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // DOM elements
+        const roundButtons = document.querySelectorAll('.round-btn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const teamsContainer = document.getElementById('teamsContainer');
+        const fixturesContainer = document.getElementById('fixturesContainer');
+        const teamsCount = document.getElementById('teamsCount');
+        const fixturesCount = document.getElementById('fixturesCount');
+        const roundName = document.getElementById('roundName');
+        const roundIcon = document.getElementById('roundIcon');
+        const matchesCount = document.getElementById('matchesCount');
+        const datesRange = document.getElementById('datesRange');
+        
+        // App state
+        let currentRound = 'RoundOf16';
+        let roundData = {};
+        let fixturesData = {};
+        
+        // Event listeners
+        roundButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Update active button
+                roundButtons.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // Update current round
+                currentRound = e.target.dataset.round;
+                
+                // Load data for the selected round
+                loadRoundData();
+            });
+        });
+        
+        refreshBtn.addEventListener('click', loadRoundData);
+        
+        // Format round name for display
+        function formatRoundName(roundId) {
+            const names = {
+                'RoundOf16': 'Round of 16',
+                'quarterfinals': 'Quarterfinals',
+                'semifinals': 'Semifinals',
+                'final': 'Final'
+            };
+            return names[roundId] || roundId;
+        }
+        
+        // Get icon for round
+        function getRoundIcon(roundId) {
+            const icons = {
+                'RoundOf16': 'fa-users',
+                'quarterfinals': 'fa-trophy',
+                'semifinals': 'fa-medal',
+                'final': 'fa-crown'
+            };
+            return icons[roundId] || 'fa-futbol';
+        }
+        
+        // Load data for the current round
+        async function loadRoundData() {
+            try {
+                showStatus('Loading round data...', 'success');
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading';
+                refreshBtn.disabled = true;
+                
+                // Clear current data
+                roundData = {};
+                fixturesData = {};
+                
+                // 1. Load teams for the round
+                const roundDoc = await db.collection('GombeWorriorsCup')
+                    .doc(currentRound)
+                    .get();
+                
+                if (!roundDoc.exists) {
+                    throw new Error(`No data found for ${formatRoundName(currentRound)}`);
+                }
+                
+                const roundInfo = roundDoc.data();
+                
+                // Extract teams based on round type
+                let teams = [];
+                if (currentRound === 'RoundOf16') {
+                    teams = roundInfo.qualifiers ? roundInfo.qualifiers.map(q => q.team) : [];
+                } else if (currentRound === 'quarterfinals') {
+                    teams = roundInfo.quarterfinalists ? roundInfo.quarterfinalists.map(q => q.team) : [];
+                } else if (currentRound === 'semifinals') {
+                    teams = roundInfo.semifinalists ? roundInfo.semifinalists.map(s => s.team) : [];
+                } else if (currentRound === 'final') {
+                    teams = roundInfo.finalists ? roundInfo.finalists.map(f => f.team) : [];
+                }
+                
+                roundData = {
+                    name: formatRoundName(currentRound),
+                    teams: teams,
+                    teamCount: teams.length
+                };
+                
+                // 2. Load fixtures for the round
+                const fixturesDoc = await db.collection('GombeWorriorsCup')
+                    .doc('fixtures')
+                    .collection(currentRound)
+                    .doc('matches')
+                    .get();
+                
+                if (fixturesDoc.exists) {
+                    fixturesData = fixturesDoc.data();
+                } else {
+                    fixturesData = {
+                        fixtures: [],
+                        round: currentRound,
+                        roundName: formatRoundName(currentRound)
+                    };
+                }
+                
+                // Render the data
+                renderRoundData();
+                
+                showStatus(`${formatRoundName(currentRound)} data loaded successfully!`, 'success');
+                
+            } catch (error) {
+                console.error('Error loading round data:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+                
+                // Show empty state
+                teamsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Error loading teams data</p>
+                    </div>
+                `;
+                
+                fixturesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>Error loading fixtures data</p>
+                    </div>
+                `;
+            } finally {
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+                refreshBtn.disabled = false;
+            }
+        }
+        
+        // Render the round data
+        function renderRoundData() {
+            // Update round info
+            roundName.textContent = roundData.name;
+            roundIcon.className = `fas ${getRoundIcon(currentRound)}`;
+            teamsCount.textContent = roundData.teamCount;
+            
+            // Render teams
+            renderTeams();
+            
+            // Render fixtures
+            renderFixtures();
+        }
+        
+        // Render teams in the UI
+        function renderTeams() {
+            if (roundData.teams.length === 0) {
+                teamsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <p>No teams qualified for this round yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            teamsContainer.innerHTML = '';
+            roundData.teams.forEach((team, index) => {
+                const teamCard = document.createElement('div');
+                teamCard.className = 'team-card';
+                teamCard.innerHTML = `
+                    <div class="team-badge">${index + 1}</div>
+                    <div class="team-info">
+                        <div class="team-name">${team}</div>
+                        <div class="team-details">Qualified Team</div>
+                    </div>
+                `;
+                teamsContainer.appendChild(teamCard);
+            });
+        }
+        
+        // Render fixtures in the UI
+        function renderFixtures() {
+            const fixtures = fixturesData.fixtures || [];
+            fixturesCount.textContent = fixtures.length;
+            matchesCount.textContent = Math.ceil(fixtures.length / (currentRound === 'final' ? 1 : 2));
+            
+            if (fixtures.length === 0) {
+                fixturesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-day"></i>
+                        <p>No fixtures scheduled for this round yet</p>
+                        <p style="margin-top: 10px; font-size: 0.9rem;">Fixtures will appear here once generated</p>
+                    </div>
+                `;
+                datesRange.textContent = '-';
+                return;
+            }
+            
+            fixturesContainer.innerHTML = '';
+            
+            // Calculate date range for the round
+            const dates = fixtures.map(f => f.date).filter(d => d);
+            if (dates.length > 0) {
+                const sortedDates = dates.sort();
+                datesRange.textContent = `${formatDate(sortedDates[0])} - ${formatDate(sortedDates[sortedDates.length - 1])}`;
+            } else {
+                datesRange.textContent = 'Dates not set';
+            }
+            
+            // Group fixtures by match (for two-legged ties)
+            let matchGroups = {};
+            if (currentRound !== 'final') {
+                fixtures.forEach(fixture => {
+                    const matchId = fixture.id.split('-')[0]; // Extract base match ID
+                    if (!matchGroups[matchId]) {
+                        matchGroups[matchId] = [];
+                    }
+                    matchGroups[matchId].push(fixture);
+                });
+            } else {
+                // Final is a single match
+                matchGroups = { 'final': fixtures };
+            }
+            
+            // Render each match
+            Object.values(matchGroups).forEach((matchFixtures, index) => {
+                const isFinal = currentRound === 'final';
+                const matchCard = document.createElement('div');
+                matchCard.className = 'match-card';
+                
+                if (isFinal) {
+                    // Final match display
+                    const fixture = matchFixtures[0];
+                    matchCard.innerHTML = generateFinalMatchHTML(fixture, index + 1);
+                } else {
+                    // Two-legged tie display
+                    matchCard.innerHTML = generateTwoLeggedMatchHTML(matchFixtures, index + 1);
+                }
+                
+                fixturesContainer.appendChild(matchCard);
+            });
+        }
+        
+        // Generate HTML for a final match
+        function generateFinalMatchHTML(fixture, matchNum) {
+            const status = getMatchStatus(fixture);
+            const statusClass = `status-${status}`;
+            
+            return `
+                <div class="match-header">
+                    <div class="match-id">Final Match</div>
+                    <div class="match-status ${statusClass}">${status.toUpperCase()}</div>
+                </div>
+                <div class="match-body">
+                    <div class="team-display">
+                        <div class="team-logo">${fixture.homeTeam ? fixture.homeTeam.charAt(0) : 'T1'}</div>
+                        <div class="team-name-large">${fixture.homeTeam || 'TBD'}</div>
+                        <div class="team-record">Finalist</div>
+                    </div>
+                    
+                    <div class="vs-container">
+                        <div class="vs-text">VS</div>
+                        <div class="match-date">${fixture.date ? formatDate(fixture.date) : 'Date TBD'}</div>
+                        <div class="match-date">${fixture.time || 'Time TBD'}</div>
+                    </div>
+                    
+                    <div class="team-display">
+                        <div class="team-logo">${fixture.awayTeam ? fixture.awayTeam.charAt(0) : 'T2'}</div>
+                        <div class="team-name-large">${fixture.awayTeam || 'TBD'}</div>
+                        <div class="team-record">Finalist</div>
+                    </div>
+                </div>
+                <div class="match-footer">
+                    <div class="match-info">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Gombe Central Stadium</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-user-tie"></i>
+                            <span>${fixture.commissioner || 'Commissioner TBD'}</span>
+                        </div>
+                    </div>
+                    <div class="score-display">${fixture.homeScore || '0'} - ${fixture.awayScore || '0'}</div>
+                </div>
+            `;
+        }
+        
+        // Generate HTML for a two-legged match
+        function generateTwoLeggedMatchHTML(fixtures, matchNum) {
+            const leg1 = fixtures.find(f => f.leg === 1) || {};
+            const leg2 = fixtures.find(f => f.leg === 2) || {};
+            
+            const status1 = getMatchStatus(leg1);
+            const status2 = getMatchStatus(leg2);
+            
+            return `
+                <div class="match-header">
+                    <div class="match-id">Match ${matchNum}</div>
+                    <div class="match-status status-${status1}">${getRoundPrefix(currentRound)}${matchNum}</div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="font-weight:500; margin-bottom:10px; color:#2e7d32; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-arrow-right"></i> First Leg
+                        <span class="match-status status-${status1}" style="font-size: 0.7rem; padding: 3px 8px;">${status1.toUpperCase()}</span>
+                    </div>
+                    <div class="match-body">
+                        <div class="team-display">
+                            <div class="team-logo">${leg1.homeTeam ? leg1.homeTeam.charAt(0) : 'T1'}</div>
+                            <div class="team-name-large">${leg1.homeTeam || 'TBD'}</div>
+                            <div class="team-record">Home</div>
+                        </div>
+                        
+                        <div class="vs-container">
+                            <div class="vs-text">VS</div>
+                            <div class="match-date">${leg1.date ? formatDate(leg1.date) : 'Date TBD'}</div>
+                            <div class="match-date">${leg1.time || 'Time TBD'}</div>
+                        </div>
+                        
+                        <div class="team-display">
+                            <div class="team-logo">${leg1.awayTeam ? leg1.awayTeam.charAt(0) : 'T2'}</div>
+                            <div class="team-name-large">${leg1.awayTeam || 'TBD'}</div>
+                            <div class="team-record">Away</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">
+                        <div class="score-display">${leg1.homeScore || '0'} - ${leg1.awayScore || '0'}</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div style="font-weight:500; margin-bottom:10px; color:#2e7d32; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-arrow-left"></i> Second Leg
+                        <span class="match-status status-${status2}" style="font-size: 0.7rem; padding: 3px 8px;">${status2.toUpperCase()}</span>
+                    </div>
+                    <div class="match-body">
+                        <div class="team-display">
+                            <div class="team-logo">${leg2.homeTeam ? leg2.homeTeam.charAt(0) : 'T2'}</div>
+                            <div class="team-name-large">${leg2.homeTeam || 'TBD'}</div>
+                            <div class="team-record">Home</div>
+                        </div>
+                        
+                        <div class="vs-container">
+                            <div class="vs-text">VS</div>
+                            <div class="match-date">${leg2.date ? formatDate(leg2.date) : 'Date TBD'}</div>
+                            <div class="match-date">${leg2.time || 'Time TBD'}</div>
+                        </div>
+                        
+                        <div class="team-display">
+                            <div class="team-logo">${leg1.awayTeam ? leg1.awayTeam.charAt(0) : 'T1'}</div>
+                            <div class="team-name-large">${leg2.awayTeam || 'TBD'}</div>
+                            <div class="team-record">Away</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 10px;">
+                        <div class="score-display">${leg2.homeScore || '0'} - ${leg2.awayScore || '0'}</div>
+                    </div>
+                </div>
+                
+                <div class="match-footer">
+                    <div class="match-info">
+                        <div class="info-item">
+                            <i class="fas fa-user-tie"></i>
+                            <span>Leg 1: ${leg1.commissioner || 'TBD'}</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-user-tie"></i>
+                            <span>Leg 2: ${leg2.commissioner || 'TBD'}</span>
+                        </div>
+                    </div>
+                    <div style="font-weight: bold; color: #1b5e20;">
+                        Aggregate: ${(parseInt(leg1.homeScore || 0) + parseInt(leg2.awayScore || 0))} - ${(parseInt(leg1.awayScore || 0) + parseInt(leg2.homeScore || 0))}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Get match status based on date and completion
+        function getMatchStatus(fixture) {
+            if (!fixture.date) return 'scheduled';
+            
+            const matchDate = new Date(fixture.date);
+            const today = new Date();
+            
+            if (fixture.matchCompleted) return 'completed';
+            if (matchDate < today) return 'completed'; // Assume completed if date passed
+            if (matchDate.toDateString() === today.toDateString()) return 'live';
+            
+            return 'scheduled';
+        }
+        
+        // Get round prefix for match IDs
+        function getRoundPrefix(roundId) {
+            const prefixes = {
+                'RoundOf16': 'R16',
+                'quarterfinals': 'QF',
+                'semifinals': 'SF',
+                'final': 'F'
+            };
+            return prefixes[roundId] || roundId.charAt(0);
+        }
+        
+        // Format date for display
+        function formatDate(dateString) {
+            if (!dateString) return 'TBD';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+        
+        // Show status message
+        function showStatus(message, type) {
+            statusMessage.style.display = 'block';
+            statusMessage.innerHTML = `
+                <div class="${type}">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+            
+            // Auto hide after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRoundData();
+        });
+    </script>
+</body>
+</html>

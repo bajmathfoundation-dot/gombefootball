@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe Zonal Premier Leagues</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(90deg, #1a472a, #2e8b57);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header:before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .subtitle {
+            font-size: 1.6rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            font-weight: 300;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .info-box {
+            background: rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 20px auto;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            gap: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .info-item i {
+            font-size: 1.8rem;
+            color: #ffd700;
+        }
+        
+        .zones-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .zone-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .zone-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+        }
+        
+        .zone-header {
+            padding: 25px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 150px;
+        }
+        
+        .northern {
+            background: linear-gradient(90deg, #D2B48C, #CD853F);
+        }
+        
+        .southern {
+            background: linear-gradient(90deg, #2E8B57, #3CB371);
+        }
+        
+        .central {
+            background: linear-gradient(90deg, #4682B4, #5F9EA0);
+        }
+        
+        .eastern {
+            background: linear-gradient(90deg, #DAA520, #CD853F);
+        }
+        
+        .zone-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .zone-name {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .league-name {
+            font-size: 1.4rem;
+            text-align: center;
+            opacity: 0.9;
+        }
+        
+        .zone-body {
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: #1a472a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h3 i {
+            color: #2e8b57;
+        }
+        
+        .zone-description {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            flex-grow: 1;
+        }
+        
+        .zone-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: auto;
+        }
+        
+        .stat {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1a472a;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.95rem;
+            color: #6c757d;
+        }
+        
+        .relegation-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            border-top: 5px solid #c21500;
+        }
+        
+        .relegation-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .relegation-header h2 {
+            font-size: 2.2rem;
+            color: #c21500;
+            margin-bottom: 15px;
+        }
+        
+        .relegation-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .relegation-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .relegation-visual {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .relegation-pyramid {
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .tier {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            margin-bottom: 5px;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tier-1 {
+            background: #1a472a;
+            border-radius: 10px 10px 0 0;
+            width: 200px;
+            z-index: 3;
+        }
+        
+        .tier-2 {
+            background: #2e8b57;
+            border-radius: 0 0 10px 10px;
+            width: 250px;
+            z-index: 2;
+        }
+        
+        .tier-arrow {
+            font-size: 2rem;
+            color: #c21500;
+            margin: 10px 0;
+            animation: bounce 1.5s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .relegation-rules {
+            background: #fff9e6;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+            margin-top: 25px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .relegation-content {
+                flex-direction: column;
+            }
+            
+            .relegation-pyramid {
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gombe Zonal Premier Leagues</h1>
+            <div class="subtitle">Tier 1 Football Structure</div>
+            
+            <div class="info-box">
+                <div class="info-item">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>4 Zones • 20 Clubs Each • Tier 1 Competition</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>Premier League in Each Zone</span>
+                </div>
+            </div>
+        </header>
+        
+        <div class="zones-container">
+            <div class="zone-card">
+                <div class="zone-header northern">
+                    <div class="zone-icon">
+                        <i class="fas fa-cactus"></i>
+                    </div>
+                    <div class="zone-name">Northern Zone</div>
+                    <div class="league-name">Sahel League</div>
+                </div>
+                <div class="zone-body">
+                    <h3><i class="fas fa-info-circle"></i> About the Zone</h3>
+                    <div class="zone-description">
+                        <p>The Northern Zone is home to pastoralist communities, characterized by its vast savannah landscapes and traditional livestock-rearing culture. This region experiences distinct wet and dry seasons that shape both the lifestyle and sporting calendar.</p>
+                        <p>Football clubs in this zone often represent communities with deep-rooted pastoral traditions, and matches frequently coincide with cultural festivals and livestock markets.</p>
+                    </div>
+                    
+                    <div class="zone-stats">
+                        <div class="stat">
+                            <div class="stat-value">20</div>
+                            <div class="stat-label">Clubs</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">38</div>
+                            <div class="stat-label">Matchdays</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="zone-card">
+                <div class="zone-header southern">
+                    <div class="zone-icon">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <div class="zone-name">Southern Zone</div>
+                    <div class="league-name">Hills League</div>
+                </div>
+                <div class="zone-body">
+                    <h3><i class="fas fa-info-circle"></i> About the Zone</h3>
+                    <div class="zone-description">
+                        <p>This region is the cultural heartland of the Tangale people, known for its picturesque hills and valleys. The terrain has influenced a distinct style of football with an emphasis on technical skills and agility.</p>
+                        <p>Football clubs here are deeply connected to local cultural traditions, with many teams originating from community youth development programs that celebrate Tangale heritage through sport.</p>
+                    </div>
+                    
+                    <div class="zone-stats">
+                        <div class="stat">
+                            <div class="stat-value">20</div>
+                            <div class="stat-label">Clubs</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">38</div>
+                            <div class="stat-label">Matchdays</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="zone-card">
+                <div class="zone-header central">
+                    <div class="zone-icon">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <div class="zone-name">Central Zone</div>
+                    <div class="league-name">City League</div>
+                </div>
+                <div class="zone-body">
+                    <h3><i class="fas fa-info-circle"></i> About the Zone</h3>
+                    <div class="zone-description">
+                        <p>Centered around Gombe City, this urban hub features modern infrastructure and a diverse population. The City League represents the fastest-growing football region with state-of-the-art facilities.</p>
+                        <p>Clubs in this zone benefit from corporate sponsorship and have developed sophisticated youth academies. The cosmopolitan nature of the city has created a dynamic football culture that blends traditional support with modern fan engagement.</p>
+                    </div>
+                    
+                    <div class="zone-stats">
+                        <div class="stat">
+                            <div class="stat-value">20</div>
+                            <div class="stat-label">Clubs</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">38</div>
+                            <div class="stat-label">Matchdays</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="zone-card">
+                <div class="zone-header eastern">
+                    <div class="zone-icon">
+                        <i class="fas fa-tractor"></i>
+                    </div>
+                    <div class="zone-name">Eastern Zone</div>
+                    <div class="league-name">Lands League</div>
+                </div>
+                <div class="zone-body">
+                    <h3><i class="fas fa-info-circle"></i> About the Zone</h3>
+                    <div class="zone-description">
+                        <p>Located near the Dadin Kowa Dam, this agricultural region features fertile plains that support extensive farming. Football here follows the agricultural calendar with match schedules designed around planting and harvest seasons.</p>
+                        <p>Clubs are often community-based with strong ties to local farming cooperatives. The Dam provides irrigation that maintains excellent pitch conditions year-round, making this zone known for its quality playing surfaces.</p>
+                    </div>
+                    
+                    <div class="zone-stats">
+                        <div class="stat">
+                            <div class="stat-value">20</div>
+                            <div class="stat-label">Clubs</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">38</div>
+                            <div class="stat-label">Matchdays</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="relegation-section">
+            <div class="relegation-header">
+                <h2><i class="fas fa-arrow-down"></i> Relegation System</h2>
+                <p>How clubs move between league tiers</p>
+            </div>
+            
+            <div class="relegation-content">
+                <div class="relegation-info">
+                    <h3><i class="fas fa-exchange-alt"></i> Promotion & Relegation</h3>
+                    <p>The Gombe football pyramid features a structured relegation system to maintain competition quality across tiers:</p>
+                    
+                    <ul style="padding-left: 25px; margin: 20px 0;">
+                        <li>Each Zonal Premier League (Tier 1) has 20 clubs</li>
+                        <li>At the end of each season, the bottom 3 clubs are relegated</li>
+                        <li>Relegated clubs move to their respective Zonal Championship (Tier 2)</li>
+                        <li>Top 3 clubs from each Zonal Championship (Tier 2) are promoted to Premier League</li>
+                        <li>This system ensures competitive balance across both tiers</li>
+                    </ul>
+                    
+                    <div class="relegation-rules">
+                        <h4><i class="fas fa-clipboard-list"></i> Key Regulations</h4>
+                        <ul style="padding-left: 25px; margin-top: 15px;">
+                            <li>Relegation determined by final league position</li>
+                            <li>In case of tie, head-to-head record then goal difference</li>
+                            <li>Financial compliance required for promotion</li>
+                            <li>Stadium standards must be met for Tier 1 participation</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="relegation-visual">
+                    <div class="relegation-pyramid">
+                        <div class="tier tier-1">
+                            <div style="font-size: 1.2rem; font-weight: bold;">Zonal Premier League</div>
+                            <div style="font-size: 0.9rem;">Tier 1 (20 Clubs)</div>
+                        </div>
+                        
+                        <div class="tier-arrow">
+                            <i class="fas fa-long-arrow-alt-down"></i>
+                        </div>
+                        
+                        <div class="tier tier-2">
+                            <div style="font-size: 1.2rem; font-weight: bold;">Zonal Championship</div>
+                            <div style="font-size: 0.9rem;">Tier 2 (20 Clubs)</div>
+                        </div>
+                        
+                        <div style="margin-top: 20px; text-align: center; font-size: 0.9rem; color: #6c757d;">
+                            <i class="fas fa-info-circle"></i> Bottom 3 relegated from Tier 1<br>
+                            Top 3 promoted from Tier 2
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Gombe Football Association | Zonal Premier Leagues Structure</p>
+            <p>© 2023 Gombe Football Association | All rights reserved</p>
+        </div>
+    </div>
+    
+    <script>
+        // Simple animation for zone cards on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.zone-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'all 0.5s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 50);
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>

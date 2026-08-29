@@ -1,0 +1,2162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Commissioner Portal | Gombe Football</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0d3b1e, #2a6e37);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #0d3b1e, #2a6e37);
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        h1 {
+            color: #0d3b1e;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .subtitle {
+            color: #2a6e37;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: #0d3b1e;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e7e1;
+        }
+        
+        .card-header i {
+            background: #0d3b1e;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .card-header h2 {
+            color: #0d3b1e;
+            font-size: 1.6rem;
+        }
+        
+        .match-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e7e1;
+        }
+        
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .team-name {
+            font-weight: bold;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: #0d3b1e;
+        }
+        
+        .team-coach {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        
+        .team-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2a6e37;
+            background: #e9f5eb;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .vs {
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin: 0 15px;
+            color: #0d3b1e;
+        }
+        
+        .match-time {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .timer {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #0d3b1e;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            background: #e9f5eb;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .match-status {
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .status-pending {
+            background: #ffcc00;
+            color: #333;
+        }
+        
+        .status-live {
+            background: #28a745;
+            color: white;
+        }
+        
+        .status-ended {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .officials-container {
+            background: #e9f5eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #0d3b1e;
+        }
+        
+        .officials-title {
+            color: #0d3b1e;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .officials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .official-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .official-icon {
+            color: #0d3b1e;
+            width: 30px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: #0d3b1e;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0a2e17;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-pause {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .btn-pause:hover {
+            background: #e0a800;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #a71d2c;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1d7a34;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .events-container {
+            margin-top: 20px;
+        }
+        
+        .event-log {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .event-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            align-items: center;
+            border-left: 4px solid #0d3b1e;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .event-time {
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 50px;
+            color: #0d3b1e;
+        }
+        
+        .event-type {
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .goal { background: #d4edda; color: #155724; }
+        .yellow { background: #fff3cd; color: #856404; }
+        .red { background: #f8d7da; color: #721c24; }
+        .sub { background: #cce5ff; color: #004085; }
+        .assist { background: #e2e3f3; color: #3d3d6d; }
+        .disallowed { background: #f8d7da; color: #721c24; }
+        .penalty { background: #e2e3f3; color: #3d3d6d; }
+        
+        .event-details {
+            flex: 1;
+        }
+        
+        .event-player {
+            font-weight: bold;
+        }
+        
+        .no-events {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            background: #f0f2f5;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 120px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .action-btn i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .goal-btn { color: #28a745; }
+        .yellow-btn { color: #ffc107; }
+        .red-btn { color: #dc3545; }
+        .sub-btn { color: #0d3b1e; }
+        .disallow-btn { color: #dc3545; }
+        .penalty-btn { color: #6f42c1; }
+        
+        .action-btn:hover.goal-btn { background: #d4edda; }
+        .action-btn:hover.yellow-btn { background: #fff3cd; }
+        .action-btn:hover.red-btn { background: #f8d7da; }
+        .action-btn:hover.sub-btn { background: #cce5ff; }
+        .action-btn:hover.disallow-btn { background: #f8d7da; }
+        .action-btn:hover.penalty-btn { background: #e2e3f3; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-header h2 {
+            color: #0d3b1e;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #777;
+            transition: all 0.2s;
+        }
+        
+        .close-modal:hover {
+            color: #0d3b1e;
+            transform: scale(1.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #0d3b1e;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #f8f9fa;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #0d3b1e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #0a2e17;
+            transform: translateY(-2px);
+        }
+        
+        .confirmation {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .confirmation i {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        
+        .confirmation h2 {
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #0d3b1e;
+            font-size: 1.1rem;
+        }
+        
+        .loading i {
+            font-size: 2.5rem;
+            animation: spin 1.5s infinite linear;
+            margin-bottom: 15px;
+            color: #0d3b1e;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: #dc3545;
+            background-color: rgba(220, 53, 69, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+            font-size: 1rem;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #0d3b1e, #2a6e37);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .status-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .disabled-player {
+            opacity: 0.5;
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .competition-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: #3a7d44;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .group-badge {
+            background: #1976d2;
+            margin-left: 8px;
+        }
+
+        .auto-save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .auto-save-indicator.show {
+            opacity: 1;
+        }
+
+        .last-save-time {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .penalty-shootout-container {
+            background: #e9f5eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #0d3b1e;
+        }
+        
+        .penalty-shootout-title {
+            color: #0d3b1e;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .penalty-shootout-scores {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .penalty-team {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .penalty-team-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .penalty-team-score {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #0d3b1e;
+        }
+        
+        .penalty-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .penalty-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .penalty-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .penalty-miss {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .penalty-reset {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .penalty-shootout-active {
+            border: 2px solid #dc3545;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-whistle"></i> Match Commissioner Portal</h1>
+            <p class="subtitle">Manage live match events, record scores, cards, and substitutions in real-time</p>
+        </header>
+        
+        <div class="competition-badge" id="competitionBadge">
+            <i class="fas fa-trophy"></i> <span id="competitionName">Cup Match</span>
+            <span class="group-badge" id="groupBadge" style="display: none;"></span>
+        </div>
+        
+        <div class="main-content">
+            <!-- Match Control Panel -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-futbol"></i>
+                    <h2>Match Control</h2>
+                </div>
+                
+                <div class="match-info">
+                    <div class="team">
+                        <div class="team-name" id="homeTeam">Loading...</div>
+                        <div class="team-coach" id="homeCoach"></div>
+                        <div class="team-score" id="homeScore">0</div>
+                    </div>
+                    
+                    <div class="vs">VS</div>
+                    
+                    <div class="team">
+                        <div class="team-name" id="awayTeam">Loading...</div>
+                        <div class="team-coach" id="awayCoach"></div>
+                        <div class="team-score" id="awayScore">0</div>
+                    </div>
+                </div>
+                
+                <div class="match-time">
+                    <div class="timer" id="timer">00:00</div>
+                    <div class="match-status status-pending" id="match-status">MATCH NOT STARTED</div>
+                </div>
+                
+                <div class="officials-container">
+                    <div class="officials-title">
+                        <i class="fas fa-whistle"></i> Match Officials
+                    </div>
+                    <div class="officials-grid" id="matchOfficials">
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-whistle"></i></div>
+                            <div><strong>Referee:</strong> <span id="mainReferee">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-flag"></i></div>
+                            <div><strong>Linesman 1:</strong> <span id="linesman1">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-flag"></i></div>
+                            <div><strong>Linesman 2:</strong> <span id="linesman2">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-network-wired"></i></div>
+                            <div><strong>Netman 1:</strong> <span id="netman1">Not assigned</span></div>
+                        </div>
+                        <div class="official-item">
+                            <div class="official-icon"><i class="fas fa-network-wired"></i></div>
+                            <div><strong>Netman 2:</strong> <span id="netman2">Not assigned</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="penalty-shootout-container" id="penaltyShootoutContainer" style="display: none;">
+                    <div class="penalty-shootout-title">
+                        <i class="fas fa-crosshairs"></i> Penalty Shootout
+                    </div>
+                    <div class="penalty-shootout-scores">
+                        <div class="penalty-team">
+                            <div class="penalty-team-name" id="penaltyHomeTeam"></div>
+                            <div class="penalty-team-score" id="penaltyHomeScore">0</div>
+                        </div>
+                        <div class="penalty-team">
+                            <div class="penalty-team-name" id="penaltyAwayTeam"></div>
+                            <div class="penalty-team-score" id="penaltyAwayScore">0</div>
+                        </div>
+                    </div>
+                    <div class="penalty-controls">
+                        <button class="penalty-btn penalty-success" id="penaltyHomeSuccess">Home Score</button>
+                        <button class="penalty-btn penalty-miss" id="penaltyHomeMiss">Home Miss</button>
+                        <button class="penalty-btn penalty-success" id="penaltyAwaySuccess">Away Score</button>
+                        <button class="penalty-btn penalty-miss" id="penaltyAwayMiss">Away Miss</button>
+                        <button class="penalty-btn penalty-reset" id="penaltyReset">Reset</button>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" id="start-pause-btn">
+                        <i class="fas fa-play"></i> Start Match
+                    </button>
+                    <button class="btn btn-pause" id="pause-btn" style="display:none">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="btn btn-danger" id="stop-btn" disabled>
+                        <i class="fas fa-stop"></i> End Match
+                    </button>
+                    <button class="btn btn-success" id="penalty-shootout-btn" style="display:none">
+                        <i class="fas fa-crosshairs"></i> Start Penalty Shootout
+                    </button>
+                </div>
+                
+                <div class="events-container">
+                    <h3><i class="fas fa-list"></i> Match Events</h3>
+                    <div class="event-log" id="event-log">
+                        <div class="no-events">No events recorded yet</div>
+                    </div>
+                    <div class="last-save-time" id="lastSaveTime"></div>
+                </div>
+            </div>
+            
+            <!-- Actions Panel -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-tasks"></i>
+                    <h2>Match Actions</h2>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn goal-btn" id="goal-btn">
+                        <i class="fas fa-futbol"></i>
+                        Record Goal
+                    </button>
+                    
+                    <button class="action-btn yellow-btn" id="yellow-btn">
+                        <i class="fas fa-card"></i>
+                        Yellow Card
+                    </button>
+                    
+                    <button class="action-btn red-btn" id="red-btn">
+                        <i class="fas fa-card"></i>
+                        Red Card
+                    </button>
+                    
+                    <button class="action-btn sub-btn" id="sub-btn">
+                        <i class="fas fa-exchange-alt"></i>
+                        Substitution
+                    </button>
+                    
+                    <button class="action-btn disallow-btn" id="disallow-btn">
+                        <i class="fas fa-ban"></i>
+                        Disallow Goal
+                    </button>
+                    
+                    <button class="action-btn penalty-btn" id="penalty-btn">
+                        <i class="fas fa-crosshairs"></i>
+                        Penalty Kick
+                    </button>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-success" id="confirm-btn" disabled>
+                        <i class="fas fa-check-circle"></i> Confirm Final Result
+                    </button>
+                </div>
+                
+                <div id="dataError" class="error-message" style="display: none;"></div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+                <div class="status-container">
+                    <span id="current-status">Ready to start match</span>
+                    <span id="status-percentage">0%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Match Commissioner Portal &copy; 2023 | Gombe Football Association</p>
+        </div>
+    </div>
+
+    <!-- Auto Save Indicator -->
+    <div class="auto-save-indicator" id="autoSaveIndicator">
+        <i class="fas fa-sync-alt fa-spin"></i>
+        Auto-saving match data...
+    </div>
+    
+    <!-- Modal for Event Recording -->
+    <div class="modal" id="event-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Record Event</h2>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            <div id="modal-body">
+                <!-- Content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Global state
+        const matchState = {
+            isLive: false,
+            isPaused: false,
+            minutes: 0,
+            seconds: 0,
+            timer: null,
+            homeScore: 0,
+            awayScore: 0,
+            events: [],
+            homeTeam: "",
+            awayTeam: "",
+            homeCoach: "",
+            awayCoach: "",
+            homeCoachId: "",
+            awayCoachId: "",
+            homeStarters: [],
+            awayStarters: [],
+            homeSubstitutes: [],
+            awaySubstitutes: [],
+            matchPath: "",
+            matchId: "",
+            seasonId: "",
+            mainRefereeId: "",
+            linesman1Id: "",
+            linesman2Id: "",
+            netman1Id: "",
+            netman2Id: "",
+            redCardedPlayers: [],
+            playerPositions: {},
+            competitionType: "",
+            matchStatus: "",
+            homeTeamId: "",
+            awayTeamId: "",
+            group: "",
+            autoSaveInterval: null,
+            lastSaveTime: null,
+            // Penalty shootout state
+            penaltyShootoutActive: false,
+            homePenaltyScore: 0,
+            awayPenaltyScore: 0,
+            penaltyShootoutEvents: []
+        };
+        
+        // DOM Elements
+        const timerElement = document.getElementById('timer');
+        const matchStatusElement = document.getElementById('match-status');
+        const homeTeamElement = document.getElementById('homeTeam');
+        const awayTeamElement = document.getElementById('awayTeam');
+        const homeCoachElement = document.getElementById('homeCoach');
+        const awayCoachElement = document.getElementById('awayCoach');
+        const homeScoreElement = document.getElementById('homeScore');
+        const awayScoreElement = document.getElementById('awayScore');
+        const eventLogElement = document.getElementById('event-log');
+        const startPauseButton = document.getElementById('start-pause-btn');
+        const pauseButton = document.getElementById('pause-btn');
+        const stopButton = document.getElementById('stop-btn');
+        const confirmButton = document.getElementById('confirm-btn');
+        const goalButton = document.getElementById('goal-btn');
+        const yellowButton = document.getElementById('yellow-btn');
+        const redButton = document.getElementById('red-btn');
+        const subButton = document.getElementById('sub-btn');
+        const disallowButton = document.getElementById('disallow-btn');
+        const penaltyButton = document.getElementById('penalty-btn');
+        const penaltyShootoutButton = document.getElementById('penalty-shootout-btn');
+        const eventModal = document.getElementById('event-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const closeModal = document.getElementById('close-modal');
+        const dataErrorElement = document.getElementById('dataError');
+        const mainRefereeElement = document.getElementById('mainReferee');
+        const linesman1Element = document.getElementById('linesman1');
+        const linesman2Element = document.getElementById('linesman2');
+        const netman1Element = document.getElementById('netman1');
+        const netman2Element = document.getElementById('netman2');
+        const progressBar = document.getElementById('progress-bar');
+        const currentStatus = document.getElementById('current-status');
+        const statusPercentage = document.getElementById('status-percentage');
+        const competitionNameElement = document.getElementById('competitionName');
+        const groupBadgeElement = document.getElementById('groupBadge');
+        const autoSaveIndicator = document.getElementById('autoSaveIndicator');
+        const lastSaveTimeElement = document.getElementById('lastSaveTime');
+        // Penalty shootout elements
+        const penaltyShootoutContainer = document.getElementById('penaltyShootoutContainer');
+        const penaltyHomeTeamElement = document.getElementById('penaltyHomeTeam');
+        const penaltyAwayTeamElement = document.getElementById('penaltyAwayTeam');
+        const penaltyHomeScoreElement = document.getElementById('penaltyHomeScore');
+        const penaltyAwayScoreElement = document.getElementById('penaltyAwayScore');
+        const penaltyHomeSuccessButton = document.getElementById('penaltyHomeSuccess');
+        const penaltyHomeMissButton = document.getElementById('penaltyHomeMiss');
+        const penaltyAwaySuccessButton = document.getElementById('penaltyAwaySuccess');
+        const penaltyAwayMissButton = document.getElementById('penaltyAwayMiss');
+        const penaltyResetButton = document.getElementById('penaltyReset');
+
+        // Function to show auto-save indicator
+        function showAutoSaveIndicator() {
+            autoSaveIndicator.classList.add('show');
+            setTimeout(() => {
+                autoSaveIndicator.classList.remove('show');
+            }, 2000);
+        }
+
+        // Function to update last save time
+        function updateLastSaveTime() {
+            const now = new Date();
+            matchState.lastSaveTime = now;
+            lastSaveTimeElement.textContent = `Last auto-save: ${now.toLocaleTimeString()}`;
+        }
+
+        // Function to save live match data
+        async function saveLiveMatchData() {
+            if (!matchState.isLive) return;
+
+            try {
+                const collectionName = getCompetitionCollection(matchState.competitionType);
+                
+                // Prepare live match data
+                const liveMatchData = {
+                    liveMatch: true,
+                    duration: {
+                        minutes: matchState.minutes,
+                        seconds: matchState.seconds
+                    },
+                    homeScore: matchState.homeScore,
+                    awayScore: matchState.awayScore,
+                    events: matchState.events,
+                    isPaused: matchState.isPaused,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // Add penalty shootout data if active
+                if (matchState.penaltyShootoutActive) {
+                    liveMatchData.penaltyShootout = {
+                        active: true,
+                        homeScore: matchState.homePenaltyScore,
+                        awayScore: matchState.awayPenaltyScore,
+                        events: matchState.penaltyShootoutEvents
+                    };
+                }
+
+                // Update the match document
+                await db.collection(collectionName)
+                    .doc(matchState.matchId)
+                    .update(liveMatchData);
+
+                showAutoSaveIndicator();
+                updateLastSaveTime();
+                console.log('Live match data auto-saved');
+            } catch (error) {
+                console.error('Error auto-saving live match data:', error);
+            }
+        }
+
+        // Function to get competition collection name
+        function getCompetitionCollection(competitionType) {
+            switch (competitionType) {
+                case 'league':
+                    return 'leagueMatches';
+                case 'cup':
+                    return 'cupMatches';
+                case 'friendly':
+                    return 'friendlyMatches';
+                default:
+                    return 'matches';
+            }
+        }
+
+        // Function to start auto-save
+        function startAutoSave() {
+            // Save every 30 seconds
+            matchState.autoSaveInterval = setInterval(saveLiveMatchData, 30000);
+        }
+
+        // Function to stop auto-save
+        function stopAutoSave() {
+            if (matchState.autoSaveInterval) {
+                clearInterval(matchState.autoSaveInterval);
+                matchState.autoSaveInterval = null;
+            }
+        }
+
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Function to load match data
+        async function loadMatchData() {
+            try {
+                // Get match ID from URL
+                const matchId = getUrlParameter('matchId');
+                const competitionType = getUrlParameter('competitionType') || 'cup';
+                
+                if (!matchId) {
+                    throw new Error('No match ID provided in URL');
+                }
+                
+                matchState.matchId = matchId;
+                matchState.competitionType = competitionType;
+                
+                const collectionName = getCompetitionCollection(competitionType);
+                const matchDoc = await db.collection(collectionName).doc(matchId).get();
+                
+                if (!matchDoc.exists) {
+                    throw new Error('Match not found');
+                }
+                
+                const matchData = matchDoc.data();
+                
+                // Update match state with loaded data
+                matchState.homeTeam = matchData.homeTeam;
+                matchState.awayTeam = matchData.awayTeam;
+                matchState.homeCoach = matchData.homeCoach;
+                matchState.awayCoach = matchData.awayCoach;
+                matchState.homeCoachId = matchData.homeCoachId;
+                matchState.awayCoachId = matchData.awayCoachId;
+                matchState.homeTeamId = matchData.homeTeamId;
+                matchState.awayTeamId = matchData.awayTeamId;
+                matchState.mainRefereeId = matchData.mainRefereeId;
+                matchState.linesman1Id = matchData.linesman1Id;
+                matchState.linesman2Id = matchData.linesman2Id;
+                matchState.netman1Id = matchData.netman1Id;
+                matchState.netman2Id = matchData.netman2Id;
+                matchState.seasonId = matchData.seasonId;
+                matchState.matchPath = `${collectionName}/${matchId}`;
+                matchState.competitionType = competitionType;
+                matchState.group = matchData.group || '';
+                
+                // Update UI with match data
+                homeTeamElement.textContent = matchState.homeTeam;
+                awayTeamElement.textContent = matchState.awayTeam;
+                homeCoachElement.textContent = `Coach: ${matchState.homeCoach}`;
+                awayCoachElement.textContent = `Coach: ${matchState.awayCoach}`;
+                
+                // Set competition name
+                competitionNameElement.textContent = competitionType === 'league' ? 'League Match' : 
+                                                   competitionType === 'cup' ? 'Cup Match' : 'Friendly Match';
+                
+                // Show group if available
+                if (matchState.group) {
+                    groupBadgeElement.textContent = matchState.group;
+                    groupBadgeElement.style.display = 'inline';
+                }
+                
+                // Load officials data
+                await loadOfficialsData();
+                
+                // Load lineup data
+                await loadLineupData();
+                
+                // Check if match is already live
+                if (matchData.liveMatch) {
+                    matchState.isLive = true;
+                    matchState.minutes = matchData.duration?.minutes || 0;
+                    matchState.seconds = matchData.duration?.seconds || 0;
+                    matchState.homeScore = matchData.homeScore || 0;
+                    matchState.awayScore = matchData.awayScore || 0;
+                    matchState.events = matchData.events || [];
+                    matchState.isPaused = matchData.isPaused || false;
+                    
+                    // Load penalty shootout data if exists
+                    if (matchData.penaltyShootout) {
+                        matchState.penaltyShootoutActive = matchData.penaltyShootout.active;
+                        matchState.homePenaltyScore = matchData.penaltyShootout.homeScore || 0;
+                        matchState.awayPenaltyScore = matchData.penaltyShootout.awayScore || 0;
+                        matchState.penaltyShootoutEvents = matchData.penaltyShootout.events || [];
+                    }
+                    
+                    updateUI();
+                    
+                    if (!matchState.isPaused) {
+                        startTimer();
+                    }
+                    
+                    startAutoSave();
+                }
+                
+                // Update progress bar
+                updateProgressBar();
+                
+            } catch (error) {
+                console.error('Error loading match data:', error);
+                dataErrorElement.textContent = `Error loading match data: ${error.message}`;
+                dataErrorElement.style.display = 'block';
+            }
+        }
+        
+        // Function to load officials data
+        async function loadOfficialsData() {
+            try {
+                const officialsPromises = [];
+                
+                if (matchState.mainRefereeId) {
+                    officialsPromises.push(
+                        db.collection('users').doc(matchState.mainRefereeId).get()
+                            .then(doc => {
+                                if (doc.exists) {
+                                    const data = doc.data();
+                                    mainRefereeElement.textContent = `${data.firstName} ${data.lastName}`;
+                                }
+                            })
+                    );
+                }
+                
+                if (matchState.linesman1Id) {
+                    officialsPromises.push(
+                        db.collection('users').doc(matchState.linesman1Id).get()
+                            .then(doc => {
+                                if (doc.exists) {
+                                    const data = doc.data();
+                                    linesman1Element.textContent = `${data.firstName} ${data.lastName}`;
+                                }
+                            })
+                    );
+                }
+                
+                if (matchState.linesman2Id) {
+                    officialsPromises.push(
+                        db.collection('users').doc(matchState.linesman2Id).get()
+                            .then(doc => {
+                                if (doc.exists) {
+                                    const data = doc.data();
+                                    linesman2Element.textContent = `${data.firstName} ${data.lastName}`;
+                                }
+                            })
+                    );
+                }
+                
+                if (matchState.netman1Id) {
+                    officialsPromises.push(
+                        db.collection('users').doc(matchState.netman1Id).get()
+                            .then(doc => {
+                                if (doc.exists) {
+                                    const data = doc.data();
+                                    netman1Element.textContent = `${data.firstName} ${data.lastName}`;
+                                }
+                            })
+                    );
+                }
+                
+                if (matchState.netman2Id) {
+                    officialsPromises.push(
+                        db.collection('users').doc(matchState.netman2Id).get()
+                            .then(doc => {
+                                if (doc.exists) {
+                                    const data = doc.data();
+                                    netman2Element.textContent = `${data.firstName} ${data.lastName}`;
+                                }
+                            })
+                    );
+                }
+                
+                await Promise.all(officialsPromises);
+            } catch (error) {
+                console.error('Error loading officials data:', error);
+            }
+        }
+        
+        // Function to load lineup data
+        async function loadLineupData() {
+            try {
+                // Load home team lineup
+                const homeLineupDoc = await db.collection('lineups')
+                    .where('matchId', '==', matchState.matchId)
+                    .where('teamId', '==', matchState.homeTeamId)
+                    .get();
+                
+                if (!homeLineupDoc.empty) {
+                    const homeLineupData = homeLineupDoc.docs[0].data();
+                    matchState.homeStarters = homeLineupData.starters || [];
+                    matchState.homeSubstitutes = homeLineupData.substitutes || [];
+                    
+                    // Store player positions
+                    homeLineupData.starters.forEach(player => {
+                        matchState.playerPositions[player.id] = player.position;
+                    });
+                }
+                
+                // Load away team lineup
+                const awayLineupDoc = await db.collection('lineups')
+                    .where('matchId', '==', matchState.matchId)
+                    .where('teamId', '==', matchState.awayTeamId)
+                    .get();
+                
+                if (!awayLineupDoc.empty) {
+                    const awayLineupData = awayLineupDoc.docs[0].data();
+                    matchState.awayStarters = awayLineupData.starters || [];
+                    matchState.awaySubstitutes = awayLineupData.substitutes || [];
+                    
+                    // Store player positions
+                    awayLineupData.starters.forEach(player => {
+                        matchState.playerPositions[player.id] = player.position;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading lineup data:', error);
+            }
+        }
+        
+        // Function to update UI based on match state
+        function updateUI() {
+            // Update scores
+            homeScoreElement.textContent = matchState.homeScore;
+            awayScoreElement.textContent = matchState.awayScore;
+            
+            // Update timer
+            timerElement.textContent = `${matchState.minutes.toString().padStart(2, '0')}:${matchState.seconds.toString().padStart(2, '0')}`;
+            
+            // Update match status
+            if (matchState.isLive) {
+                if (matchState.isPaused) {
+                    matchStatusElement.textContent = 'MATCH PAUSED';
+                    matchStatusElement.className = 'match-status status-pending';
+                } else {
+                    matchStatusElement.textContent = 'LIVE';
+                    matchStatusElement.className = 'match-status status-live';
+                }
+            } else {
+                matchStatusElement.textContent = 'MATCH NOT STARTED';
+                matchStatusElement.className = 'match-status status-pending';
+            }
+            
+            // Update button states
+            startPauseButton.style.display = matchState.isLive ? 'none' : 'flex';
+            pauseButton.style.display = matchState.isLive && !matchState.isPaused ? 'flex' : 'none';
+            stopButton.disabled = !matchState.isLive;
+            confirmButton.disabled = matchState.isLive;
+            
+            // Show penalty shootout button if match is ended and scores are level
+            if (!matchState.isLive && matchState.homeScore === matchState.awayScore) {
+                penaltyShootoutButton.style.display = 'flex';
+            } else {
+                penaltyShootoutButton.style.display = 'none';
+            }
+            
+            // Update penalty shootout UI
+            updatePenaltyShootoutUI();
+            
+            // Update event log
+            updateEventLog();
+            
+            // Update progress bar
+            updateProgressBar();
+        }
+        
+        // Function to update penalty shootout UI
+        function updatePenaltyShootoutUI() {
+            if (matchState.penaltyShootoutActive) {
+                penaltyShootoutContainer.style.display = 'block';
+                penaltyHomeTeamElement.textContent = matchState.homeTeam;
+                penaltyAwayTeamElement.textContent = matchState.awayTeam;
+                penaltyHomeScoreElement.textContent = matchState.homePenaltyScore;
+                penaltyAwayScoreElement.textContent = matchState.awayPenaltyScore;
+                
+                // Add visual indicator that penalty shootout is active
+                penaltyShootoutContainer.classList.add('penalty-shootout-active');
+            } else {
+                penaltyShootoutContainer.style.display = 'none';
+                penaltyShootoutContainer.classList.remove('penalty-shootout-active');
+            }
+        }
+        
+        // Function to update event log
+        function updateEventLog() {
+            if (matchState.events.length === 0) {
+                eventLogElement.innerHTML = '<div class="no-events">No events recorded yet</div>';
+                return;
+            }
+            
+            // Sort events by time (newest first)
+            const sortedEvents = [...matchState.events].sort((a, b) => {
+                if (a.minute !== b.minute) {
+                    return b.minute - a.minute;
+                }
+                return b.second - a.second;
+            });
+            
+            let eventsHTML = '';
+            
+            sortedEvents.forEach(event => {
+                const timeString = `${event.minute.toString().padStart(2, '0')}:${event.second.toString().padStart(2, '0')}`;
+                let eventTypeClass = '';
+                let eventIcon = '';
+                
+                switch (event.type) {
+                    case 'goal':
+                        eventTypeClass = 'goal';
+                        eventIcon = '<i class="fas fa-futbol"></i>';
+                        break;
+                    case 'yellow':
+                        eventTypeClass = 'yellow';
+                        eventIcon = '<i class="fas fa-card"></i>';
+                        break;
+                    case 'red':
+                        eventTypeClass = 'red';
+                        eventIcon = '<i class="fas fa-card"></i>';
+                        break;
+                    case 'substitution':
+                        eventTypeClass = 'sub';
+                        eventIcon = '<i class="fas fa-exchange-alt"></i>';
+                        break;
+                    case 'assist':
+                        eventTypeClass = 'assist';
+                        eventIcon = '<i class="fas fa-handshake"></i>';
+                        break;
+                    case 'disallowed_goal':
+                        eventTypeClass = 'disallowed';
+                        eventIcon = '<i class="fas fa-ban"></i>';
+                        break;
+                    case 'penalty':
+                        eventTypeClass = 'penalty';
+                        eventIcon = '<i class="fas fa-crosshairs"></i>';
+                        break;
+                }
+                
+                eventsHTML += `
+                    <div class="event-item">
+                        <div class="event-time">${timeString}</div>
+                        <div class="event-type ${eventTypeClass}">${eventIcon} ${event.type.replace('_', ' ').toUpperCase()}</div>
+                        <div class="event-details">
+                            <span class="event-player">${event.playerName}</span>
+                            ${event.assistPlayerName ? ` (Assist: ${event.assistPlayerName})` : ''}
+                            ${event.substitutePlayerName ? ` (Replaced by: ${event.substitutePlayerName})` : ''}
+                            ${event.reason ? ` (${event.reason})` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            eventLogElement.innerHTML = eventsHTML;
+        }
+        
+        // Function to update progress bar
+        function updateProgressBar() {
+            let progress = 0;
+            let statusText = 'Ready to start match';
+            
+            if (matchState.isLive) {
+                // Calculate progress based on match time (assuming 90 minutes match)
+                progress = Math.min(100, Math.round((matchState.minutes / 90) * 100));
+                statusText = `Match in progress: ${matchState.minutes}:${matchState.seconds.toString().padStart(2, '0')}`;
+                
+                if (matchState.isPaused) {
+                    statusText += ' (PAUSED)';
+                }
+            } else if (!matchState.isLive && matchState.minutes > 0) {
+                progress = 100;
+                statusText = 'Match completed';
+            }
+            
+            progressBar.style.width = `${progress}%`;
+            currentStatus.textContent = statusText;
+            statusPercentage.textContent = `${progress}%`;
+        }
+        
+        // Function to start timer
+        function startTimer() {
+            if (matchState.timer) return;
+            
+            matchState.timer = setInterval(() => {
+                matchState.seconds++;
+                
+                if (matchState.seconds === 60) {
+                    matchState.seconds = 0;
+                    matchState.minutes++;
+                }
+                
+                timerElement.textContent = `${matchState.minutes.toString().padStart(2, '0')}:${matchState.seconds.toString().padStart(2, '0')}`;
+                
+                // Update progress bar every minute
+                if (matchState.seconds === 0) {
+                    updateProgressBar();
+                }
+            }, 1000);
+        }
+        
+        // Function to pause timer
+        function pauseTimer() {
+            if (matchState.timer) {
+                clearInterval(matchState.timer);
+                matchState.timer = null;
+            }
+        }
+        
+        // Function to start match
+        async function startMatch() {
+            try {
+                const collectionName = getCompetitionCollection(matchState.competitionType);
+                
+                await db.collection(collectionName).doc(matchState.matchId).update({
+                    liveMatch: true,
+                    duration: {
+                        minutes: 0,
+                        seconds: 0
+                    },
+                    homeScore: 0,
+                    awayScore: 0,
+                    events: [],
+                    isPaused: false,
+                    matchStatus: 'live',
+                    startTime: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                matchState.isLive = true;
+                matchState.minutes = 0;
+                matchState.seconds = 0;
+                matchState.homeScore = 0;
+                matchState.awayScore = 0;
+                matchState.events = [];
+                matchState.isPaused = false;
+                matchState.matchStatus = 'live';
+                
+                startTimer();
+                updateUI();
+                startAutoSave();
+                
+            } catch (error) {
+                console.error('Error starting match:', error);
+                dataErrorElement.textContent = `Error starting match: ${error.message}`;
+                dataErrorElement.style.display = 'block';
+            }
+        }
+        
+        // Function to pause match
+        async function pauseMatch() {
+            try {
+                const collectionName = getCompetitionCollection(matchState.competitionType);
+                
+                await db.collection(collectionName).doc(matchState.matchId).update({
+                    isPaused: true
+                });
+                
+                matchState.isPaused = true;
+                pauseTimer();
+                updateUI();
+                
+            } catch (error) {
+                console.error('Error pausing match:', error);
+                dataErrorElement.textContent = `Error pausing match: ${error.message}`;
+                dataErrorElement.style.display = 'block';
+            }
+        }
+        
+        // Function to resume match
+        async function resumeMatch() {
+            try {
+                const collectionName = getCompetitionCollection(matchState.competitionType);
+                
+                await db.collection(collectionName).doc(matchState.matchId).update({
+                    isPaused: false
+                });
+                
+                matchState.isPaused = false;
+                startTimer();
+                updateUI();
+                
+            } catch (error) {
+                console.error('Error resuming match:', error);
+                dataErrorElement.textContent = `Error resuming match: ${error.message}`;
+                dataErrorElement.style.display = 'block';
+            }
+        }
+        
+        // Function to end match
+        async function endMatch() {
+            try {
+                const collectionName = getCompetitionCollection(matchState.competitionType);
+                
+                await db.collection(collectionName).doc(matchState.matchId).update({
+                    liveMatch: false,
+                    isPaused: false,
+                    matchStatus: 'completed',
+                    endTime: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                matchState.isLive = false;
+                matchState.isPaused = false;
+                matchState.matchStatus = 'completed';
+                
+                pauseTimer();
+                stopAutoSave();
+                updateUI();
+                
+            } catch (error) {
+                console.error('Error ending match:', error);
+                dataErrorElement.textContent = `Error ending match: ${error.message}`;
+                dataErrorElement.style.display = 'block';
+            }
+        }
+        
+        // Function to record event
+        async function recordEvent(event) {
+            try {
+                // Add timestamp to event
+                event.minute = matchState.minutes;
+                event.second = matchState.seconds;
+                
+                // Add to events array
+                matchState.events.push(event);
+                
+                // Update scores if it's a goal
+                if (event.type === 'goal') {
+                    if (event.team === 'home') {
+                        matchState.homeScore++;
+                    } else {
+                        matchState.awayScore++;
+                    }
+                }
+                
+                // Update UI
+                updateUI();
+                
+                // Save to Firestore
+                const collectionName = getCompetitionCollection(matchState.competitionType);
+                await db.collection(collectionName).doc(matchState.matchId).update({
+                    events: matchState.events,
+                    homeScore: matchState.homeScore,
+                    awayScore: matchState.awayScore
+                });
+                
+                console.log('Event recorded:', event);
+                
+            } catch (error) {
+                console.error('Error recording event:', error);
+                dataErrorElement.textContent = `Error recording event: ${error.message}`;
+                dataErrorElement.style.display = 'block';
+            }
+        }
+        
+        // Function to show event modal
+        function showEventModal(type) {
+            let title = '';
+            let content = '';
+            
+            switch (type) {
+                case 'goal':
+                    title = 'Record Goal';
+                    content = `
+                        <div class="form-group">
+                            <label for="goal-team">Team</label>
+                            <select class="form-control" id="goal-team">
+                                <option value="home">${matchState.homeTeam}</option>
+                                <option value="away">${matchState.awayTeam}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="goal-player">Scoring Player</label>
+                            <select class="form-control" id="goal-player">
+                                <option value="">Select Player</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="assist-player">Assisting Player (Optional)</label>
+                            <select class="form-control" id="assist-player">
+                                <option value="">Select Player</option>
+                            </select>
+                        </div>
+                        <button class="submit-btn" id="submit-goal">Record Goal</button>
+                    `;
+                    break;
+                    
+                case 'yellow':
+                    title = 'Record Yellow Card';
+                    content = `
+                        <div class="form-group">
+                            <label for="yellow-team">Team</label>
+                            <select class="form-control" id="yellow-team">
+                                <option value="home">${matchState.homeTeam}</option>
+                                <option value="away">${matchState.awayTeam}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="yellow-player">Player</label>
+                            <select class="form-control" id="yellow-player">
+                                <option value="">Select Player</option>
+                            </select>
+                        </div>
+                        <button class="submit-btn" id="submit-yellow">Record Yellow Card</button>
+                    `;
+                    break;
+                    
+                case 'red':
+                    title = 'Record Red Card';
+                    content = `
+                        <div class="form-group">
+                            <label for="red-team">Team</label>
+                            <select class="form-control" id="red-team">
+                                <option value="home">${matchState.homeTeam}</option>
+                                <option value="away">${matchState.awayTeam}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="red-player">Player</label>
+                            <select class="form-control" id="red-player">
+                                <option value="">Select Player</option>
+                            </select>
+                        </div>
+                        <button class="submit-btn" id="submit-red">Record Red Card</button>
+                    `;
+                    break;
+                    
+                case 'substitution':
+                    title = 'Record Substitution';
+                    content = `
+                        <div class="form-group">
+                            <label for="sub-team">Team</label>
+                            <select class="form-control" id="sub-team">
+                                <option value="home">${matchState.homeTeam}</option>
+                                <option value="away">${matchState.awayTeam}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sub-out">Player Coming Off</label>
+                            <select class="form-control" id="sub-out">
+                                <option value="">Select Player</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sub-in">Player Coming On</label>
+                            <select class="form-control" id="sub-in">
+                                <option value="">Select Player</option>
+                            </select>
+                        </div>
+                        <button class="submit-btn" id="submit-sub">Record Substitution</button>
+                    `;
+                    break;
+                    
+                case 'disallow':
+                    title = 'Disallow Goal';
+                    content = `
+                        <div class="form-group">
+                            <label for="disallow-team">Team</label>
+                            <select class="form-control" id="disallow-team">
+                                <option value="home">${matchState.homeTeam}</option>
+                                <option value="away">${matchState.awayTeam}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="disallow-player">Player</label>
+                            <select class="form-control" id="disallow-player">
+                                <option value="">Select Player</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="disallow-reason">Reason</label>
+                            <select class="form-control" id="disallow-reason">
+                                <option value="Offside">Offside</option>
+                                <option value="Foul">Foul</option>
+                                <option value="Handball">Handball</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <button class="submit-btn" id="submit-disallow">Disallow Goal</button>
+                    `;
+                    break;
+                    
+                case 'penalty':
+                    title = 'Record Penalty Kick';
+                    content = `
+                        <div class="form-group">
+                            <label for="penalty-team">Team</label>
+                            <select class="form-control" id="penalty-team">
+                                <option value="home">${matchState.homeTeam}</option>
+                                <option value="away">${matchState.awayTeam}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="penalty-player">Player</label>
+                            <select class="form-control" id="penalty-player">
+                                <option value="">Select Player</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="penalty-outcome">Outcome</label>
+                            <select class="form-control" id="penalty-outcome">
+                                <option value="goal">Goal</option>
+                                <option value="missed">Missed</option>
+                                <option value="saved">Saved</option>
+                            </select>
+                        </div>
+                        <button class="submit-btn" id="submit-penalty">Record Penalty</button>
+                    `;
+                    break;
+            }
+            
+            modalTitle.textContent = title;
+            modalBody.innerHTML = content;
+            eventModal.style.display = 'flex';
+            
+            // Populate player dropdowns based on team selection
+            if (type !== 'substitution') {
+                const teamSelect = document.getElementById(`${type}-team`);
+                const playerSelect = document.getElementById(`${type}-player`);
+                
+                if (teamSelect && playerSelect) {
+                    populatePlayerDropdown(teamSelect.value, playerSelect, type);
+                    
+                    teamSelect.addEventListener('change', () => {
+                        populatePlayerDropdown(teamSelect.value, playerSelect, type);
+                    });
+                }
+            } else {
+                // Special handling for substitution
+                const teamSelect = document.getElementById('sub-team');
+                const subOutSelect = document.getElementById('sub-out');
+                const subInSelect = document.getElementById('sub-in');
+                
+                if (teamSelect && subOutSelect && subInSelect) {
+                    populatePlayerDropdown(teamSelect.value, subOutSelect, 'sub-out');
+                    populatePlayerDropdown(teamSelect.value, subInSelect, 'sub-in');
+                    
+                    teamSelect.addEventListener('change', () => {
+                        populatePlayerDropdown(teamSelect.value, subOutSelect, 'sub-out');
+                        populatePlayerDropdown(teamSelect.value, subInSelect, 'sub-in');
+                    });
+                }
+            }
+            
+            // Add event listener for submit button
+            const submitButton = document.getElementById(`submit-${type}`);
+            if (submitButton) {
+                submitButton.onclick = () => handleEventSubmission(type);
+            }
+        }
+        
+        // Function to populate player dropdown
+        function populatePlayerDropdown(team, selectElement, type) {
+            // Clear existing options
+            selectElement.innerHTML = '<option value="">Select Player</option>';
+            
+            let players = [];
+            
+            if (team === 'home') {
+                players = [...matchState.homeStarters];
+                
+                // For substitutions, include substitutes for "sub-in"
+                if (type === 'sub-in') {
+                    players = [...matchState.homeSubstitutes];
+                }
+            } else {
+                players = [...matchState.awayStarters];
+                
+                // For substitutions, include substitutes for "sub-in"
+                if (type === 'sub-in') {
+                    players = [...matchState.awaySubstitutes];
+                }
+            }
+            
+            // Filter out red-carded players for certain event types
+            if (type === 'goal' || type === 'penalty' || type === 'sub-out') {
+                players = players.filter(player => !matchState.redCardedPlayers.includes(player.id));
+            }
+            
+            players.forEach(player => {
+                const option = document.createElement('option');
+                option.value = player.id;
+                option.textContent = `${player.name} (${player.position})`;
+                
+                // Add disabled class if player is red-carded
+                if (matchState.redCardedPlayers.includes(player.id)) {
+                    option.disabled = true;
+                    option.textContent += ' (RED CARD)';
+                }
+                
+                selectElement.appendChild(option);
+            });
+        }
+        
+        // Function to handle event submission
+        function handleEventSubmission(type) {
+            let event = { type };
+            
+            switch (type) {
+                case 'goal':
+                    const goalTeam = document.getElementById('goal-team').value;
+                    const goalPlayer = document.getElementById('goal-player').value;
+                    const goalPlayerName = document.getElementById('goal-player').options[document.getElementById('goal-player').selectedIndex].text;
+                    const assistPlayer = document.getElementById('assist-player').value;
+                    const assistPlayerName = assistPlayer ? document.getElementById('assist-player').options[document.getElementById('assist-player').selectedIndex].text : '';
+                    
+                    if (!goalPlayer) {
+                        alert('Please select a scoring player');
+                        return;
+                    }
+                    
+                    event.team = goalTeam;
+                    event.playerId = goalPlayer;
+                    event.playerName = goalPlayerName.split(' (')[0]; // Remove position from name
+                    
+                    if (assistPlayer) {
+                        event.assistPlayerId = assistPlayer;
+                        event.assistPlayerName = assistPlayerName.split(' (')[0]; // Remove position from name
+                    }
+                    
+                    break;
+                    
+                case 'yellow':
+                case 'red':
+                    const cardTeam = document.getElementById(`${type}-team`).value;
+                    const cardPlayer = document.getElementById(`${type}-player`).value;
+                    const cardPlayerName = document.getElementById(`${type}-player').options[document.getElementById(`${type}-player`).selectedIndex].text;
+                    
+                    if (!cardPlayer) {
+                        alert(`Please select a player`);
+                        return;
+                    }
+                    
+                    event.team = cardTeam;
+                    event.playerId = cardPlayer;
+                    event.playerName = cardPlayerName.split(' (')[0]; // Remove position from name
+                    
+                    // Add to red-carded players list if it's a red card
+                    if (type === 'red') {
+                        matchState.redCardedPlayers.push(cardPlayer);
+                    }
+                    
+                    break;
+                    
+                case 'substitution':
+                    const subTeam = document.getElementById('sub-team').value;
+                    const subOut = document.getElementById('sub-out').value;
+                    const subOutName = document.getElementById('sub-out').options[document.getElementById('sub-out').selectedIndex].text;
+                    const subIn = document.getElementById('sub-in').value;
+                    const subInName = document.getElementById('sub-in').options[document.getElementById('sub-in').selectedIndex].text;
+                    
+                    if (!subOut || !subIn) {
+                        alert('Please select both players');
+                        return;
+                    }
+                    
+                    if (subOut === subIn) {
+                        alert('Cannot substitute a player for themselves');
+                        return;
+                    }
+                    
+                    event.team = subTeam;
+                    event.playerId = subOut;
+                    event.playerName = subOutName.split(' (')[0]; // Remove position from name
+                    event.substitutePlayerId = subIn;
+                    event.substitutePlayerName = subInName.split(' (')[0]; // Remove position from name
+                    
+                    break;
+                    
+                case 'disallow':
+                    const disallowTeam = document.getElementById('disallow-team').value;
+                    const disallowPlayer = document.getElementById('disallow-player').value;
+                    const disallowPlayerName = document.getElementById('disallow-player').options[document.getElementById('disallow-player').selectedIndex].text;
+                    const disallowReason = document.getElementById('disallow-reason').value;
+                    
+                    if (!disallowPlayer) {
+                        alert('Please select a player');
+                        return;
+                    }
+                    
+                    event.team = disallowTeam;
+                    event.playerId = disallowPlayer;
+                    event.playerName = disallowPlayerName.split(' (')[0]; // Remove position from name
+                    event.reason = disallowReason;
+                    
+                    break;
+                    
+                case 'penalty':
+                    const penaltyTeam = document.getElementById('penalty-team').value;
+                    const penaltyPlayer = document.getElementById('penalty-player').value;
+                    const penaltyPlayerName = document.getElementById('penalty-player').options[document.getElementById('penalty-player').selectedIndex].text;
+                    const penaltyOutcome = document.getElementById('penalty-outcome').value;
+                    
+                    if (!penaltyPlayer) {
+                        alert('Please select a player');
+                        return;
+                    }
+                    
+                    event.team = penaltyTeam;
+                    event.playerId = penaltyPlayer;
+                    event.playerName = penaltyPlayerName.split(' (')[0]; // Remove position from name
+                    event.outcome = penaltyOutcome;
+                    
+                    // If penalty results in a goal, record it as a goal
+                    if (penaltyOutcome === 'goal') {
+                        event.type = 'goal';
+                        event.penalty = true;
+                    }
+                    
+                    break;
+            }
+            
+            recordEvent(event);
+            eventModal.style.display = 'none';
+        }
+        
+        // Function to start penalty shootout
+        function startPenaltyShootout() {
+            matchState.penaltyShootoutActive = true;
+            matchState.homePenaltyScore = 0;
+            matchState.awayPenaltyScore = 0;
+            matchState.penaltyShootoutEvents = [];
+            
+            updatePenaltyShootoutUI();
+            
+            // Save penalty shootout state to Firestore
+            savePenaltyShootoutData();
+        }
+        
+        // Function to record penalty shootout event
+        async function recordPenaltyShootoutEvent(team, success) {
+            const event = {
+                team,
+                success,
+                timestamp: new Date()
+            };
+            
+            matchState.penaltyShootoutEvents.push(event);
+            
+            if (success) {
+                if (team === 'home') {
+                    matchState.homePenaltyScore++;
+                } else {
+                    matchState.awayPenaltyScore++;
+                }
+            }
+            
+            updatePenaltyShootoutUI();
+            
+            // Save penalty shootout data to Firestore
+            await savePenaltyShootoutData();
+        }
+        
+        // Function to save penalty shootout data
+        async function savePenaltyShootoutData() {
+            try {
+                const collectionName = getCompetitionCollection(matchState.competitionType);
+                
+                await db.collection(collectionName).doc(matchState.matchId).update({
+                    penaltyShootout: {
+                        active: matchState.penaltyShootoutActive,
+                        homeScore: matchState.homePenaltyScore,
+                        awayScore: matchState.awayPenaltyScore,
+                        events: matchState.penaltyShootoutEvents
+                    }
+                });
+                
+                console.log('Penalty shootout data saved');
+            } catch (error) {
+                console.error('Error saving penalty shootout data:', error);
+            }
+        }
+        
+        // Function to reset penalty shootout
+        function resetPenaltyShootout() {
+            matchState.penaltyShootoutActive = false;
+            matchState.homePenaltyScore = 0;
+            matchState.awayPenaltyScore = 0;
+            matchState.penaltyShootoutEvents = [];
+            
+            updatePenaltyShootoutUI();
+            
+            // Remove penalty shootout data from Firestore
+            const collectionName = getCompetitionCollection(matchState.competitionType);
+            db.collection(collectionName).doc(matchState.matchId).update({
+                penaltyShootout: firebase.firestore.FieldValue.delete()
+            });
+        }
+        
+        // Event Listeners
+        startPauseButton.addEventListener('click', startMatch);
+        
+        pauseButton.addEventListener('click', () => {
+            if (matchState.isPaused) {
+                resumeMatch();
+            } else {
+                pauseMatch();
+            }
+        });
+        
+        stopButton.addEventListener('click', endMatch);
+        
+        goalButton.addEventListener('click', () => showEventModal('goal'));
+        yellowButton.addEventListener('click', () => showEventModal('yellow'));
+        redButton.addEventListener('click', () => showEventModal('red'));
+        subButton.addEventListener('click', () => showEventModal('substitution'));
+        disallowButton.addEventListener('click', () => showEventModal('disallow'));
+        penaltyButton.addEventListener('click', () => showEventModal('penalty'));
+        
+        penaltyShootoutButton.addEventListener('click', startPenaltyShootout);
+        
+        // Penalty shootout button event listeners
+        penaltyHomeSuccessButton.addEventListener('click', () => recordPenaltyShootoutEvent('home', true));
+        penaltyHomeMissButton.addEventListener('click', () => recordPenaltyShootoutEvent('home', false));
+        penaltyAwaySuccessButton.addEventListener('click', () => recordPenaltyShootoutEvent('away', true));
+        penaltyAwayMissButton.addEventListener('click', () => recordPenaltyShootoutEvent('away', false));
+        penaltyResetButton.addEventListener('click', resetPenaltyShootout);
+        
+        closeModal.addEventListener('click', () => {
+            eventModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            if (event.target === eventModal) {
+                eventModal.style.display = 'none';
+            }
+        });
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMatchData();
+        });
+    </script>
+</body>
+</html>

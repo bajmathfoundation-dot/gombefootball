@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe Worriors Cup - Group Stage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f5f9f5;
+            color: #2e7d32;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            background: #2e7d32;
+            border-radius: 10px;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        header p {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0f2e1;
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #1b5e20;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #c8e6c9;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .zones-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .zone-section {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e0f2e1;
+            transition: all 0.3s ease;
+        }
+
+        .zone-section.completed {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+
+        .zone-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #2e7d32;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #c8e6c9;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-size: 1rem;
+            color: #2e7d32;
+        }
+
+        .team-select {
+            width: 100%;
+            height: 180px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #c8e6c9;
+            background: #ffffff;
+            font-size: 1rem;
+            font-weight: 400;
+            color: #2e7d32;
+        }
+
+        .team-select:disabled {
+            background: #f5f9f5;
+            cursor: not-allowed;
+        }
+
+        .team-select:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+
+        .team-count {
+            font-size: 1rem;
+            color: #1b5e20;
+            margin-top: 15px;
+            text-align: center;
+            padding: 12px;
+            background: #f1f8e9;
+            border-radius: 8px;
+            font-weight: 500;
+            border: 1px solid #c8e6c9;
+        }
+
+        .team-count.completed {
+            background: #c8e6c9;
+            border-color: #4caf50;
+            color: #1b5e20;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .primary-btn {
+            background: #4caf50;
+            color: white;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background: #388e3c;
+        }
+
+        .secondary-btn {
+            background: #f5f5f5;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .secondary-btn:hover:not(:disabled) {
+            background: #e8f5e9;
+        }
+
+        .status-container {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+        }
+
+        .groups-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .group-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #c8e6c9;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .group-card h3 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 500;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #c8e6c9;
+        }
+
+        .group-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .group-table th {
+            background: #e8f5e9;
+            color: #1b5e20;
+            padding: 10px;
+            text-align: center;
+            font-weight: 500;
+            border-bottom: 2px solid #c8e6c9;
+        }
+
+        .group-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .group-table tr:nth-child(even) {
+            background: #f9fdf9;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(46, 125, 50, 0.3);
+            border-radius: 50%;
+            border-top-color: #2e7d32;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 25px;
+            color: #2e7d32;
+            font-size: 1rem;
+            background: #e8f5e9;
+            border-radius: 10px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-weight: 500;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            font-size: 1rem;
+        }
+
+        .completion-message {
+            color: #1b5e20;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 6px;
+            background: #c8e6c9;
+        }
+
+        @media (max-width: 768px) {
+            .zones-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .groups-container {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gombe worriors Cup</h1>
+            <p>Group Stage Selection - Select 8 teams from each zone</p>
+        </header>
+        
+        <main>
+            <div class="card">
+                <h2>Group Stage Selection</h2>
+                
+                <div class="zones-container">
+                    <div class="zone-section" id="central-zone-section">
+                        <h3>Central Zone</h3>
+                        <div class="form-group">
+                            <label for="centralSelect">Select 8 teams:</label>
+                            <select multiple class="team-select" id="centralSelect" size="8"></select>
+                        </div>
+                        <div class="team-count" id="centralCount">
+                            Selected: 0 of 8
+                        </div>
+                        <div id="centralMessage" class="completion-message" style="display: none;">
+                            Selection complete! This zone is locked.
+                        </div>
+                    </div>
+                    
+                    <div class="zone-section" id="northern-zone-section">
+                        <h3>Northern Zone</h3>
+                        <div class="form-group">
+                            <label for="northernSelect">Select 8 teams:</label>
+                            <select multiple class="team-select" id="northernSelect" size="8"></select>
+                        </div>
+                        <div class="team-count" id="northernCount">
+                            Selected: 0 of 8
+                        </div>
+                        <div id="northernMessage" class="completion-message" style="display: none;">
+                            Selection complete! This zone is locked.
+                        </div>
+                    </div>
+                    
+                    <div class="zone-section" id="southern-zone-section">
+                        <h3>Southern Zone</h3>
+                        <div class="form-group">
+                            <label for="southernSelect">Select 8 teams:</label>
+                            <select multiple class="team-select" id="southernSelect" size="8"></select>
+                        </div>
+                        <div class="team-count" id="southernCount">
+                            Selected: 0 of 8
+                        </div>
+                        <div id="southernMessage" class="completion-message" style="display: none;">
+                            Selection complete! This zone is locked.
+                        </div>
+                    </div>
+                    
+                    <div class="zone-section" id="eastern-zone-section">
+                        <h3>Eastern Zone</h3>
+                        <div class="form-group">
+                            <label for="easternSelect">Select 8 teams:</label>
+                            <select multiple class="team-select" id="easternSelect" size="8"></select>
+                        </div>
+                        <div class="team-count" id="easternCount">
+                            Selected: 0 of 8
+                        </div>
+                        <div id="easternMessage" class="completion-message" style="display: none;">
+                            Selection complete! This zone is locked.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="button-container">
+                    <button id="drawGroupsBtn" class="primary-btn" disabled>
+                        <span id="drawText">Draw Groups</span>
+                        <span id="drawLoader" class="loader" style="display: none;"></span>
+                    </button>
+                    <button id="resetBtn" class="secondary-btn">Reset All</button>
+                </div>
+            </div>
+            
+            <div class="card" id="groupsCard" style="display: none;">
+                <h2>Group Stage Draw</h2>
+                <div class="groups-container" id="groupsContainer">
+                    <!-- Groups will be generated here -->
+                </div>
+                
+                <div class="button-container" style="margin-top: 30px;">
+                    <button id="saveGroupsBtn" class="primary-btn">
+                        <span id="saveGroupsText">Save Group Stage</span>
+                        <span id="saveGroupsLoader" class="loader" style="display: none;"></span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="status-container" id="statusMessage" style="display: none;"></div>
+        </main>
+        
+        <footer>
+            <p>Gombe Football Association &copy; 2025 | worriors Cup Tournament</p>
+        </footer>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // DOM elements
+        const centralSelect = document.getElementById('centralSelect');
+        const northernSelect = document.getElementById('northernSelect');
+        const southernSelect = document.getElementById('southernSelect');
+        const easternSelect = document.getElementById('easternSelect');
+        
+        const centralCount = document.getElementById('centralCount');
+        const northernCount = document.getElementById('northernCount');
+        const southernCount = document.getElementById('southernCount');
+        const easternCount = document.getElementById('easternCount');
+        
+        const centralMessage = document.getElementById('centralMessage');
+        const northernMessage = document.getElementById('northernMessage');
+        const southernMessage = document.getElementById('southernMessage');
+        const easternMessage = document.getElementById('easternMessage');
+        
+        const centralSection = document.getElementById('central-zone-section');
+        const northernSection = document.getElementById('northern-zone-section');
+        const southernSection = document.getElementById('southern-zone-section');
+        const easternSection = document.getElementById('eastern-zone-section');
+        
+        const drawGroupsBtn = document.getElementById('drawGroupsBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const saveGroupsBtn = document.getElementById('saveGroupsBtn');
+        
+        const groupsCard = document.getElementById('groupsCard');
+        const groupsContainer = document.getElementById('groupsContainer');
+        const statusMessage = document.getElementById('statusMessage');
+        
+        const drawText = document.getElementById('drawText');
+        const drawLoader = document.getElementById('drawLoader');
+        const saveGroupsText = document.getElementById('saveGroupsText');
+        const saveGroupsLoader = document.getElementById('saveGroupsLoader');
+        
+        // Zone select elements mapped by zone id
+        const zoneSelects = {
+            'central-zone': centralSelect,
+            'northern-zone': northernSelect,
+            'southern-zone': southernSelect,
+            'eastern-zone': easternSelect
+        };
+        
+        // Zone count elements mapped by zone id
+        const zoneCountElements = {
+            'central-zone': centralCount,
+            'northern-zone': northernCount,
+            'southern-zone': southernCount,
+            'eastern-zone': easternCount
+        };
+        
+        // Zone message elements
+        const zoneMessages = {
+            'central-zone': centralMessage,
+            'northern-zone': northernMessage,
+            'southern-zone': southernMessage,
+            'eastern-zone': easternMessage
+        };
+        
+        // Zone section elements
+        const zoneSections = {
+            'central-zone': centralSection,
+            'northern-zone': northernSection,
+            'southern-zone': southernSection,
+            'eastern-zone': easternSection
+        };
+        
+        // App state
+        let teamsByZone = {
+            'central-zone': [],
+            'northern-zone': [],
+            'southern-zone': [],
+            'eastern-zone': []
+        };
+        
+        let selectedTeamsByZone = {
+            'central-zone': [],
+            'northern-zone': [],
+            'southern-zone': [],
+            'eastern-zone': []
+        };
+        
+        let groups = [];
+        const groupNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        
+        // Event listeners
+        centralSelect.addEventListener('change', () => handleSelection('central-zone'));
+        northernSelect.addEventListener('change', () => handleSelection('northern-zone'));
+        southernSelect.addEventListener('change', () => handleSelection('southern-zone'));
+        easternSelect.addEventListener('change', () => handleSelection('eastern-zone'));
+        
+        drawGroupsBtn.addEventListener('click', drawGroups);
+        resetBtn.addEventListener('click', resetSelection);
+        saveGroupsBtn.addEventListener('click', saveGroups);
+        
+        // Initialize the app
+        loadTeamsForAllZones();
+        
+        // Load teams for all zones
+        async function loadTeamsForAllZones() {
+            try {
+                // Show loading state
+                for (const zoneId in zoneSelects) {
+                    zoneSelects[zoneId].innerHTML = '<option>Loading teams...</option>';
+                }
+                
+                // Get all teams from GombeTeams collection
+                const teamsSnapshot = await db.collection('GombeTeams').get();
+                
+                if (teamsSnapshot.empty) {
+                    throw new Error('No teams found in GombeTeams collection!');
+                }
+                
+                // Reset team lists
+                for (const zoneId in teamsByZone) {
+                    teamsByZone[zoneId] = [];
+                }
+                
+                // Process teams
+                teamsSnapshot.forEach(doc => {
+                    const team = doc.data();
+                    const teamName = team.name || '';
+                    const teamZone = team.zone || '';
+                    const normalizedTeamZone = teamZone.toLowerCase().replace(' ', '-');
+                    
+                    // Only include league_phase teams
+                    const CompetitionValue = (team.StateWideCompetition || '').toString().toLowerCase().trim();
+                    if (CompetitionValue !== 'worriors-cup') return;
+                    
+                    // Only include teams from our defined zones
+                    if (teamsByZone.hasOwnProperty(normalizedTeamZone)) {
+                        teamsByZone[normalizedTeamZone].push({
+                            id: doc.id,
+                            name: teamName,
+                            zone: teamZone
+                        });
+                    }
+                });
+                
+                // Render teams for each zone
+                for (const zoneId in teamsByZone) {
+                    renderTeamsForZone(zoneId);
+                }
+                
+            } catch (error) {
+                console.error('Error loading teams:', error);
+                for (const zoneId in zoneSelects) {
+                    zoneSelects[zoneId].innerHTML = `<option class="error">Error: ${error.message}</option>`;
+                }
+            }
+        }
+        
+        // Render teams for a specific zone
+        function renderTeamsForZone(zoneId) {
+            const selectElement = zoneSelects[zoneId];
+            const teams = teamsByZone[zoneId];
+            
+            selectElement.innerHTML = '';
+            
+            if (teams.length === 0) {
+                selectElement.innerHTML = '<option>No teams available for this zone</option>';
+                return;
+            }
+            
+            teams.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team.id;
+                option.textContent = team.name;
+                selectElement.appendChild(option);
+            });
+            
+            // Update count
+            updateSelectedCount(zoneId);
+        }
+        
+        // Handle team selection
+        function handleSelection(zoneId) {
+            const selectElement = zoneSelects[zoneId];
+            const selectedCount = selectElement.selectedOptions.length;
+            
+            // Store selected teams
+            selectedTeamsByZone[zoneId] = Array.from(selectElement.selectedOptions).map(opt => {
+                return teamsByZone[zoneId].find(team => team.id === opt.value);
+            });
+            
+            // Update UI
+            updateSelectedCount(zoneId);
+            
+            // Check if exactly 8 teams are selected
+            if (selectedCount === 8) {
+                // Disable selection for this zone
+                selectElement.disabled = true;
+                
+                // Show completion message
+                zoneMessages[zoneId].style.display = 'block';
+                
+                // Apply completed styling
+                zoneSections[zoneId].classList.add('completed');
+                zoneCountElements[zoneId].classList.add('completed');
+            } else {
+                // Enable selection if not complete
+                selectElement.disabled = false;
+                
+                // Hide completion message
+                zoneMessages[zoneId].style.display = 'none';
+                
+                // Remove completed styling
+                zoneSections[zoneId].classList.remove('completed');
+                zoneCountElements[zoneId].classList.remove('completed');
+            }
+            
+            // Check if all zones have 8 selections
+            const allZonesComplete = Object.keys(zoneSelects).every(zoneId => {
+                return zoneSelects[zoneId].selectedOptions.length === 8;
+            });
+            
+            // Enable draw button if all zones are complete
+            drawGroupsBtn.disabled = !allZonesComplete;
+        }
+        
+        // Update selected team count for a zone
+        function updateSelectedCount(zoneId) {
+            const selectElement = zoneSelects[zoneId];
+            const selectedCount = selectElement.selectedOptions.length;
+            zoneCountElements[zoneId].textContent = `Selected: ${selectedCount} of 8`;
+        }
+        
+        // Draw groups function
+        function drawGroups() {
+            if (drawGroupsBtn.disabled) return;
+            
+            try {
+                // Show loading state
+                drawText.innerHTML = 'Drawing Groups...';
+                drawLoader.style.display = 'inline-block';
+                drawGroupsBtn.disabled = true;
+                
+                // Shuffle teams in each zone
+                for (const zoneId in selectedTeamsByZone) {
+                    shuffleArray(selectedTeamsByZone[zoneId]);
+                }
+                
+                // Create 8 groups
+                groups = [];
+                for (let i = 0; i < 8; i++) {
+                    const group = {
+                        id: groupNames[i],
+                        teams: []
+                    };
+                    
+                    // Take one team from each zone
+                    for (const zoneId in selectedTeamsByZone) {
+                        const team = selectedTeamsByZone[zoneId][i];
+                        if (team) {
+                            group.teams.push({
+                                name: team.name,
+                                zone: team.zone,
+                                matchesPlayed: 0,
+                                wins: 0,
+                                draws: 0,
+                                losses: 0,
+                                goalsFor: 0,
+                                goalsAgainst: 0,
+                                goalDifference: 0,
+                                points: 0
+                            });
+                        }
+                    }
+                    
+                    groups.push(group);
+                }
+                
+                // Display groups
+                displayGroups();
+                
+                // Show groups card
+                groupsCard.style.display = 'block';
+                
+                // Scroll to groups
+                groupsCard.scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                console.error('Error drawing groups:', error);
+                statusMessage.style.display = 'block';
+                statusMessage.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Error drawing groups:</strong> ${error.message}
+                    </div>
+                `;
+            } finally {
+                // Reset button state
+                drawText.innerHTML = 'Draw Groups';
+                drawLoader.style.display = 'none';
+            }
+        }
+        
+        // Display groups in the UI
+        function displayGroups() {
+            groupsContainer.innerHTML = '';
+            
+            groups.forEach(group => {
+                const groupCard = document.createElement('div');
+                groupCard.className = 'group-card';
+                
+                groupCard.innerHTML = `
+                    <h3>Group ${group.id}</h3>
+                    <table class="group-table">
+                        <thead>
+                            <tr>
+                                <th>Team</th>
+                                <th>Zone</th>
+                                <th>MP</th>
+                                <th>W</th>
+                                <th>D</th>
+                                <th>L</th>
+                                <th>GF</th>
+                                <th>GA</th>
+                                <th>GD</th>
+                                <th>Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${group.teams.map(team => `
+                                <tr>
+                                    <td>${team.name}</td>
+                                    <td>${team.zone.split(' ')[0]}</td>
+                                    <td>${team.matchesPlayed}</td>
+                                    <td>${team.wins}</td>
+                                    <td>${team.draws}</td>
+                                    <td>${team.losses}</td>
+                                    <td>${team.goalsFor}</td>
+                                    <td>${team.goalsAgainst}</td>
+                                    <td>${team.goalDifference}</td>
+                                    <td><strong>${team.points}</strong></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                groupsContainer.appendChild(groupCard);
+            });
+        }
+        
+        // Save groups to Firebase
+        async function saveGroups() {
+            try {
+                // Show loading state
+                saveGroupsText.innerHTML = 'Saving Groups...';
+                saveGroupsLoader.style.display = 'inline-block';
+                saveGroupsBtn.disabled = true;
+                
+                // Save each group to its own document
+                for (const group of groups) {
+                    const groupRef = db.collection('GombeWorriorsCup/Groupstage/Groups').doc(`Group${group.id}`);
+                    
+                    await groupRef.set({
+                        groupId: group.id,
+                        teams: group.teams,
+                        drawDate: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                // Show success message
+                statusMessage.style.display = 'block';
+                statusMessage.innerHTML = `
+                    <div style="color: #1b5e20; font-weight: 600; margin-bottom: 10px;">
+                        ✅ Group Stage saved successfully!
+                    </div>
+                    <p>Groups A-H have been saved to Firestore.</p>
+                `;
+                
+            } catch (error) {
+                console.error('Error saving groups:', error);
+                statusMessage.style.display = 'block';
+                statusMessage.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Error saving groups:</strong> ${error.message}
+                    </div>
+                `;
+            } finally {
+                // Reset button state
+                saveGroupsText.innerHTML = 'Save Group Stage';
+                saveGroupsLoader.style.display = 'none';
+            }
+        }
+        
+        // Reset all selections
+        function resetSelection() {
+            for (const zoneId in zoneSelects) {
+                const selectElement = zoneSelects[zoneId];
+                for (let i = 0; i < selectElement.options.length; i++) {
+                    selectElement.options[i].selected = false;
+                }
+                selectElement.disabled = false;
+                
+                // Hide completion message
+                zoneMessages[zoneId].style.display = 'none';
+                
+                // Remove completed styling
+                zoneSections[zoneId].classList.remove('completed');
+                zoneCountElements[zoneId].classList.remove('completed');
+                
+                // Update count
+                updateSelectedCount(zoneId);
+            }
+            
+            // Reset state
+            selectedTeamsByZone = {
+                'central-zone': [],
+                'northern-zone': [],
+                'southern-zone': [],
+                'eastern-zone': []
+            };
+            
+            groupsCard.style.display = 'none';
+            statusMessage.style.display = 'none';
+            drawGroupsBtn.disabled = true;
+        }
+        
+        // Utility function to shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+    </script>
+</body>
+</html>

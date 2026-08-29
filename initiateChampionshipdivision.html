@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Championship Division Setup</title>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: sans-serif; background: #f1f1f1; padding: 2em; }
+    .container {
+      background: #fff;
+      max-width: 600px;
+      margin: auto;
+      padding: 2em;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 0.75em 1.5em;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background-color: #0056b3; }
+    #status { margin-top: 1em; text-align: center; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Setup Championship Division</h2>
+    <p>This will create Championship divisions based on teams with <code>tier = "Championship"</code>.</p>
+    <button onclick="setupLeague()">Run Setup</button>
+    <div id="status"></div>
+  </div>
+  <div style="margin-top:2em;">
+  <h3>Championship Divisions Preview</h3>
+  <div id="division-list"></div>
+  <button onclick="loadDivisions()">Refresh View</button>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      databaseURL: "https://gombefootball-default-rtdb.firebaseio.com",
+      projectId: "gombefootball",
+      storageBucket: "gombefootball.firebasestorage.app",
+      messagingSenderId: "120731655706",
+      appId: "1:120731655706:web:9c99d6831aca3df563bba3",
+      measurementId: "G-8SCVPBSKPG"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    async function setupLeague() {
+      const statusEl = document.getElementById('status');
+      statusEl.textContent = 'Processing...';
+
+      try {
+        const snapshot = await db.collection('GombeTeams')
+          .where('tier', '==', 'championship')
+          .get();
+
+        const zones = {};
+
+        snapshot.forEach(doc => {
+          const team = doc.data();
+          const zone = team.zone;
+
+          if (!zones[zone]) zones[zone] = [];
+
+          zones[zone].push({
+            name: team.name,
+            M: 0, W: 0, D: 0, L: 0,
+            GS: 0, GA: 0, GD: 0, points: 0
+          });
+        });
+
+        const writePromises = Object.entries(zones).map(([zone, teams]) => {
+          return db.collection('Championship_division').doc(zone).set({ teams });
+        });
+
+        await Promise.all(writePromises);
+        statusEl.textContent = 'Championship divisions successfully created! ✅';
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Error during setup ⚠️';
+      }
+    }
+  async function loadDivisions() {
+  const listEl = document.getElementById('division-list');
+  listEl.innerHTML = 'Loading...';
+
+  try {
+    const snapshot = await db.collection('Championship_division').get();
+
+    if (snapshot.empty) {
+      listEl.innerHTML = '<p>No divisions found yet.</p>';
+      return;
+    }
+
+    let html = '';
+    snapshot.forEach(doc => {
+      const zone = doc.id;
+      const data = doc.data();
+      html += `<h4>${zone}</h4><ul>`;
+      if (data.teams && Array.isArray(data.teams)) {
+        data.teams.forEach(team => {
+          html += `<li>${team.name}</li>`;
+        });
+      } else {
+        html += '<li>No teams listed</li>';
+      }
+      html += '</ul>';
+    });
+
+    listEl.innerHTML = html;
+  } catch (err) {
+    console.error(err);
+    listEl.innerHTML = '<p>Error fetching divisions ⚠️</p>';
+  }
+}
+  async function populateZoneSelector() {
+  const select = document.getElementById('zone-select');
+  select.innerHTML = '<option value="">-- Choose a zone --</option>';
+  
+  try {
+    const snapshot = await db.collection('Championship_division').get();
+    snapshot.forEach(doc => {
+      const option = document.createElement('option');
+      option.value = doc.id;
+      option.textContent = doc.id;
+      select.appendChild(option);
+    });
+  } catch (err) {
+    console.error('Error loading zones:', err);
+  }
+}
+
+ </script>
+
+</body>
+</html>

@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe State Team Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #343a40;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        #registration-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.7rem;
+            font-weight: 600;
+        }
+        
+        .card-header i {
+            font-size: 2rem;
+        }
+        
+        #team-registration {
+            padding: 30px;
+            background-color: #f8fafc;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            flex: 1 1 300px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        .form-control:focus {
+            border-color: #4299e1;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.15);
+        }
+        
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            background-size: 18px;
+            padding-right: 45px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2);
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #219653, #27ae60);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(39, 174, 96, 0.3);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .zone-indicator {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 10px;
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .is-invalid {
+            border-color: #e74c3c !important;
+        }
+        
+        .is-valid {
+            border-color: #27ae60 !important;
+        }
+        
+        .required {
+            color: #e74c3c;
+        }
+        
+        .zone-map {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .zone-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left: 4px solid;
+        }
+        
+        .zone-card h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .zone-card ul {
+            padding-left: 20px;
+        }
+        
+        .zone-card li {
+            margin-bottom: 8px;
+        }
+        
+        .northern { border-color: #3498db; }
+        .central { border-color: #2ecc71; }
+        .eastern { border-color: #e67e22; }
+        .southern { border-color: #9b59b6; }
+        
+        .northern h3 { color: #3498db; }
+        .central h3 { color: #2ecc71; }
+        .eastern h3 { color: #e67e22; }
+        .southern h3 { color: #9b59b6; }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        #team-id-display {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            text-align: center;
+            display: none;
+        }
+        
+        #team-id-display h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        #team-id {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #1b5e20;
+        }
+        
+        @media (max-width: 768px) {
+            .zone-map {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                gap: 15px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .card-header {
+                padding: 20px;
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+            
+            #team-registration {
+                padding: 25px 20px;
+            }
+            
+            .form-control {
+                padding: 12px 15px;
+            }
+        }
+    </style>
+    
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            setDoc,
+            doc,
+            arrayUnion,
+            serverTimestamp,
+            runTransaction,
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            databaseURL: "https://gombefootball-default-rtdb.firebaseio.com",
+            projectId: "gombefootball",
+            storageBucket: "gombefootball.firebasestorage.app",
+            messagingSenderId: "120731655706",
+            appId: "1:120731655706:web:9c99d6831aca3df563bba3",
+            measurementId: "G-8SCVPBSKPG"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
+
+        // Make Firebase available to the main script
+        window.firebase = {
+            db,
+            collection,
+            addDoc,
+            setDoc,
+            doc,
+            arrayUnion,
+            serverTimestamp,
+            runTransaction,
+            getDoc
+        };
+        
+        // Start main application after Firebase is ready
+        document.addEventListener('DOMContentLoaded', main);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-futbol"></i> Gombe State Team Registration</h1>
+            <p>Register your local team to participate in the Gombe State Football Championship</p>
+        </header>
+        
+        <div id="registration-card">
+            <div class="card-header">
+                <i class="fas fa-users"></i>
+                <h2>Register Your Team</h2>
+            </div>
+            <form id="team-registration">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="team-name">Team Name <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="team-name" required placeholder="Enter your team name">
+                    </div>
+               </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="team-lga">Local Government Area (LGA) <span class="required">*</span></label>
+                        <select class="form-control" id="team-lga" required>
+                            <option value="">-- Select LGA --</option>
+                            <option value="Akko">Akko</option>
+                            <option value="Balanga">Balanga</option>
+                            <option value="Billiri">Billiri</option>
+                            <option value="Dukku">Dukku</option>
+                            <option value="Funakaye">Funakaye</option>
+                            <option value="Gombe">Gombe</option>
+                            <option value="Kaltungo">Kaltungo</option>
+                            <option value="Kwami">Kwami</option>
+                            <option value="Nafada">Nafada</option>
+                            <option value="Shongom">Shongom</option>
+                            <option value="YamaltuDeba">Yamaltu/Deba</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="team-ward">Ward <span class="required">*</span></label>
+                        <select class="form-control" id="team-ward" required disabled>
+                            <option value="">-- Select ward --</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="team-zone">Zone</label>
+                        <input type="text" class="form-control" id="team-zone" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="team-year">Founded Year <span class="required">*</span></label>
+                        <input type="number" class="form-control" id="team-year" min="1900" max="2025" required placeholder="e.g. 1995">
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Submit Application
+                </button>
+            </form>
+        </div>
+        
+        <div id="team-id-display">
+            <h3><i class="fas fa-id-card"></i> Team Registered Successfully!</h3>
+            <p>Your team ID: <span id="team-id">GT-TeamName-001</span></p>
+        </div>
+        
+        <div class="zone-map">
+            <div class="zone-card northern">
+                <h3><i class="fas fa-sun"></i> Northern Zone</h3>
+                <p><strong>LGAs:</strong> Dukku, Funakaye, Nafada</p>
+                <p><strong>Characteristics:</strong> Sahel vegetation, borders Yobe State</p>
+            </div>
+            
+            <div class="zone-card central">
+                <h3><i class="fas fa-city"></i> Central Zone</h3>
+                <p><strong>LGAs:</strong> Gombe, Akko, Kwami</p>
+                <p><strong>Characteristics:</strong> Urban centers, state capital</p>
+            </div>
+            
+            <div class="zone-card eastern">
+                <h3><i class="fas fa-water"></i> Eastern Zone</h3>
+                <p><strong>LGAs:</strong> Yamaltu/Deba, Balanga</p>
+                <p><strong>Characteristics:</strong> Gongola River basin, borders Adamawa</p>
+            </div>
+            
+            <div class="zone-card southern">
+                <h3><i class="fas fa-mountain"></i> Southern Zone</h3>
+                <p><strong>LGAs:</strong> Billiri, Kaltungo, Shongom</p>
+                <p><strong>Characteristics:</strong> Mountainous terrain, borders Taraba</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Gombe State Sports Commission &copy; 2025 | All Rights Reserved</p>
+            <p>For assistance, contact: support@gombesports.gov.ng</p>
+        </footer>
+    </div>
+
+    <script>
+        function main() {
+            console.log("DOM fully loaded and Firebase ready");
+            
+            // Complete Ward Data
+            const wardsData = {
+                Akko: ["Akko", "Garko", "Kalshingi", "Kashere", "Kumo Central", 
+                       "Kumo East", "Kumo North", "Kumo West", "Pindiga", "Tumu", "Tukulma"],
+                
+                Balanga: ["Bambam", "Bangu", "Dadiya", "Gelengu/Balanga", "Kindiyo", 
+                          "Kulani Degre", "Mwona", "Nyuwar", "Swa/Ref", "Talasse"],
+                
+                Billiri: ["Baganje North", "Baganje South", "Bare", "Billiri North", 
+                          "Billiri South", "Kalmai", "Tai", "Tanglang", "Todi", "Tudun Kwaya"],
+                
+                Dukku: ["Gombe Abba", "Hashidu", "Jamari", "Kunde", "Lafiya", 
+                        "Malala", "Waziri North", "Waziri South Central", "Wuro Tale", "Zange", "Zaure"],
+                
+                Funakaye: ["Ashaka/Magaba", "Bage", "Bajoga West", "Bajoga East", 
+                           "Bodor/Tilde", "Jillahi", "Kupto", "Ribadu", "Tongo", "Wawa"],
+                
+                Gombe: ["Ajiya", "Bajoga", "Bolari East", "Bolari West", "Dawaki", 
+                        "Herwagana", "Jeka Dafari", "Kumbiya Kumbiya", "Nasarawa", "Pantami", "Shamaki"],
+                
+                Kaltungo: ["Awak", "Bule/Kaltin", "Kaltungo West", "Kaltungo East", 
+                           "Kamo", "Tula Baule", "Tula Wange", "Tula Yiri", "Tungo", "Ture"],
+                
+                Kwami: ["Bojude", "Daban Fulani", "Doho", "Dukul", "Gandam", 
+                        "Jurara", "Komfulata", "Kwami", "Malam Sidi", "Malleri"],
+                
+                Nafada: ["Barwo/Nasarawo", "Barwo Winde", "Birin Bolewa", "Birin Fulani East", 
+                         "Birin Fulani West", "Gudukku", "Jigawa", "Nafada Central", "Nafada East", "Nafada West"],
+                
+                Shongom: ["Bangunji", "Boh", "Burak", "Filiya", "Gundale", 
+                          "Gwandum", "Kulishin", "Kushi", "Lalaipido", "Lapan"],
+                
+                YamaltuDeba: ["Deba", "Difa/Lubo/Kinafa", "Gwani Shinga", "Hilnah", 
+                              "Jalli North", "Jalli South", "Kanawa Wajari", "Kuri Lano", 
+                              "Kwandon/Liji", "Nono Kunwal", "Zambuk Kwali"]
+            };
+
+            // Zone Mapping
+            const zoneMap = {
+                'Dukku': 'Northern Zone',
+                'Funakaye': 'Northern Zone', 
+                'Nafada': 'Northern Zone',
+                'Gombe': 'Central Zone',
+                'Akko': 'Central Zone',
+                'Kwami': 'Central Zone',
+                'YamaltuDeba': 'Eastern Zone',
+                'Balanga': 'Eastern Zone',
+                'Billiri': 'Southern Zone',
+                'Kaltungo': 'Southern Zone',
+                'Shongom': 'Southern Zone'
+            };
+
+            // DOM Elements
+            const lgaSelect = document.getElementById('team-lga');
+            const wardSelect = document.getElementById('team-ward');
+            const zoneInput = document.getElementById('team-zone');
+            const form = document.getElementById('team-registration');
+            const teamIdDisplay = document.getElementById('team-id-display');
+            const teamIdElement = document.getElementById('team-id');
+
+            // LGA Change Handler
+            lgaSelect.addEventListener('change', function() {
+                const selectedLGA = this.value;
+                
+                // Reset and disable ward dropdown
+                wardSelect.innerHTML = '<option value="">-- Select ward --</option>';
+                wardSelect.disabled = !selectedLGA;
+                
+                // Update zone
+                zoneInput.value = zoneMap[selectedLGA] || '';
+                
+                // Visual feedback
+                if (selectedLGA) {
+                    this.classList.add('is-valid');
+                    
+                    // Populate wards
+                    if (wardsData[selectedLGA]) {
+                        wardsData[selectedLGA].forEach(ward => {
+                            const option = document.createElement('option');
+                            option.value = ward;
+                            option.textContent = ward;
+                            wardSelect.appendChild(option);
+                        });
+                    }
+                } else {
+                    this.classList.remove('is-valid');
+                }
+            });
+
+            // Ward Change Handler
+            wardSelect.addEventListener('change', function() {
+                if (this.value) {
+                    this.classList.add('is-valid');
+                } else {
+                    this.classList.remove('is-valid');
+                }
+            });
+
+            // Sanitize team name for document ID
+            function sanitizeTeamName(name) {
+                return name
+                    .trim()
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')       // Replace spaces with hyphens
+                    .replace(/[^a-z0-9-]/g, '')  // Remove special characters
+                    .substring(0, 20);           // Limit length
+            }
+
+            // Get next sequential team number
+            async function getNextTeamNumber() {
+                const counterRef = window.firebase.doc(
+                    window.firebase.db, 
+                    "counters", 
+                    "teams"
+                );
+                
+                try {
+                    // Atomically increment counter
+                    await window.firebase.runTransaction(
+                        window.firebase.db, 
+                        async (transaction) => {
+                            const counterDoc = await transaction.get(counterRef);
+                            let newCount = 1;
+                            
+                            if (counterDoc.exists()) {
+                                newCount = counterDoc.data().count + 1;
+                            }
+                            
+                            transaction.set(counterRef, { count: newCount });
+                            return newCount;
+                        }
+                    );
+                    
+                    // Return updated count
+                    const counterSnap = await window.firebase.getDoc(counterRef);
+                    return counterSnap.data().count;
+                } catch (error) {
+                    console.error("Counter error:", error);
+                    throw new Error("Could not generate team ID");
+                }
+            }
+
+            // Form Submission Handler
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Hide previous ID display
+                teamIdDisplay.style.display = 'none';
+                
+                // Validate fields
+                const requiredFields = ['team-name', 'team-lga', 'team-ward', 'team-year'];
+                let isValid = true;
+                
+                requiredFields.forEach(id => {
+                    const field = document.getElementById(id);
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    alert('Please fill all required fields marked with *');
+                    return;
+                }
+
+                try {
+                    // Get form values
+                    const teamName = document.getElementById('team-name').value.trim();
+                    const lga = document.getElementById('team-lga').value;
+                    const ward = document.getElementById('team-ward').value;
+                    const year = document.getElementById('team-year').value;
+                    const zone = document.getElementById('team-zone').value;
+                    
+                    // Generate custom ID
+                    const seqNumber = await getNextTeamNumber();
+                    const sanitizedName = sanitizeTeamName(teamName);
+                    const teamID = `GT-${sanitizedName}-${seqNumber.toString().padStart(3, '0')}`;
+
+                    // Create team data
+                    const teamData = {
+                        name: teamName,
+                        lga: lga,
+                        ward: ward,
+                        year: parseInt(year),
+                        zone: zone,
+                        tier: null,
+                        stateWideCompetition: null,
+						kitColorsHome:null,
+						kitColorsAway:null,
+						kitColorsThird:null,
+                        ManagerName: null,
+                        password: null,
+						phoneNumber: null,
+						logoUrl: null,
+                        status: "Pending",
+                        createdAt: window.firebase.serverTimestamp()
+                    };
+
+                    // Step 1: Save to GombeTeams with custom ID
+                    await window.firebase.setDoc(
+                        window.firebase.doc(
+                            window.firebase.db, 
+                            "GombeTeams", 
+                            teamID  // Use custom ID here
+                        ),
+                        teamData
+                    );
+
+                    // Step 2: Update leaguezones (unchanged)
+                    const zoneDocName = zone.replace(/\s+/g, '-').toLowerCase();
+                    await window.firebase.setDoc(
+                        window.firebase.doc(
+                            window.firebase.db, 
+                            "leaguezones", 
+                            zoneDocName
+                        ),
+                        {
+                            teams: window.firebase.arrayUnion(teamName),
+                            lastUpdated: window.firebase.serverTimestamp()
+                        },
+                        { merge: true }
+                    );
+
+                    // Show team ID
+                    teamIdElement.textContent = teamID;
+                    teamIdDisplay.style.display = 'block';
+                    
+                    // Reset form
+                    form.reset();
+                    document.getElementById('team-ward').disabled = true;
+                    document.getElementById('team-ward').innerHTML = '<option value="">-- Select ward --</option>';
+                    document.getElementById('team-zone').value = '';
+                    
+                } catch (error) {
+                    console.error("Registration error:", error);
+                    alert(`Registration failed: ${error.message}`);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

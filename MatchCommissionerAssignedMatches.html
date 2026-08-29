@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Match Assignments | Gombe Football</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #014421, #3a7d44);
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .profile-pic {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #014421;
+      overflow: hidden;
+    }
+    .profile-text h1 {
+      color: #014421;
+      margin-bottom: 5px;
+    }
+    .profile-text p {
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .back-btn {
+      background: #014421;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .back-btn:hover {
+      background: #01311a;
+    }
+    .main-content {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .section-title {
+      color: #014421;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .season-input-group {
+      margin-bottom: 20px;
+    }
+    .season-input-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #014421;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .season-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    .season-input:focus {
+      border-color: #014421;
+      box-shadow: 0 0 0 3px rgba(1, 68, 33, 0.2);
+      outline: none;
+    }
+    .input-hint {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .search-btn {
+      background: #014421;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+    .search-btn:hover {
+      background: #01311a;
+      transform: translateY(-2px);
+    }
+    .fixture-container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e0e0e0;
+      margin-bottom: 40px;
+      position: relative;
+    }
+    .matchday-section {
+      margin-bottom: 30px;
+    }
+    .matchday-header {
+      color: #014421;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .fixture-list {
+      display: grid;
+      gap: 20px;
+    }
+    .fixture-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 25px;
+      border: 1px solid #e0e0e0;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .fixture-card:hover {
+      background: #f0f7ff;
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    .fixture-card.completed {
+      border-left: 4px solid #dc3545;
+    }
+    .fixture-card.upcoming {
+      border-left: 4px solid #ffcc00;
+    }
+    .fixture-card.live {
+      border-left: 4px solid #28a745;
+    }
+    .fixture-teams {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 15px;
+      font-size: 1.2rem;
+    }
+    .fixture-team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .team-name {
+      text-align: center;
+      font-weight: 700;
+    }
+    .team-name.home-team {
+      color: #014421;
+    }
+    .vs-container {
+      margin: 0 20px;
+      background: white;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-size: 1rem;
+      color: #666;
+      border: 2px solid #e0e0e0;
+      font-weight: 700;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    .fixture-details {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px 15px 0;
+      border-top: 1px solid #e0e0e0;
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #666;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .detail-icon {
+      color: #014421;
+      width: 24px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+    .no-fixtures {
+      text-align: center;
+      padding: 40px 30px;
+      color: #666;
+      font-size: 1.2rem;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px 30px;
+      color: #014421;
+    }
+    .loading i {
+      font-size: 2.5rem;
+      animation: spin 1.5s infinite linear;
+      margin-bottom: 15px;
+    }
+    .match-status {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 6px 12px;
+      border-radius: 0 12px 0 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+    }
+    .match-status.completed {
+      background: #dc3545;
+    }
+    .match-status.upcoming {
+      background: #ffcc00;
+      color: #333;
+    }
+    .match-status.live {
+      background: #28a745;
+    }
+    .status-message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .status-message.success {
+      background-color: rgba(40, 167, 69, 0.1);
+      color: #28a745;
+      border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+    .status-message.error {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+      border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      .profile-info {
+        flex-direction: column;
+        text-align: center;
+      }
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .fixture-teams {
+        flex-direction: column;
+        gap: 20px;
+      }
+      .fixture-team {
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+      }
+      .vs-container {
+        margin: 10px 0;
+        padding: 6px 15px;
+      }
+      .fixture-details {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="profile-info">
+        <div class="profile-pic" id="profile-pic">
+          <i class="fas fa-user-tie"></i>
+        </div>
+        <div class="profile-text">
+          <h1 id="commissioner-name">Loading...</h1>
+          <p><i class="fas fa-id-card"></i> <span id="commissioner-psn">PSN: -</span></p>
+          <p><i class="fas fa-map-marker-alt"></i> <span id="commissioner-zone">Zone: -</span></p>
+        </div>
+      </div>
+      <a href="MatchCommissionerProfile.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Profile
+      </a>
+    </header>
+    
+    <div class="main-content">
+      <h2 class="section-title"><i class="fas fa-list-check"></i> My Match Assignments</h2>
+      
+      <div class="season-input-group">
+        <label for="seasonInput" class="season-input-label">
+          <i class="fas fa-calendar-alt"></i> Enter Season
+        </label>
+        <input 
+          type="text" 
+          id="seasonInput" 
+          class="season-input" 
+          placeholder="Format: SeasonYYYY-YY (e.g., Season2024-25)"
+          value="Season2025-26"
+        >
+        <span class="input-hint">Enter the season in the format shown above</span>
+      </div>
+      
+      <button id="searchBtn" class="search-btn">
+        <i class="fas fa-search"></i> Load Matches
+      </button>
+      
+      <div id="statusMessage" class="status-message"></div>
+      
+      <div class="fixture-container">
+        <div class="fixture-list" id="fixtureList">
+          <div class="loading">
+            <i class="fas fa-calendar-alt"></i>
+            <p>Enter a season to view your assigned matches</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    const commissionerNameElement = document.getElementById('commissioner-name');
+    const commissionerPsnElement = document.getElementById('commissioner-psn');
+    const commissionerZoneElement = document.getElementById('commissioner-zone');
+    const profilePicElement = document.getElementById('profile-pic');
+    const fixtureList = document.getElementById('fixtureList');
+    const seasonInputElement = document.getElementById('seasonInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const statusMessage = document.getElementById('statusMessage');
+    
+    const commissionerPsn = localStorage.getItem("commissionerPSN");
+    const commissionerName = localStorage.getItem("commissionerName");
+    const commissionerZone = localStorage.getItem("commissionerZone");
+    
+    function validateSeasonFormat(season) {
+      const pattern = /^Season\d{4}-\d{2}$/;
+      return pattern.test(season);
+    }
+    
+    function showStatus(message, type = "") {
+      statusMessage.textContent = message;
+      statusMessage.className = "status-message";
+      if (type) statusMessage.classList.add(type);
+      setTimeout(() => {
+        if (statusMessage.textContent === message) {
+          statusMessage.textContent = '';
+          statusMessage.className = 'status-message';
+        }
+      }, 5000);
+    }
+    
+    function loadingTemplate(message = "Loading matches...") {
+      return `<div class="loading"><i class="fas fa-spinner"></i><p>${message}</p></div>`;
+    }
+    
+    function noMatchesTemplate(season) {
+      return `<div class="no-fixtures"><i class="fas fa-calendar-times"></i><p>No matches assigned to you for ${season}</p></div>`;
+    }
+    
+    function errorTemplate(error) {
+      return `<div class="no-fixtures"><i class="fas fa-exclamation-triangle"></i><p>Error loading matches. Please try again.</p><p>${error.message}</p></div>`;
+    }
+    
+    function formatMatchDate(date) {
+      if (!date) return 'Date not set';
+      const matchDate = date.toDate ? date.toDate() : new Date(date);
+      return matchDate.toLocaleDateString('en-GB', {
+        weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+      });
+    }
+    
+    function formatKickoffTime(date) {
+      if (!date) return 'Time not set';
+      const matchDate = date.toDate ? date.toDate() : new Date(date);
+      return matchDate.toLocaleTimeString('en-GB', {
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+    
+ async function createMatchCard(match) {
+  const card = document.createElement('div');
+  
+  // Use matchCompleted instead of status
+  const isCompleted = match.matchCompleted === true;
+  const isLive = match.status === 'live'; // Keep live status if needed
+  const statusText = isCompleted ? 'Completed' : 
+                    isLive ? 'Live' : 'Upcoming';
+  
+  // Get the actual home and away team names from assignment
+  const homeTeamName = match.homeTeam || (match.venue === 'home' ? match.path?.split('/')[1] : match.opponent);
+  const awayTeamName = match.awayTeam || (match.venue === 'away' ? match.path?.split('/')[1] : match.opponent);
+  
+  // Get scores directly - no need to flip based on perspective
+  // The match object should have the correct scores for home and away
+  const homeScore = isCompleted ? (match.homeScore !== undefined ? match.homeScore : match.goalScored || 0) : null;
+  const awayScore = isCompleted ? (match.awayScore !== undefined ? match.awayScore : match.goalConceded || 0) : null;
+
+  // Update class based on completion status
+  card.className = `fixture-card ${isCompleted ? 'completed' : (isLive ? 'live' : 'upcoming')}`;
+  
+  card.innerHTML = `
+    <div class="match-status ${isCompleted ? 'completed' : (isLive ? 'live' : 'upcoming')}">${statusText}</div>
+    <div class="fixture-teams">
+      <div class="fixture-team">
+        <div class="team-name home-team">${homeTeamName}</div>
+        <div class="team-badge"><i class="fas fa-home"></i></div>
+      </div>
+      <div class="vs-container">
+        ${isCompleted ? 
+          `${homeScore} - ${awayScore}` : 
+          'VS'}
+      </div>
+      <div class="fixture-team">
+        <div class="team-name">${awayTeamName}</div>
+        <div class="team-badge"><i class="fas fa-route"></i></div>
+      </div>
+    </div>
+    <div class="fixture-details">
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-calendar-day"></i></div>
+        <div>${formatMatchDate(match.date)}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-hashtag"></i></div>
+        <div>Matchday ${match.matchday || 'N/A'}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+        <div>${match.venue ? match.venue.charAt(0).toUpperCase() + match.venue.slice(1) : 'TBD'}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-clock"></i></div>
+        <div>Kick-off: ${formatKickoffTime(match.date)}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-trophy"></i></div>
+        <div>${match.isChampionship ? 'Championship' : 'League'}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-icon"><i class="fas fa-map"></i></div>
+        <div>Zone: ${match.zone || commissionerZone || 'N/A'}</div>
+      </div>
+    </div>
+  `;
+  
+  card.addEventListener('click', () => {
+    if (isCompleted) {
+      showStatus("Completed matches cannot be edited", "error");
+      return;
+    }
+    localStorage.setItem("currentMatchId", match.matchId || '');
+    localStorage.setItem("currentMatchPath", match.path || '');
+	localStorage.setItem("currentMatchDivision", match.division || "");
+    localStorage.setItem("currentMatchZoneId", match.zoneId || "")
+	localStorage.setItem("currentMatchVenue", match.venue || "")
+	localStorage.setItem("currentMatchDate", match.date || "")
+	localStorage.setItem("currentMatchDay", match.matchday || "")
+    window.location.href = "MatchCommissionerDetails.html";
+  });
+  
+  return card;
+}
+    async function loadAssignedMatches() {
+      const season = seasonInputElement.value.trim();
+      if (!season) {
+        showStatus("Please enter a season", "error");
+        return;
+      }
+      if (!validateSeasonFormat(season)) {
+        showStatus("Invalid season format. Please use SeasonYYYY-YY (e.g., Season2024-25)", "error");
+        return;
+      }
+      
+      try {
+        fixtureList.innerHTML = loadingTemplate();
+        const assignmentsRef = db.collection('GombeCommissionerAssignments')
+          .doc(commissionerPsn)
+          .collection(season)
+          .doc('assignments');
+        const assignmentsDoc = await assignmentsRef.get();
+        
+        if (!assignmentsDoc.exists || !assignmentsDoc.data().matches?.length) {
+          showStatus(`No matches assigned to you for ${season}`, "error");
+          fixtureList.innerHTML = noMatchesTemplate(season);
+          return;
+        }
+        
+        const assignments = assignmentsDoc.data().matches;
+        const matches = await Promise.all(
+          assignments.map(async (assignment) => {
+            try {
+              const [homeDoc, awayDoc] = await Promise.all([
+                db.collection('GombeSeason').doc(assignment.homeTeam).collection(season).doc(assignment.matchId).get(),
+                db.collection('GombeSeason').doc(assignment.awayTeam).collection(season).doc(assignment.matchId).get()
+              ]);
+              const matchDoc = homeDoc.exists ? homeDoc : awayDoc;
+              const isHomeRecord = homeDoc.exists;
+             if (matchDoc.exists) {
+  return {
+    ...matchDoc.data(),
+    matchId: assignment.matchId,
+    path: matchDoc.ref.path,
+    venue: isHomeRecord ? 'home' : 'away',
+    homeTeam: assignment.homeTeam,  // Add this
+    awayTeam: assignment.awayTeam,  // Add this
+    opponent: isHomeRecord ? assignment.awayTeam : assignment.homeTeam
+  };
+}
+              return null;
+            } catch (error) {
+              console.error(`Error loading match ${assignment.matchId}:`, error);
+              return null;
+            }
+          })
+        );
+        
+        const validMatches = matches.filter(match => match !== null).sort((a, b) => {
+          const dateA = a.date?.seconds || 0;
+          const dateB = b.date?.seconds || 0;
+          return dateA - dateB;
+        });
+        
+        const matchesByMatchday = {};
+        validMatches.forEach(match => {
+          const matchday = match.matchday || 'Unknown';
+          if (!matchesByMatchday[matchday]) matchesByMatchday[matchday] = [];
+          matchesByMatchday[matchday].push(match);
+        });
+        
+        fixtureList.innerHTML = '';
+        if (Object.keys(matchesByMatchday).length === 0) {
+          fixtureList.innerHTML = noMatchesTemplate(season);
+          showStatus("No valid matches found", "error");
+          return;
+        }
+        
+        for (const [matchday, dayMatches] of Object.entries(matchesByMatchday)) {
+          const matchdaySection = document.createElement('div');
+          matchdaySection.className = 'matchday-section';
+          matchdaySection.innerHTML = `<h3 class="matchday-header">Matchday ${matchday}</h3><div class="fixture-list"></div>`;
+          const dayFixtureList = matchdaySection.querySelector('.fixture-list');
+          for (const match of dayMatches) {
+            dayFixtureList.appendChild(await createMatchCard(match));
+          }
+          fixtureList.appendChild(matchdaySection);
+        }
+        
+        showStatus(`Successfully loaded ${validMatches.length} matches for ${season}`, "success");
+      } catch (error) {
+        console.error("Error loading assigned matches:", error);
+        fixtureList.innerHTML = errorTemplate(error);
+        showStatus(`Error: ${error.message}`, "error");
+      }
+    }
+    
+    function initPage() {
+      if (!commissionerPsn) {
+        window.location.href = "MatchCommissionerLogin.html";
+        return;
+      }
+      commissionerNameElement.textContent = commissionerName || "Commissioner";
+      commissionerPsnElement.textContent = `PSN: ${commissionerPsn}`;
+      commissionerZoneElement.textContent = `Zone: ${commissionerZone || 'N/A'}`;
+      db.collection("MatchCommissioners").doc(commissionerPsn).get().then((doc) => {
+        if (doc.exists && doc.data().imageUrl) {
+          profilePicElement.innerHTML = `<img src="${doc.data().imageUrl}" alt="Profile Picture">`;
+        }
+      });
+      searchBtn.addEventListener('click', loadAssignedMatches);
+      seasonInputElement.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') loadAssignedMatches();
+      });
+      setTimeout(loadAssignedMatches, 500);
+    }
+    
+    initPage();
+  </script>
+</body>
+</html>

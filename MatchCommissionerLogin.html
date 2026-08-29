@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commissioner Login | Gombe Football</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #014421;
+            --secondary: #3a7d44;
+            --accent: #fdbb2d;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .login-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: 0;
+        }
+        
+        .login-header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .login-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+        
+        .login-body {
+            padding: 40px 30px;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .form-group {
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            background: var(--light);
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(58, 125, 68, 0.15);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 42px;
+            cursor: pointer;
+            color: var(--dark);
+            opacity: 0.7;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: -15px;
+            margin-bottom: 10px;
+        }
+        
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+        
+        .remember-me label {
+            font-weight: 500;
+            color: var(--dark);
+            cursor: pointer;
+        }
+        
+        .btn {
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--secondary);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .login-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: fadeIn 0.5s ease-in;
+            display: none;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid var(--success);
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid var(--danger);
+        }
+        
+        .status.info {
+            background: #cce5ff;
+            color: #004085;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--accent);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .option-link {
+            color: var(--secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .option-link:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                border-radius: 15px;
+            }
+            
+            .login-header {
+                padding: 30px 20px;
+            }
+            
+            .login-body {
+                padding: 30px 20px;
+            }
+            
+            .login-footer {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-header-content">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fas fa-whistle"></i>
+                    </div>
+                </div>
+                <h1><i class="fas fa-user-shield"></i> Commissioner Login</h1>
+                <p>Access your match commissioner dashboard</p>
+            </div>
+        </div>
+        
+        <div class="login-body">
+            <div id="status" class="status"></div>
+            
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="your.email@example.com" autocomplete="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password" autocomplete="current-password" required>
+                    <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                </div>
+                
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember me</label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+            
+            <div class="options-container">
+                <a href="MatchCommissionerAccess.html" class="option-link">
+                    <i class="fas fa-user-plus"></i> Don't have an account? Register here
+                </a>
+                <a href="#" class="option-link" id="forgotPasswordLink">
+                    <i class="fas fa-key"></i> Forgot your password?
+                </a>
+                <a href="index.html" class="option-link">
+                    <i class="fas fa-arrow-left"></i> Back to Homepage
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const statusBox = document.getElementById('status');
+        const rememberMe = document.getElementById('rememberMe');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        
+        // Toggle password visibility
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+        
+        // Handle login form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!email || !password) {
+                showStatus('⛔ Please enter both email and password', 'error');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showStatus('⛔ Please enter a valid email address', 'error');
+                return;
+            }
+            
+            showStatus('<div class="spinner"></div> Signing you in...', 'info');
+            loginBtn.disabled = true;
+            
+            try {
+                // Set auth persistence based on remember me
+                const persistence = rememberMe.checked ? 
+                    firebase.auth.Auth.Persistence.LOCAL : 
+                    firebase.auth.Auth.Persistence.SESSION;
+                
+                await auth.setPersistence(persistence);
+                
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                if (!user.emailVerified) {
+                    showStatus('⚠️ Please verify your email before logging in', 'error');
+                    loginBtn.disabled = false;
+                    return;
+                }
+                
+                // Get commissioner data
+                const commissionerQuery = await db.collection("MatchCommissioners")
+                    .where("email", "==", email)
+                    .limit(1)
+                    .get();
+                
+                if (commissionerQuery.empty) {
+                    showStatus('❌ Commissioner account not found', 'error');
+                    loginBtn.disabled = false;
+                    return;
+                }
+                
+                const commissionerDoc = commissionerQuery.docs[0];
+                const commissionerData = commissionerDoc.data();
+                
+                // Store in localStorage for consistent access
+                localStorage.setItem("commissionerPSN", commissionerDoc.id);
+                localStorage.setItem("commissionerName", commissionerData.name || '');
+                localStorage.setItem("commissionerZone", commissionerData.zone || '');
+                localStorage.setItem("commissionerEmail", commissionerData.email || '');
+                localStorage.setItem("commissionerPhone", commissionerData.phone || '');
+                
+                showStatus('✅ Login successful! Redirecting...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'MatchCommissionerProfile.html';
+                }, 1500);
+                
+            } catch (error) {
+                console.error("Login error:", error);
+                
+                let errorMessage = "Login failed";
+                if (error.code === 'auth/invalid-credential') {
+                    errorMessage = "Invalid email or password";
+                } else if (error.code === 'auth/user-not-found') {
+                    errorMessage = "No account found with this email";
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = "Incorrect password";
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = "Too many failed attempts. Please try again later";
+                } else {
+                    errorMessage = error.message;
+                }
+                
+                showStatus(`❌ ${errorMessage}`, 'error');
+                loginBtn.disabled = false;
+            }
+        });
+        
+        // Handle forgot password
+        forgotPasswordLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            
+            if (!email) {
+                showStatus('⛔ Please enter your email address first', 'error');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showStatus('⛔ Please enter a valid email address', 'error');
+                return;
+            }
+            
+            showStatus('<div class="spinner"></div> Sending password reset email...', 'info');
+            
+            try {
+                await auth.sendPasswordResetEmail(email);
+                showStatus('✅ Password reset email sent! Check your inbox', 'success');
+            } catch (error) {
+                console.error("Password reset error:", error);
+                showStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        });
+        
+        // Helper functions
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function showStatus(message, type) {
+            statusBox.style.display = 'flex';
+            statusBox.innerHTML = message;
+            statusBox.className = 'status';
+            
+            if (type) {
+                statusBox.classList.add(type);
+            }
+        }
+        
+        // Check if user is already logged in
+        auth.onAuthStateChanged((user) => {
+            if (user && user.emailVerified) {
+                showStatus('🔍 Checking your session...', 'info');
+                
+                // Get commissioner data and redirect if already logged in
+                db.collection("MatchCommissioners")
+                    .where("email", "==", user.email)
+                    .limit(1)
+                    .get()
+                    .then((querySnapshot) => {
+                        if (!querySnapshot.empty) {
+                            const commissionerDoc = querySnapshot.docs[0];
+                            const commissionerData = commissionerDoc.data();
+                            
+                            // Store in localStorage
+                            localStorage.setItem("commissionerPSN", commissionerDoc.id);
+                            localStorage.setItem("commissionerName", commissionerData.name || '');
+                            localStorage.setItem("commissionerZone", commissionerData.zone || '');
+                            localStorage.setItem("commissionerEmail", commissionerData.email || '');
+                            
+                            window.location.href = 'MatchCommissionerProfile.html';
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error checking commissioner data:", error);
+                    });
+            }
+        });
+    </script>
+</body>
+</html>

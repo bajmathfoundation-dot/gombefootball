@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Register Commissioner | Gombe Football</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+ 
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      width: 400px;
+    }
+    h2 {
+      color: #014421;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+    input[readonly] {
+      background-color: #f1f1f1;
+    }
+    button {
+      background: #014421;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage-compat.js"></script>
+</head>
+<body>
+  <div class="card">
+    <h2>Register Commissioner</h2>
+    <input type="text" id="name" placeholder="Full Name" />
+    <input type="tel" id="phone" placeholder="+234..." />
+
+    <select id="lga">
+      <option value="">-- Select LGA --</option>
+      <option>Akko</option>
+      <option>Gombe</option>
+      <option>Kwami</option>
+      <option>Billiri</option>
+      <option>Shongom</option>
+      <option>Kaltungo</option>
+      <option>Nafada</option>
+      <option>Dukku</option>
+      <option>Funakaye</option>
+      <option>Yamaltu Deba</option>
+      <option>Balanga</option>
+    </select>
+
+    <input type="text" id="zone" placeholder="Zone (auto-filled)" readonly />
+    <input type="file" id="imageFile" accept="image/*" />
+    <button id="registerBtn" onclick="registerCommissioner()">Register</button>
+  </div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+    authDomain: "gombefootball.firebaseapp.com",
+    projectId: "gombefootball"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
+  const lgaToZoneMap = {
+    "Akko": "Central Zone",
+    "Gombe": "Central Zone",
+    "Kwami": "Central Zone",
+    "Billiri": "Southern Zone",
+    "Shongom": "Southern Zone",
+    "Kaltungo": "Southern Zone",
+    "Nafada": "Northern Zone",
+    "Dukku": "Northern Zone",
+    "Funakaye": "Northern Zone",
+    "Yamaltu Deba": "Eastern Zone",
+    "Balanga": "Eastern Zone"
+  };
+
+  document.getElementById("lga").addEventListener("change", function () {
+    const lga = this.value;
+    document.getElementById("zone").value = lgaToZoneMap[lga] || "";
+  });
+
+  async function registerCommissioner() {
+    const registerBtn = document.getElementById("registerBtn");
+    registerBtn.disabled = true;
+    registerBtn.textContent = "Registering...";
+
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const lga = document.getElementById("lga").value;
+    const zone = document.getElementById("zone").value;
+    const imageFile = document.getElementById("imageFile").files[0];
+    let imageUrl = "";
+
+    if (!name || !phone || !lga || !zone) {
+      alert("Please fill in all required fields.");
+      registerBtn.disabled = false;
+      registerBtn.textContent = "Register";
+      return;
+    }
+
+    try {
+      // Upload image if provided
+      if (imageFile) {
+        const storageRef = storage.ref(`commissionerImages/${Date.now()}_${imageFile.name}`);
+        const snapshot = await storageRef.put(imageFile);
+        imageUrl = await snapshot.ref.getDownloadURL();
+      }
+
+      // Get current counter and generate PSN
+      const counterRef = db.collection("counters").doc("commissionerCount");
+      const counterDoc = await counterRef.get();
+      let currentCount = 1;
+      if (counterDoc.exists) {
+        currentCount = counterDoc.data().value + 1;
+      }
+      const psn = "C" + String(currentCount).padStart(3, "0");
+
+      // Build payload
+      const commissionerData = {
+        psn,
+        name,
+        phone,
+        lga,
+        zone,
+        league: null,
+        password: null,
+        imageUrl,
+        createdAt: new Date().toISOString()
+      };
+
+      await db.collection("MatchCommissioners").doc(psn).set(commissionerData);
+      await counterRef.set({ value: currentCount });
+
+      alert(`✅ Commissioner registered! PSN: ${psn}`);
+      window.location.reload();
+    } catch (err) {
+      console.error("❌ Registration failed:", err);
+      alert("Something went wrong during registration.");
+      registerBtn.disabled = false;
+      registerBtn.textContent = "Register";
+    }
+  }
+</script>
+</body>
+</html>

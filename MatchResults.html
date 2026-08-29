@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View Results | Gombe Football</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #1a2a6c;
+      --secondary: #3494e6;
+      --accent: #1a6cff;
+      --light: #ffffff;
+      --dark: #0c1d3d;
+      --text: #333333;
+      --text-light: #666666;
+      --border: #e0e0e0;
+      --card-bg: #f8fafc;
+      --highlight: #f0f7ff;
+      --success: #27ae60;
+      --error: #e74c3c;
+      --warning: #f39c12;
+      --win: #2ecc71;
+      --draw: #f1c40f;
+      --loss: #e74c3c;
+      --league: #1a2a6c;
+      --championscup: #8e44ad;
+      --facup: #e74c3c;
+      --worriorscup: #3498db;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e6f0ff 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      position: relative;
+      z-index: 10;
+    }
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .logo i {
+      color: var(--light);
+      animation: pulse 2s infinite;
+    }
+    
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .team-banner {
+      text-align: center;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      max-width: 800px;
+      border: 1px solid var(--border);
+    }
+    
+    .team-banner strong {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.2em;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .season-controls {
+      margin: 30px auto;
+      padding: 25px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--border);
+      max-width: 800px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .season-input, .competition-select {
+      width: 100%;
+      padding: 14px 20px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      background: #fff;
+    }
+    
+    .season-input:focus, .competition-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(26, 108, 255, 0.2);
+      outline: none;
+    }
+    
+    .input-hint {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      display: block;
+    }
+    
+    .search-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 14px 30px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s;
+      width: 100%;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 10px rgba(26, 108, 255, 0.3);
+    }
+    
+    .search-btn:hover {
+      background: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(26, 42, 108, 0.3);
+    }
+    
+    .search-btn:disabled {
+      background: var(--border);
+      color: var(--text-light);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .search-btn.searching {
+      background: #f39c12;
+    }
+    
+    .status-message {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    
+    .status-message.success {
+      background-color: rgba(39, 174, 96, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(39, 174, 96, 0.3);
+    }
+    
+    .status-message.error {
+      background-color: rgba(231, 76, 60, 0.1);
+      color: var(--error);
+      border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+    
+    .status-message.info {
+      background-color: rgba(52, 152, 219, 0.1);
+      color: #3498db;
+      border: 1px solid rgba(52, 152, 219, 0.3);
+    }
+    
+    .results-container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--border);
+      margin-bottom: 40px;
+      position: relative;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .section-title {
+      color: var(--primary);
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--border);
+    }
+    
+    .season-title {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    
+    .results-list {
+      display: grid;
+      gap: 20px;
+    }
+    
+    .result-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 25px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .result-card:hover {
+      background: var(--highlight);
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    
+    .result-card.completed {
+      border-left: 4px solid var(--success);
+    }
+    
+    .result-card.league {
+      border-left: 4px solid var(--league);
+    }
+    
+    .result-card.championscup {
+      border-left: 4px solid var(--championscup);
+    }
+    
+    .result-card.facup {
+      border-left: 4px solid var(--facup);
+    }
+    
+    .result-card.worriorscup {
+      border-left: 4px solid var(--worriorscup);
+    }
+    
+    .result-teams {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 15px;
+      font-size: 1.2rem;
+    }
+    
+    .result-team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    
+    .team-name {
+      text-align: center;
+      font-weight: 700;
+    }
+    
+    .team-name.home-team {
+      color: var(--primary);
+    }
+    
+    .score-container {
+      margin: 0 20px;
+      background: var(--light);
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-size: 1.5rem;
+      color: var(--primary);
+      border: 2px solid var(--border);
+      font-weight: 700;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      min-width: 100px;
+      text-align: center;
+    }
+    
+    .result-details {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px 15px 0;
+      border-top: 1px solid var(--border);
+      margin-top: 20px;
+      font-size: 1rem;
+      color: var(--text-light);
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .detail-icon {
+      color: var(--primary);
+      width: 24px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+    
+    .no-results {
+      text-align: center;
+      padding: 40px 30px;
+      color: var(--text-light);
+      font-size: 1.2rem;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px 30px;
+      color: var(--primary);
+    }
+    
+    .loading i {
+      font-size: 2.5rem;
+      animation: spin 1.5s infinite linear;
+      margin-bottom: 15px;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      padding: 25px;
+      color: var(--text-light);
+      font-size: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    
+    .match-status {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 6px 12px;
+      border-radius: 0 12px 0 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .match-status.completed {
+      background: var(--success);
+    }
+    
+    .result-indicator {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 6px 12px;
+      border-radius: 0 0 12px 0;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .win { background: var(--win); }
+    .draw { background: var(--draw); }
+    .loss { background: var(--loss); }
+    
+    .competition-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .competition-badge.league {
+      background: var(--league);
+    }
+    
+    .competition-badge.championscup {
+      background: var(--championscup);
+    }
+    
+    .competition-badge.facup {
+      background: var(--facup);
+    }
+    
+    .competition-badge.worriorscup {
+      background: var(--worriorscup);
+    }
+    
+    .summary-stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 20px;
+      padding: 15px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      max-width: 800px;
+      margin: 0 auto 30px;
+    }
+    
+    .stat-card {
+      text-align: center;
+      padding: 15px 25px;
+      background: var(--card-bg);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      min-width: 120px;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 5px 0;
+    }
+    
+    .stat-label {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    
+    /* Animations */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .result-teams {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .result-team {
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .score-container {
+        margin: 10px 0;
+        padding: 6px 15px;
+      }
+      
+      .result-details {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .season-controls {
+        padding: 20px;
+      }
+      
+      .section-title {
+        font-size: 1.4rem;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .summary-stats {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <i class="fas fa-futbol"></i>
+        <span>Gombe Football</span>
+      </div>
+      <h1>View Results</h1>
+      <button class="back-btn" onclick="goToProfile()">
+        <i class="fas fa-arrow-left"></i> Back to Profile
+      </button>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="team-banner" id="teamBanner">
+      Loading team information...
+    </div>
+
+    <div class="season-controls">
+      <div class="form-group">
+        <label for="seasonInput"><i class="fas fa-calendar-alt"></i> Enter Season</label>
+        <input 
+          type="text" 
+          id="seasonInput" 
+          class="season-input" 
+          placeholder="Format: SeasonYYYY-YY (e.g., Season2024-25)"
+          autocomplete="off"
+          value="Season2024-25"
+        >
+        <span class="input-hint">Enter the season in the format shown above</span>
+      </div>
+      
+      <div class="form-group">
+        <label for="competitionSelect"><i class="fas fa-trophy"></i> Competition</label>
+        <select id="competitionSelect" class="competition-select">
+          <option value="all">All Competitions</option>
+          <option value="league">League</option>
+          <option value="championscup">Champions Cup</option>
+          <option value="facup">FA Cup</option>
+          <option value="worriorscup">Warriors Cup</option>
+        </select>
+      </div>
+      
+      <button id="searchBtn" class="search-btn">
+        <i class="fas fa-search"></i> Load Results
+      </button>
+      
+      <div id="statusMessage" class="status-message"></div>
+    </div>
+
+    <div class="summary-stats" id="summaryStats">
+      <!-- Stats will be loaded here -->
+    </div>
+
+    <div class="results-container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-calendar-alt"></i> 
+          <span id="seasonTitle">Season Results</span>
+        </h2>
+      </div>
+      
+      <div id="resultsList" class="results-list">
+        <div class="loading">
+          <i class="fas fa-calendar-alt"></i>
+          <p>Enter a season to view results</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    Gombe Football Management System © 2025
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const coachPSN = urlParams.get('coachId');
+    const teamId = urlParams.get('teamId');
+
+    // DOM elements
+    const teamBanner = document.getElementById("teamBanner");
+    const seasonInput = document.getElementById("seasonInput");
+    const competitionSelect = document.getElementById("competitionSelect");
+    const searchBtn = document.getElementById("searchBtn");
+    const statusMessage = document.getElementById("statusMessage");
+    const resultsList = document.getElementById("resultsList");
+    const seasonTitle = document.getElementById("seasonTitle");
+    const summaryStats = document.getElementById("summaryStats");
+
+    let teamName = '';
+    let teamData = {};
+
+    // Check authentication and load data
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.href = "CoachLogin.html";
+      } else {
+        loadTeamData();
+      }
+    });
+
+    // Load team data
+    async function loadTeamData() {
+      try {
+        // Get coach data first to confirm team assignment
+        const coachDoc = await db.collection("GombeCoaches").doc(coachPSN).get();
+        if (!coachDoc.exists) {
+          throw new Error("Coach not found");
+        }
+
+        const coachData = coachDoc.data();
+        teamName = coachData.teamName;
+        
+        if (!teamName) {
+          throw new Error("No team assigned to this coach");
+        }
+
+        // Update UI
+        teamBanner.innerHTML = `Viewing results for: <strong>${teamName}</strong>`;
+
+        // Get team data (using teamId if available, otherwise fall back to name)
+        let teamDoc;
+        if (teamId) {
+          teamDoc = await db.collection("GombeTeams").doc(teamId).get();
+        } else {
+          const querySnapshot = await db.collection("GombeTeams")
+            .where("name", "==", teamName)
+            .limit(1)
+            .get();
+          
+          if (!querySnapshot.empty) {
+            teamDoc = querySnapshot.docs[0];
+          }
+        }
+
+        if (teamDoc && teamDoc.exists) {
+          teamData = teamDoc.data();
+          // Load default season results
+          setTimeout(loadResults, 500);
+        } else {
+          throw new Error("Team data not found");
+        }
+      } catch (error) {
+        console.error("Error loading team data:", error);
+        teamBanner.innerHTML = "⚠️ Error loading team information";
+        resultsList.innerHTML = `
+          <div class="no-results">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // Validate season format
+    function validateSeasonFormat(season) {
+      const pattern = /^Season\d{4}-\d{2}$/;
+      return pattern.test(season);
+    }
+
+    // Format competition name for display
+    function formatCompetitionName(type) {
+      const names = {
+        'worriorscup': 'Warriors Cup',
+        'championscup': 'Champions Cup', 
+        'facup': 'FA Cup',
+        'league': 'League'
+      };
+      return names[type.toLowerCase()] || type;
+    }
+
+    // Calculate and display summary statistics
+    function displaySummaryStats(matches) {
+      let wins = 0;
+      let draws = 0;
+      let losses = 0;
+      let goalsFor = 0;
+      let goalsAgainst = 0;
+      
+      matches.forEach(match => {
+        const scored = match.goalsScored ?? 0;
+        const conceded = match.goalsConceded ?? 0;
+        
+        goalsFor += scored;
+        goalsAgainst += conceded;
+        
+        if (scored > conceded) {
+          wins++;
+        } else if (scored < conceded) {
+          losses++;
+        } else {
+          draws++;
+        }
+      });
+      
+      const goalDifference = goalsFor - goalsAgainst;
+      const played = matches.length;
+      
+      summaryStats.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-value">${played}</div>
+          <div class="stat-label">Matches Played</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${wins}</div>
+          <div class="stat-label">Wins</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${draws}</div>
+          <div class="stat-label">Draws</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${losses}</div>
+          <div class="stat-label">Losses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${goalsFor}:${goalsAgainst}</div>
+          <div class="stat-label">Goals</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${goalDifference > 0 ? '+' : ''}${goalDifference}</div>
+          <div class="stat-label">Goal Difference</div>
+        </div>
+      `;
+    }
+
+    // Load results for entered season
+    async function loadResults() {
+      const season = seasonInput.value.trim();
+      const competitionFilter = competitionSelect.value;
+      
+      if (!season) {
+        showStatus("Please enter a season", "error");
+        return;
+      }
+      
+      if (!validateSeasonFormat(season)) {
+        showStatus("Invalid season format. Please use SeasonYYYY-YY (e.g., Season2024-25)", "error");
+        return;
+      }
+      
+      try {
+        // Show loading state
+        searchBtn.disabled = true;
+        searchBtn.classList.add("searching");
+        resultsList.innerHTML = `
+          <div class="loading">
+            <i class="fas fa-spinner"></i>
+            <p>Loading results for ${season}...</p>
+          </div>
+        `;
+        
+        // 1. Load league matches from main season collection
+        const teamRef = db.collection("GombeSeason").doc(teamName);
+        const seasonRef = teamRef.collection(season);
+        const leagueSnapshot = await seasonRef.orderBy("matchday").get();
+        
+        // 2. Load cup matches from separate collections
+        const cupCollections = {
+          'championscup': db.collection("GombeChampionsCupMatchesDemo").doc(teamName).collection(season),
+          'facup': db.collection("GombeFAcupsMatch").doc(teamName).collection(season),
+          'worriorscup': db.collection("GombeWorriorsCupMatches").doc(teamName).collection(season)
+        };
+        
+        // Get all cup matches in parallel
+        const cupPromises = [
+          cupCollections.championscup.get(),
+          cupCollections.facup.get(),
+          cupCollections.worriorscup.get()
+        ];
+        
+        const [championsCupSnapshot, faCupSnapshot, worriorsCupSnapshot] = await Promise.all(cupPromises);
+        
+        // Combine all matches
+        const allMatches = [];
+        
+        // Process league matches
+        leagueSnapshot.forEach(doc => {
+          const match = doc.data();
+          if (!doc.id.startsWith("_") && match.matchCompleted) {
+            allMatches.push({
+              ...match,
+              id: doc.id,
+              competitionType: 'league'
+            });
+          }
+        });
+        
+        // Process Champions Cup matches
+        championsCupSnapshot.forEach(doc => {
+          const match = doc.data();
+          if (match.matchCompleted) {
+            allMatches.push({
+              ...match,
+              id: doc.id,
+              competitionType: 'championscup'
+            });
+          }
+        });
+        
+        // Process FA Cup matches
+        faCupSnapshot.forEach(doc => {
+          const match = doc.data();
+          if (match.matchCompleted) {
+            allMatches.push({
+              ...match,
+              id: doc.id,
+              competitionType: 'facup'
+            });
+          }
+        });
+        
+        // Process Warriors Cup matches
+        worriorsCupSnapshot.forEach(doc => {
+          const match = doc.data();
+          if (match.matchCompleted) {
+            allMatches.push({
+              ...match,
+              id: doc.id,
+              competitionType: 'worriorscup'
+            });
+          }
+        });
+        
+        // Apply competition filter if not 'all'
+        const filteredMatches = competitionFilter === 'all' 
+          ? allMatches 
+          : allMatches.filter(m => m.competitionType === competitionFilter);
+        
+        if (filteredMatches.length === 0) {
+          showStatus("No matches found for selected filters", "error");
+          resultsList.innerHTML = `
+            <div class="no-results">
+              <i class="fas fa-calendar-times"></i>
+              <p>No matches found</p>
+            </div>
+          `;
+          summaryStats.innerHTML = "";
+          return;
+        }
+        
+        // Sort all matches by date (assuming all have a 'date' field)
+        filteredMatches.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Update season title
+        seasonTitle.innerHTML = `<span class="season-title">${season}</span> Results`;
+        
+        // Display summary statistics
+        displaySummaryStats(filteredMatches);
+        
+        // Display the matches
+        resultsList.innerHTML = "";
+        filteredMatches.forEach(match => {
+          const homeTeam = match.venue === 'home' ? teamName : match.opponent;
+          const awayTeam = match.venue === 'away' ? teamName : match.opponent;
+          const isHomeGame = match.venue === 'home';
+          
+          // Safely get goals with fallback values
+          const goalsScored = match.goalsScored ?? 0;
+          const goalsConceded = match.goalsConceded ?? 0;
+          
+          // Determine goals for display
+          const homeGoals = isHomeGame ? goalsScored : goalsConceded;
+          const awayGoals = isHomeGame ? goalsConceded : goalsScored;
+          
+          const matchDate = match.date ? new Date(match.date) : new Date();
+          const formattedDate = matchDate.toLocaleDateString('en-GB', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+          });
+          
+          // Determine match result indicator
+          let resultClass = "";
+          let resultText = "";
+          if (goalsScored > goalsConceded) {
+            resultClass = "win";
+            resultText = "Win";
+          } else if (goalsScored < goalsConceded) {
+            resultClass = "loss";
+            resultText = "Loss";
+          } else {
+            resultClass = "draw";
+            resultText = "Draw";
+          }
+          
+          // Get competition display name
+          const displayName = formatCompetitionName(match.competitionType);
+          
+          // Determine round display text
+          let roundDisplay = '';
+          if (match.competitionType === 'league') {
+            roundDisplay = `Matchday ${match.matchday}`;
+          } else if (match.round) {
+            roundDisplay = `${displayName} ${match.round}`;
+          } else {
+            roundDisplay = displayName;
+          }
+          
+          const resultCard = document.createElement("div");
+          resultCard.className = `result-card completed ${match.competitionType}`;
+          resultCard.style.animation = "fadeIn 0.5s ease forwards";
+          resultCard.dataset.matchId = match.id;
+          
+          resultCard.innerHTML = `
+            <div class="match-status completed">
+              Completed
+            </div>
+            <div class="result-indicator ${resultClass}">
+              ${resultText}
+            </div>
+            <div class="competition-badge ${match.competitionType}">
+              ${displayName}
+            </div>
+            
+            <div class="result-teams">
+              <div class="result-team">
+                <div class="team-name ${isHomeGame ? 'home-team' : ''}">${homeTeam}</div>
+                <div class="team-badge"><i class="fas ${isHomeGame ? 'fa-home' : 'fa-route'}"></i></div>
+              </div>
+              
+              <div class="score-container">${homeGoals} : ${awayGoals}</div>
+              
+              <div class="result-team">
+                <div class="team-name ${!isHomeGame ? 'home-team' : ''}">${awayTeam}</div>
+                <div class="team-badge"><i class="fas ${!isHomeGame ? 'fa-home' : 'fa-route'}"></i></div>
+              </div>
+            </div>
+            
+            <div class="result-details">
+              <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-calendar-day"></i></div>
+                <div>${formattedDate}</div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-hashtag"></i></div>
+                <div>${roundDisplay}</div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <div>${isHomeGame ? 'Home' : 'Away'}</div>
+              </div>
+              
+              ${match.competitionNotes ? `
+                <div class="detail-item">
+                  <div class="detail-icon"><i class="fas fa-info-circle"></i></div>
+                  <div>${match.competitionNotes}</div>
+                </div>
+              ` : ''}
+              
+              ${goalsScored === undefined || goalsConceded === undefined ? `
+                <div class="detail-item" style="color: var(--error);">
+                  <div class="detail-icon"><i class="fas fa-exclamation-circle"></i></div>
+                  <div>Goal data missing</div>
+                </div>
+              ` : ''}
+            </div>
+          `;
+          resultsList.appendChild(resultCard);
+        });
+        
+        showStatus(`Successfully loaded ${filteredMatches.length} matches`, "success");
+        
+      } catch (error) {
+        console.error("Error loading results:", error);
+        showStatus(`Error loading results: ${error.message}`, "error");
+        resultsList.innerHTML = `
+          <div class="no-results">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Error loading results</p>
+          </div>
+        `;
+        summaryStats.innerHTML = "";
+      } finally {
+        searchBtn.disabled = false;
+        searchBtn.classList.remove("searching");
+      }
+    }
+    
+    // Helper function to show status message
+    function showStatus(message, type = "") {
+      statusMessage.textContent = message;
+      statusMessage.className = "status-message";
+      if (type) {
+        statusMessage.classList.add(type);
+      }
+      
+      // Clear message after 5 seconds
+      setTimeout(() => {
+        if (statusMessage.textContent === message) {
+          statusMessage.textContent = '';
+          statusMessage.className = 'status-message';
+        }
+      }, 5000);
+    }
+    
+    // Go back to profile page
+    function goToProfile() {
+      window.location.href = `CoachProfile.html?coachId=${coachPSN}${teamId ? `&teamId=${teamId}` : ''}`;
+    }
+
+    // Event listeners
+    searchBtn.addEventListener('click', loadResults);
+    
+    // Allow Enter key to trigger search
+    seasonInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        loadResults();
+      }
+    });
+  </script>
+</body>
+</html>

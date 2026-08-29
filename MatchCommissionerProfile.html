@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commissioner Profile | Gombe Football</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #014421, #3a7d44);
+      min-height: 100vh;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .profile-pic {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #014421;
+      overflow: hidden;
+    }
+    
+    .profile-pic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .profile-text h1 {
+      color: #014421;
+      margin-bottom: 5px;
+    }
+    
+    .profile-text p {
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .logout-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .logout-btn:hover {
+      background: #c0392b;
+    }
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 25px;
+    }
+    
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sidebar-menu {
+      list-style: none;
+    }
+    
+    .sidebar-menu li {
+      margin-bottom: 15px;
+    }
+    
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 15px;
+      color: #333;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background: #e3f2fd;
+      color: #014421;
+    }
+    
+    .sidebar-menu i {
+      width: 20px;
+      text-align: center;
+    }
+    
+    /* Dashboard Content */
+    .dashboard {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-title {
+      color: #014421;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    /* Zone Filter */
+    .zone-filter {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .zone-filter label {
+      font-weight: 600;
+    }
+    
+    .zone-filter select {
+      padding: 8px 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: white;
+    }
+    
+    /* Matches List */
+    .matches-list {
+      display: grid;
+      gap: 15px;
+    }
+    
+    .match-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+    
+    .match-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .match-teams {
+      flex: 1;
+    }
+    
+    .team {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    
+    .team-name {
+      font-weight: 600;
+    }
+    
+    .vs {
+      font-weight: bold;
+      margin: 0 10px;
+    }
+    
+    .match-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    
+    .match-date {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .match-status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+    
+    .status-pending {
+      background: #ffcc00;
+      color: #333;
+    }
+    
+    .status-live {
+      background: #28a745;
+      color: white;
+    }
+    
+    .status-completed {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .action-btn {
+      padding: 8px 15px;
+      background: #014421;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .action-btn:hover {
+      background: #01311a;
+    }
+    
+    .no-matches, .loading, .error {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+    }
+    
+    /* Responsive */
+    @media (max-width: 576px) {
+      .match-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .match-meta {
+        align-items: flex-start;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header with Profile Info -->
+    <header>
+      <div class="profile-info">
+        <div class="profile-pic" id="profile-pic">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="profile-text">
+          <h1 id="commissioner-name">Loading...</h1>
+          <p><i class="fas fa-id-card"></i> <span id="commissioner-psn">PSN: -</span></p>
+          <p><i class="fas fa-map-marker-alt"></i> <span id="commissioner-zone">Zone: -</span></p>
+        </div>
+      </div>
+      <button class="logout-btn" id="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </header>
+    
+    <div class="main-content">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <ul class="sidebar-menu">
+          <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+          <li><a href="MatchCommissionerAssignedMatches.html" id="matches-assigned-link"><i class="fas fa-calendar-alt"></i> Matches Assigned</a></li>
+          <li><a href="MatchCommissionerReports.html" id="reports-link"><i class="fas fa-file-alt"></i> Reports</a></li>
+          <li><a href="MatchCommissionerSettings.html" id="settings-link"><i class="fas fa-cog"></i> Settings</a></li>
+          <li><a href="MatchCommissionerAssignedMatchesCups.html" id="cups-matches-assigned-link"><i class="fas fa-trophy"></i> Cups Matches</a></li>
+        </ul>
+      </div>
+      
+      <!-- Dashboard Content -->
+      <div class="dashboard">
+        <h2 class="section-title"><i class="fas fa-tasks"></i> Next Upcoming Match</h2>
+        
+        <!-- Zone Filter (hidden if commissioner has only one zone) -->
+        <div class="zone-filter" id="zone-filter" style="display: none;">
+          <label for="zone-select"><i class="fas fa-filter"></i> Filter by Zone:</label>
+          <select id="zone-select">
+            <option value="all">All Zones</option>
+          </select>
+        </div>
+        
+        <!-- Matches List -->
+        <div class="matches-list" id="matches-list">
+          <div class="loading">Loading next match...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    
+    // DOM Elements
+    const commissionerNameElement = document.getElementById('commissioner-name');
+    const commissionerPsnElement = document.getElementById('commissioner-psn');
+    const commissionerZoneElement = document.getElementById('commissioner-zone');
+    const profilePicElement = document.getElementById('profile-pic');
+    const logoutButton = document.getElementById('logout-btn');
+    const matchesListElement = document.getElementById('matches-list');
+    const zoneFilterElement = document.getElementById('zone-filter');
+    const zoneSelectElement = document.getElementById('zone-select');
+    
+    // Enhanced authentication check
+    function checkAuthState() {
+        return new Promise((resolve, reject) => {
+            auth.onAuthStateChanged((user) => {
+                if (user && user.emailVerified) {
+                    resolve(user);
+                } else {
+                    // If no Firebase auth but we have localStorage data, try to restore session
+                    const commissionerPsn = localStorage.getItem("commissionerPSN");
+                    if (commissionerPsn) {
+                        // Try to silently re-authenticate
+                        auth.currentUser?.getIdToken(true)
+                            .then(() => resolve(auth.currentUser))
+                            .catch(() => {
+                                localStorage.clear();
+                                window.location.href = "MatchCommissionerLogin.html";
+                            });
+                    } else {
+                        localStorage.clear();
+                        window.location.href = "MatchCommissionerLogin.html";
+                    }
+                }
+            });
+        });
+    }
+    
+    // Session maintenance
+    function maintainSession() {
+        // Refresh Firebase token every 30 minutes
+        setInterval(() => {
+            if (auth.currentUser) {
+                auth.currentUser.getIdToken(true);
+            }
+        }, 30 * 60 * 1000);
+        
+        // Check if user is still authenticated every minute
+        setInterval(() => {
+            auth.currentUser?.getIdToken()
+                .catch(() => {
+                    // Token is invalid, redirect to login
+                    localStorage.clear();
+                    window.location.href = "MatchCommissionerLogin.html";
+                });
+        }, 60 * 1000);
+    }
+    
+    // Add click handlers for sidebar links
+    document.addEventListener('DOMContentLoaded', function() {
+      const commissionerPsn = localStorage.getItem("commissionerPSN");
+      
+      // Function to handle navigation with commissioner PSN
+      function navigateWithCommissionerId(url) {
+        if (commissionerPsn) {
+          window.location.href = `${url}?psn=${encodeURIComponent(commissionerPsn)}`;
+        } else {
+          window.location.href = "MatchCommissionerLogin.html";
+        }
+      }
+      
+      // Set up click handlers for each link
+      document.getElementById('matches-assigned-link')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        navigateWithCommissionerId("MatchCommissionerAssignedMatches.html");
+      });
+      
+      document.getElementById('reports-link')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        navigateWithCommissionerId("MatchCommissionerReports.html");
+      });
+      
+      document.getElementById('settings-link')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        navigateWithCommissionerId("MatchCommissionerSettings.html");
+      });
+      
+      document.getElementById('cups-matches-assigned-link')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        navigateWithCommissionerId("MatchCommissionerAssignedMatchesCups.html");
+      });
+    });
+    
+    // Improved profile loading
+    async function loadProfile() {
+        try {
+            await checkAuthState();
+            
+            const commissionerPsn = localStorage.getItem("commissionerPSN");
+            const commissionerName = localStorage.getItem("commissionerName");
+            const commissionerZone = localStorage.getItem("commissionerZone");
+            
+            if (!commissionerPsn) {
+                window.location.href = "MatchCommissionerLogin.html";
+                return;
+            }
+            
+            // Display basic info immediately
+            commissionerNameElement.textContent = commissionerName || "Commissioner";
+            commissionerPsnElement.textContent = `PSN: ${commissionerPsn}`;
+            commissionerZoneElement.textContent = `Zone: ${commissionerZone}`;
+            
+            // Load additional details from Firestore
+            const doc = await db.collection("MatchCommissioners").doc(commissionerPsn).get();
+            
+            if (doc.exists) {
+                const data = doc.data();
+                
+                // Update profile picture if available
+                if (data.imageUrl) {
+                    profilePicElement.innerHTML = `<img src="${data.imageUrl}" alt="Profile Picture">`;
+                }
+                
+                // Update localStorage with latest data
+                localStorage.setItem("commissionerName", data.name || commissionerName);
+                localStorage.setItem("commissionerZone", data.zone || commissionerZone);
+                
+                // Update displayed info
+                commissionerNameElement.textContent = data.name || commissionerName;
+                commissionerZoneElement.textContent = `Zone: ${data.zone || commissionerZone}`;
+                
+                // Load matches
+                if (data.allZonesAccess) {
+                    zoneFilterElement.style.display = "flex";
+                    loadAllZones();
+                } else {
+                    loadNextUpcomingMatch(data.zone || commissionerZone);
+                }
+            }
+        } catch (error) {
+            console.error("Error loading profile:", error);
+            window.location.href = "MatchCommissionerLogin.html";
+        }
+    }
+    
+    // Load the next upcoming match closest to today's date
+    function loadNextUpcomingMatch(zone) {
+      matchesListElement.innerHTML = '<div class="loading">Finding next match...</div>';
+      
+      // Get today's date at midnight to compare with match dates
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Query matches from Firestore filtered by zone and future dates
+      db.collection("Matches")
+        .where("zone", "==", zone)
+        .where("status", "in", ["pending", "live"])
+        .orderBy("date", "asc")
+        .get()
+        .then((querySnapshot) => {
+          matchesListElement.innerHTML = '';
+          
+          if (querySnapshot.empty) {
+            matchesListElement.innerHTML = '<div class="no-matches">No upcoming matches in your zone.</div>';
+            return;
+          }
+          
+          // Find the match closest to today's date
+          let closestMatch = null;
+          let smallestDiff = Infinity;
+          
+          querySnapshot.forEach((doc) => {
+            const match = { id: doc.id, ...doc.data() };
+            
+            // Skip matches without a date
+            if (!match.date) return;
+            
+            const matchDate = match.date.toDate();
+            const timeDiff = matchDate.getTime() - today.getTime();
+            
+            // If the match is today or in the future, and closer than previous matches
+            if (timeDiff >= 0 && timeDiff < smallestDiff) {
+              smallestDiff = timeDiff;
+              closestMatch = match;
+            }
+          });
+          
+          if (closestMatch) {
+            addMatchCard(closestMatch);
+          } else {
+            matchesListElement.innerHTML = '<div class="no-matches">No upcoming matches in your zone.</div>';
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading matches:", error);
+          matchesListElement.innerHTML = '<div class="error">Error loading matches. Please try again.</div>';
+        });
+    }
+    
+    // Load all zones (for commissioners with special access)
+    function loadAllZones() {
+      // Replace with your actual zones
+      const zones = ["Central Zone", "Northern Zone", "Southern Zone", "Eastern Zone"];
+      
+      zones.forEach(zone => {
+        const option = document.createElement('option');
+        option.value = zone;
+        option.textContent = zone;
+        zoneSelectElement.appendChild(option);
+      });
+      
+      // Add event listener for zone filter
+      zoneSelectElement.addEventListener('change', (e) => {
+        if (e.target.value === "all") {
+          // Load all matches (you would implement this)
+          console.log("Loading all matches");
+        } else {
+          loadNextUpcomingMatch(e.target.value);
+        }
+      });
+    }
+    
+    // Add a match card to the list
+    function addMatchCard(match) {
+      const matchCard = document.createElement('div');
+      matchCard.className = 'match-card';
+      
+      // Format date
+      const matchDate = match.date ? match.date.toDate().toLocaleDateString('en-GB', {
+        weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+      }) : "Date not set";
+      
+      // Format time
+      const matchTime = match.date ? match.date.toDate().toLocaleTimeString('en-GB', {
+        hour: '2-digit', minute: '2-digit'
+      }) : "Time not set";
+      
+      // Determine status
+      let statusClass = "status-pending";
+      let statusText = "Upcoming";
+      
+      if (match.status === "live") {
+        statusClass = "status-live";
+        statusText = "Live";
+      }
+      
+      matchCard.innerHTML = `
+        <div class="match-teams">
+          <div class="team">
+            <div class="team-name">${match.homeTeam || match.team1 || "Home Team"}</div>
+          </div>
+          <div class="vs">VS</div>
+          <div class="team">
+            <div class="team-name">${match.awayTeam || match.team2 || "Away Team"}</div>
+          </div>
+        </div>
+        <div class="match-meta">
+          <div class="match-date">${matchDate} at ${matchTime}</div>
+          <div class="match-status ${statusClass}">${statusText}</div>
+          <button class="action-btn" data-match-id="${match.id}">
+            <i class="fas fa-edit"></i> Manage
+          </button>
+        </div>
+      `;
+      
+      // Add click event to the manage button
+      const manageButton = matchCard.querySelector('.action-btn');
+      manageButton.addEventListener('click', () => {
+        // Store match details and redirect to match management page
+        localStorage.setItem("currentMatchId", match.id);
+        localStorage.setItem("currentMatchHomeTeam", match.homeTeam || match.team1);
+        localStorage.setItem("currentMatchAwayTeam", match.awayTeam || match.team2);
+        localStorage.setItem("currentMatchDate", match.date.toDate().toString());
+        window.location.href = "MatchCommissionerDetails.html";
+      });
+      
+      matchesListElement.appendChild(matchCard);
+    }
+    
+    // Logout function
+    function logout() {
+        auth.signOut().then(() => {
+            localStorage.clear();
+            window.location.href = "MatchCommissionerLogin.html";
+        }).catch((error) => {
+            console.error("Logout error:", error);
+            localStorage.clear();
+            window.location.href = "MatchCommissionerLogin.html";
+        });
+    }
+    
+    // Event listeners
+    logoutButton.addEventListener('click', logout);
+    
+    // Initialize the page
+    async function initializeApp() {
+        try {
+            await loadProfile();
+            maintainSession();
+        } catch (error) {
+            console.error("Failed to initialize app:", error);
+            window.location.href = "MatchCommissionerLogin.html";
+        }
+    }
+    
+    // Start the application
+    initializeApp();
+  </script>
+</body>
+</html>
