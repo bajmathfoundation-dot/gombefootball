@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner with Passion | Gombe Football Sponsorship</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base Styles */
+        :root {
+            --primary: #006400;
+            --secondary: #FFD700;
+            --accent: #8B0000;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        section {
+            padding: 80px 0;
+        }
+        
+        h1, h2, h3, h4 {
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        h1 {
+            font-size: 3rem;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        h2:after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: var(--secondary);
+            margin: 10px auto;
+        }
+        
+        p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary);
+        }
+        
+        /* Header & Navigation */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--secondary);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin-left: 2rem;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--secondary);
+        }
+        
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 180px 0 100px;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        /* Why Section */
+        .why-section {
+            background: white;
+        }
+        
+        .value-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .value-card {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .value-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .value-card i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .value-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+        }
+        
+        .stats-section h2 {
+            color: white;
+        }
+        
+        .stats-section h2:after {
+            background: var(--secondary);
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+        
+        .stat-item {
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        
+        .stat-label {
+            font-size: 1.2rem;
+        }
+        
+        /* Packages Section */
+        .packages-section {
+            background: white;
+        }
+        
+        .package-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 12px 25px;
+            background: #f1f1f1;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn:first-child {
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .tab-btn:last-child {
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .package-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .package-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .package-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .package-card.featured {
+            border: 2px solid var(--secondary);
+            transform: scale(1.05);
+        }
+        
+        .package-card.featured .package-header {
+            background: var(--secondary);
+            color: var(--dark);
+        }
+        
+        .package-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .package-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .package-body {
+            padding: 30px;
+        }
+        
+        .package-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .package-features li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .package-features li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        /* Gallery Section */
+        .gallery-section {
+            background: #f8f9fa;
+        }
+        
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            height: 250px;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 15px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+        
+        /* Testimonials Section */
+        .testimonials-section {
+            background: white;
+        }
+        
+        .testimonial-slider {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .testimonial {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        
+        .testimonial.active {
+            display: block;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        
+        .testimonial-author {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .testimonial-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .testimonial-dot {
+            width: 12px;
+            height: 12px;
+            background: #ddd;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        
+        .testimonial-dot.active {
+            background: var(--primary);
+        }
+        
+        /* Contact Section */
+        .contact-section {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .contact-section h2 {
+            color: white;
+        }
+        
+        .contact-section h2:after {
+            background: var(--secondary);
+        }
+        
+        .contact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+        }
+        
+        .contact-info h3 {
+            margin-bottom: 20px;
+        }
+        
+        .contact-details {
+            margin-top: 30px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .contact-item i {
+            margin-right: 15px;
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+        
+        .contact-form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            color: var(--dark);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .footer-logo i {
+            margin-right: 10px;
+            color: var(--secondary);
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--secondary);
+        }
+        
+        .copyright {
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .package-card.featured {
+                transform: scale(1);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu {
+                display: block;
+            }
+            
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--primary);
+                flex-direction: column;
+                padding: 20px 0;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            nav li {
+                margin: 0;
+                text-align: center;
+                padding: 10px 0;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                margin-bottom: 10px;
+            }
+            
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            section {
+                padding: 60px 0;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .hero {
+                padding: 150px 0 80px;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-futbol"></i>
+                <span>Gombe Football</span>
+            </div>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#why">Why Partner</a></li>
+                    <li><a href="#packages">Packages</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Partner with Passion. Champion Gombe.</h1>
+            <p>Your Brand, Our Pitch. A Winning Partnership for Business Growth and Community Impact.</p>
+            <div class="hero-buttons">
+                <a href="#contact" class="btn">Become a Partner</a>
+                <a href="#" class="btn btn-secondary">Download Sponsorship Deck</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Section -->
+    <section class="why-section" id="why">
+        <div class="container">
+            <h2>More Than a Game. It's a Movement.</h2>
+            <div class="value-cards">
+                <div class="value-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Unite a Passionate Fanbase</h3>
+                    <p>Connect directly with hundreds of thousands of loyal fans in Gombe and across the nation.</p>
+                </div>
+                <div class="value-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Drive Tangible Business Growth</h3>
+                    <p>Leverage unique marketing assets to increase brand visibility and customer loyalty.</p>
+                </div>
+                <div class="value-card">
+                    <i class="fas fa-seedling"></i>
+                    <h3>Build a Lasting Legacy</h3>
+                    <p>Demonstrate your investment in youth development, health, and community pride.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <h2>The Power of Gombe Football</h2>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number" id="fanCount">0</div>
+                    <div class="stat-label">Total Fan Reach</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="recallCount">0</div>
+                    <div class="stat-label">Brand Recall in Gombe State</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="matchCount">0</div>
+                    <div class="stat-label">Matches Per Season</div>
+                </div>
+                <!-- <div class="stat-item"> -->
+                    <!-- <div class="stat-number" id="digitalCount">0</div> -->
+                    <!-- <div class="stat-label">Potential Digital Impressions</div> -->
+                <!-- </div> -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Packages Section -->
+    <section class="packages-section" id="packages">
+        <div class="container">
+            <h2>Tailored Partnership Tiers</h2>
+            <div class="package-tabs">
+                <button class="tab-btn active" data-package="community">Community Partner</button>
+                <button class="tab-btn" data-package="official">Official Partner</button>
+                <button class="tab-btn" data-package="title">Title Partner</button>
+            </div>
+            <div class="package-cards">
+                <!-- Community Partner -->
+                <div class="package-card" data-package="community">
+                    <div class="package-header">
+                        <h3>Community Partner</h3>
+                        <div class="package-price">₦ / Year</div>
+                        <p>Best For: Local businesses, SMEs</p>
+                    </div>
+                    <div class="package-body">
+                        <ul class="package-features">
+                            <li>Logo on official website</li>
+                            <li>Social media mentions (2 per season)</li>
+                            <li>Matchday program advertisement</li>
+                            <li>Community event presence</li>
+                            <li>Recognition in annual report</li>
+                        </ul>
+                        <a href="#contact" class="btn">Select This Plan</a>
+                    </div>
+                </div>
+                
+                <!-- Official Partner -->
+                <div class="package-card featured" data-package="official">
+                    <div class="package-header">
+                        <h3>Official Partner</h3>
+                        <div class="package-price">₦ / Year</div>
+                        <p>Best For: Regional leaders, growing brands</p>
+                    </div>
+                    <div class="package-body">
+                        <ul class="package-features">
+                            <li>All Community Partner benefits</li>
+                            <li>LED Board advertising during matches</li>
+                            <li>Branded interview backdrop</li>
+                            <li>"Official Partner" designation</li>
+                            <li>Player appearances (2 per year)</li>
+                            <li>VIP match tickets (4 per match)</li>
+                        </ul>
+                        <a href="#contact" class="btn">Select This Plan</a>
+                    </div>
+                </div>
+                
+                <!-- Title Partner -->
+                <div class="package-card" data-package="title">
+                    <div class="package-header">
+                        <h3>Title Partner</h3>
+                        <div class="package-price">Custom Quote</div>
+                        <p>Best For: National brands, industry giants</p>
+                    </div>
+                    <div class="package-body">
+                        <ul class="package-features">
+                            <li>All Official Partner benefits</li>
+                            <li>Naming Rights (e.g., "YourBrand Gombe Stadium")</li>
+                            <li>Exclusive jersey branding (Chest or Sleeve)</li>
+                            <li>Dedicated player appearances (6 per year)</li>
+                            <li>Exclusive content creation</li>
+                            <li>Prime hospitality at all matches</li>
+                        </ul>
+                        <a href="#contact" class="btn">Request Custom Quote</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section" id="gallery">
+        <div class="container">
+            <h2>Your Brand in the Spotlight</h2>
+            <div class="gallery-container">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80" alt="Jersey Branding">
+                    <div class="gallery-caption">
+                        <p>Jersey Branding - The most visible real estate in sports.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1459865264687-595d652de67e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80" alt="Stadium Advertising">
+                    <div class="gallery-caption">
+                        <p>Stadium LED Advertising - Seen by every fan, in-person and on TV.</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1599669454699-248893623440?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80" alt="Interview Backdrop">
+                    <div class="gallery-caption">
+                        <p>Official Interview Backdrop - Prime media visibility.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <h2>What Our Partners Say</h2>
+            <div class="testimonial-slider">
+                <div class="testimonial active">
+                    <p class="testimonial-text">"Partnering with Gombe United wasn't just marketing; it was joining the family. Our brand visibility in the state tripled within the first season."</p>
+                    <p class="testimonial-author">- CEO, Jewel Bank</p>
+                </div>
+                <div class="testimonial">
+                    <p class="testimonial-text">"The community engagement we've achieved through this sponsorship is unparalleled. It's a true win-win for both our brand and the local community."</p>
+                    <p class="testimonial-author">- Marketing Director, Gombe Springs Water</p>
+                </div>
+                <div class="testimonial">
+                    <p class="testimonial-text">"As a local business, this partnership gave us credibility and access to audiences we couldn't reach through traditional advertising."</p>
+                    <p class="testimonial-author">- Owner, Savannah Foods</p>
+                </div>
+                <div class="testimonial-nav">
+                    <span class="testimonial-dot active" data-slide="0"></span>
+                    <span class="testimonial-dot" data-slide="1"></span>
+                    <span class="testimonial-dot" data-slide="2"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <h2>Ready to Champion Gombe?</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Let's Create a Winning Partnership</h3>
+                    <p>Our team is ready to create a custom proposal that aligns with your business objectives and delivers maximum value.</p>
+                    
+                    <div class="contact-details">
+                        <h3>Contact Our Partnership Director</h3>
+                        <div class="contact-item">
+                            <i class="fas fa-user"></i>
+                            <div>
+                                <strong>Aisha Usman</strong><br>
+                                Head of Commercial & Partnerships
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>phone</div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>partnerships@gombefootball.web.app</div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>Pantami Stadium, Gombe, Nigeria</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <h3>Send Us an Inquiry</h3>
+                    <form id="sponsorshipForm">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Company</label>
+                            <input type="text" id="company" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="interest">Interest Level</label>
+                            <select id="interest" class="form-control" required>
+                                <option value="">Select an option</option>
+                                <option value="community">Community Partner</option>
+                                <option value="official">Official Partner</option>
+                                <option value="title">Title Partner</option>
+                                <option value="custom">Custom Package</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" class="form-control" rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="btn">Submit Inquiry</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <i class="fas fa-futbol"></i>
+                        <span>Gombe Football</span>
+                    </div>
+                    <p>Uniting communities through the power of football and strategic partnerships.</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#why">Why Partner</a></li>
+                        <li><a href="#packages">Packages</a></li>
+                        <li><a href="#gallery">Gallery</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h3>Connect With Us</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Gombe Football. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        document.querySelector('.mobile-menu').addEventListener('click', function() {
+            document.querySelector('nav ul').classList.toggle('active');
+        });
+
+        // Package Tabs
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const packageCards = document.querySelectorAll('.package-card');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                tabBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const packageType = this.getAttribute('data-package');
+                
+                // Show/hide package cards based on selection
+                packageCards.forEach(card => {
+                    if (packageType === 'all' || card.getAttribute('data-package') === packageType) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Testimonial Slider
+        const testimonialDots = document.querySelectorAll('.testimonial-dot');
+        const testimonials = document.querySelectorAll('.testimonial');
+        
+        testimonialDots.forEach(dot => {
+            dot.addEventListener('click', function() {
+                const slideIndex = this.getAttribute('data-slide');
+                
+                // Remove active class from all dots and testimonials
+                testimonialDots.forEach(d => d.classList.remove('active'));
+                testimonials.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked dot and corresponding testimonial
+                this.classList.add('active');
+                testimonials[slideIndex].classList.add('active');
+            });
+        });
+
+        // Auto-rotate testimonials
+        let currentTestimonial = 0;
+        function rotateTestimonials() {
+            testimonialDots.forEach(d => d.classList.remove('active'));
+            testimonials.forEach(t => t.classList.remove('active'));
+            
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            
+            testimonialDots[currentTestimonial].classList.add('active');
+            testimonials[currentTestimonial].classList.add('active');
+        }
+        
+        setInterval(rotateTestimonials, 5000);
+
+        // Animated Statistics
+        function animateCounter(element, target, duration) {
+            let start = 0;
+            const increment = target / (duration / 16); // 60fps
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // Start counters when stats section is in view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(document.getElementById('fanCount'), 500000, 2000);
+                    animateCounter(document.getElementById('recallCount'), 95, 1500);
+                    animateCounter(document.getElementById('matchCount'), 50, 1000);
+                    animateCounter(document.getElementById('digitalCount'), 1000000, 2500);
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+
+        observer.observe(document.querySelector('.stats-section'));
+
+        // Form Submission
+        document.getElementById('sponsorshipForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your interest! Our partnership team will contact you shortly.');
+            this.reset();
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId !== '#') {
+                    const targetElement = document.querySelector(targetId);
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    document.querySelector('nav ul').classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

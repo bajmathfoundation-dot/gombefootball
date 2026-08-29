@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a2a6c;
+            --secondary: #3494e6;
+            --accent: #fdbb2d;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --danger: #e74c3c;
+            --success: #27ae60;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f5ff, #e6f0ff);
+            margin: 0;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .team-name {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .team-badge {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #C0C0C0);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 auto 15px;
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .player-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .player-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            overflow: hidden;
+        }
+
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-info {
+            flex-grow: 1;
+        }
+
+        .player-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .player-position {
+            font-size: 0.95rem;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+
+        .player-details {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+        }
+
+        .player-id {
+            font-family: monospace;
+            color: var(--gray);
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+        }
+
+        .loader {
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(52, 148, 230, 0.2);
+            border-top-color: var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background-color: rgba(39, 174, 96, 0.2);
+            color: var(--success);
+            display: block;
+        }
+
+        .error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+            display: block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--light-gray);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal h3 {
+            margin-top: 0;
+            color: var(--primary);
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-cancel {
+            background: #ddd;
+            border: none;
+        }
+
+        .btn-save {
+            background: var(--success);
+            color: white;
+            border: none;
+        }
+
+        .transfer-type-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
+        .permanent-badge {
+            background-color: rgba(39, 174, 96, 0.2);
+            color: var(--success);
+        }
+
+        .loan-badge {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="team-badge" id="teamBadge">T</div>
+            <h1 class="team-name" id="teamName">Team Management</h1>
+            <p id="teamInfo">Loading team information...</p>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+
+        <!-- Modal for setting player value and transfer type -->
+        <div id="valueModal" class="modal">
+            <div class="modal-content">
+                <h3>Set Player Transfer Details</h3>
+                <form id="transferForm">
+                    <input type="hidden" id="csrfToken" name="csrfToken">
+                    <div class="form-group">
+                        <label for="playerValueInput">Transfer Value ($)</label>
+                        <input type="number" id="playerValueInput" placeholder="Enter player value in $" min="0" step="1000">
+                    </div>
+                    <div class="form-group">
+                        <label for="contractTypeSelect">Transfer Type</label>
+                        <select id="contractTypeSelect">
+                            <option value="Permanent">Permanent Transfer</option>
+                            <option value="Loan">Loan</option>
+                        </select>
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="cancelValueBtn" class="btn-cancel" type="button">Cancel</button>
+                        <button id="saveValueBtn" class="btn-save" type="submit">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="players-grid" id="playersGrid">
+            <div class="loading">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-check-compat.js"></script>
+    
+    <script>
+        // Security configuration
+        const SECURITY_CONFIG = {
+            CSRF_TOKEN_LENGTH: 32,
+            CSRF_TOKEN_EXPIRY: 30 * 60 * 1000, // 30 minutes
+            RECAPTCHA_ENTERPRISE_SITE_KEY: 'your-recaptcha-enterprise-site-key-here'
+        };
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball",
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Initialize Firebase App Check
+        const appCheck = firebase.appCheck();
+        appCheck.activate(SECURITY_CONFIG.RECAPTCHA_ENTERPRISE_SITE_KEY, true);
+        
+        // Security state management
+        let securityState = {
+            csrfTokens: new Map(),
+            currentToken: null
+        };
+
+        // Get team ID from URL parameters with sanitization
+        const urlParams = new URLSearchParams(window.location.search);
+        const teamId = sanitizeInput(urlParams.get('teamId'));
+        let currentTeamName = '';
+        let currentPlayerIdForValue = null;
+
+        // Initialize security features
+        initializeSecurity();
+
+        if (!teamId) {
+            showError("No team selected. Please access this page from the Manager Profile.");
+        } else {
+            fetchTeamData();
+        }
+
+        // Security initialization
+        function initializeSecurity() {
+            generateCSRFToken();
+            setupSecurityEventListeners();
+        }
+
+        // Generate and store CSRF token
+        function generateCSRFToken() {
+            const token = generateRandomString(SECURITY_CONFIG.CSRF_TOKEN_LENGTH);
+            const expiry = Date.now() + SECURITY_CONFIG.CSRF_TOKEN_EXPIRY;
+            
+            securityState.csrfTokens.set(token, expiry);
+            securityState.currentToken = token;
+            
+            document.getElementById('csrfToken').value = token;
+            
+            // Clean up expired tokens
+            cleanupExpiredTokens();
+        }
+
+        // Validate CSRF token
+        function validateCSRFToken(token) {
+            if (!token) return false;
+            
+            const expiry = securityState.csrfTokens.get(token);
+            if (!expiry || expiry < Date.now()) {
+                securityState.csrfTokens.delete(token);
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Generate random string for tokens
+        function generateRandomString(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            const crypto = window.crypto || window.msCrypto;
+            const values = new Uint32Array(length);
+            
+            crypto.getRandomValues(values);
+            for (let i = 0; i < length; i++) {
+                result += chars[values[i] % chars.length];
+            }
+            return result;
+        }
+
+        // Clean up expired CSRF tokens
+        function cleanupExpiredTokens() {
+            const now = Date.now();
+            for (const [token, expiry] of securityState.csrfTokens.entries()) {
+                if (expiry < now) {
+                    securityState.csrfTokens.delete(token);
+                }
+            }
+        }
+
+        // Setup security event listeners
+        function setupSecurityEventListeners() {
+            // Prevent form submission if CSRF token is invalid
+            document.getElementById('transferForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formToken = document.getElementById('csrfToken').value;
+                if (!validateCSRFToken(formToken)) {
+                    showError("Security token expired. Please refresh the page and try again.");
+                    return;
+                }
+                
+                handleSaveValue();
+            });
+            
+            // Clear sensitive data when modal is closed
+            document.getElementById('cancelValueBtn').addEventListener('click', function() {
+                clearSensitiveData();
+                document.getElementById('valueModal').style.display = 'none';
+            });
+            
+            // Clear sensitive data when page is unloaded
+            window.addEventListener('beforeunload', clearSensitiveData);
+        }
+
+        // Clear sensitive data from memory
+        function clearSensitiveData() {
+            currentPlayerIdForValue = null;
+            document.getElementById('playerValueInput').value = '';
+            document.getElementById('contractTypeSelect').value = 'Permanent';
+        }
+
+        // Input sanitization function
+        function sanitizeInput(input) {
+            if (typeof input !== 'string') return '';
+            
+            return input
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#x27;')
+                .replace(/\//g, '&#x2F;')
+                .substring(0, 500); // Limit input length
+        }
+
+        // Output sanitization for HTML content
+        function sanitizeHTML(content) {
+            const temp = document.createElement('div');
+            temp.textContent = content;
+            return temp.innerHTML;
+        }
+
+        async function fetchTeamData() {
+            try {
+                const teamDoc = await db.collection("GombeTeams").doc(teamId).get();
+                
+                if (!teamDoc.exists) {
+                    throw new Error("Team not found");
+                }
+
+                const teamData = teamDoc.data();
+                currentTeamName = sanitizeInput(teamData.teamName || teamData.name || "Unknown Team");
+                
+                document.getElementById("teamName").textContent = currentTeamName;
+                document.getElementById("teamBadge").textContent = sanitizeHTML(currentTeamName.charAt(0).toUpperCase());
+                document.getElementById("teamInfo").textContent = `Managing players for ${sanitizeHTML(currentTeamName)}`;
+                
+                fetchPlayers();
+            } catch (error) {
+                console.error("Error fetching team:", error);
+                showError("Error loading team data. Please try again later.");
+            }
+        }
+
+        async function fetchPlayers() {
+            const playersGrid = document.getElementById("playersGrid");
+            playersGrid.innerHTML = '<div class="loading"><div class="loader"></div></div>';
+            
+            try {
+                // First try by team ID
+                let querySnapshot = await db.collection("playerRegistry")
+                    .where("teamId", "==", teamId)
+                    .get();
+
+                // If no results by ID, try by team name
+                if (querySnapshot.empty && currentTeamName) {
+                    querySnapshot = await db.collection("playerRegistry")
+                        .where("teamName", "==", currentTeamName)
+                        .get();
+                }
+
+                if (querySnapshot.empty) {
+                    playersGrid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-user-slash"></i>
+                            <p>No players found in this team</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                playersGrid.innerHTML = '';
+                
+                querySnapshot.forEach(doc => {
+                    const player = doc.data();
+                    createPlayerCard(player, doc.id, playersGrid);
+                });
+            } catch (error) {
+                console.error("Error fetching players:", error);
+                playersGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error loading players</p>
+                    </div>
+                `;
+            }
+        }
+
+        function createPlayerCard(player, playerId, container) {
+            const card = document.createElement('div');
+            card.className = 'player-card';
+            
+            // Sanitize player data
+            const safePlayerName = sanitizeHTML(player.name || "Unknown Player");
+            const safePosition = sanitizeHTML(player.position || "No position specified");
+            const safeJerseyNumber = sanitizeHTML(player.jerseyNumber || "N/A");
+            const safeLGA = sanitizeHTML(player.LGAs || "N/A");
+            const safeMarketStatus = player.MarketStatus ? sanitizeHTML(player.MarketStatus) : '';
+            const safePlayerValue = player.playerValue ? `$${sanitizeHTML(player.playerValue.toString())}` : '';
+            
+            // Create transfer type badge if available
+            let transferTypeBadge = '';
+            if (player.contractType) {
+                const badgeClass = player.contractType === 'Permanent' ? 'permanent-badge' : 'loan-badge';
+                const safeContractType = sanitizeHTML(player.contractType);
+                transferTypeBadge = `<span class="transfer-type-badge ${badgeClass}">${safeContractType}</span>`;
+            }
+            
+            // Safe image handling with onerror fallback
+            const imageHtml = player.imageUrl ? 
+                `<img src="${sanitizeHTML(player.imageUrl)}" alt="${safePlayerName}" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-user\'></i>'">` : 
+                `<i class="fas fa-user"></i>`;
+            
+            card.innerHTML = `
+                <div class="player-avatar">
+                    ${imageHtml}
+                </div>
+                <div class="player-info">
+                    <div class="player-name">${safePlayerName}${transferTypeBadge}</div>
+                    <div class="player-position">${safePosition}</div>
+                    <div class="player-details">
+                        <div>#${safeJerseyNumber}</div>
+                        <div>${safeLGA}</div>
+                        ${safeMarketStatus ? `<div style="color: var(--accent); font-weight: 500;">${safeMarketStatus}</div>` : ''}
+                        ${safePlayerValue ? `<div style="color: var(--success); font-weight: 500;">${safePlayerValue}</div>` : ''}
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-danger remove-btn" data-player-id="${sanitizeHTML(playerId)}">
+                        <i class="fas fa-user-minus"></i> Release
+                    </button>
+                    <button class="btn btn-sale" data-player-id="${sanitizeHTML(playerId)}" style="background-color: var(--accent); color: white;">
+                        <i class="fas fa-tag"></i> For Sale
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(card);
+        }
+
+        // Handle player removal
+        document.addEventListener('click', async function(e) {
+            if (e.target.closest('.remove-btn')) {
+                const button = e.target.closest('.remove-btn');
+                const playerId = button.getAttribute('data-player-id');
+                
+                // Validate player ID
+                if (!playerId || playerId.length > 100) {
+                    showError("Invalid player selection");
+                    return;
+                }
+                
+                if (!confirm("Are you sure you want to release this player?")) {
+                    return;
+                }
+                
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                
+                try {
+                    // First, get the player document to retrieve the agentId
+                    const playerDoc = await db.collection("playerRegistry").doc(playerId).get();
+                    const playerData = playerDoc.data();
+                    const agentId = playerData.agentId;
+
+                    if (agentId) {
+                        // Get the agent document
+                        const agentDoc = await db.collection("GombeAgents").doc(agentId).get();
+                        
+                        if (agentDoc.exists) {
+                            const agentData = agentDoc.data();
+                            let playerIds = agentData.playerIds || [];
+                            
+                            // Remove the playerId from the array
+                            playerIds = playerIds.filter(id => id !== playerId);
+                            
+                            // Update the agent document with the new playerIds array
+                            await db.collection("GombeAgents").doc(agentId).update({
+                                playerIds: playerIds
+                            });
+                        }
+                    }
+
+                    // Update player to become a free agent
+                    await db.collection("playerRegistry").doc(playerId).update({
+                        teamId: null,
+                        teamName: "Free Agent",
+                        contractEnd: "",
+                        contractStart: "",
+                        agentId: "",
+                        AgentTeamAproval: "",
+                        team: null,
+                        MarketStatus: null,
+                        playerValue: "",
+                        contractType: ""
+                    });
+
+                    showStatus(`Player released successfully`, 'success');
+                    
+                    // Remove the card with animation
+                    button.closest('.player-card').style.opacity = '0';
+                    setTimeout(() => {
+                        button.closest('.player-card').remove();
+                    }, 300);
+                    
+                } catch (error) {
+                    console.error("Error releasing player:", error);
+                    showStatus(`Error releasing player. Please try again.`, 'error');
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-user-minus"></i> Release';
+                }
+            }
+            
+            // Handle "For Sale" button click
+            if (e.target.closest('.btn-sale')) {
+                const button = e.target.closest('.btn-sale');
+                const playerId = button.getAttribute('data-player-id');
+                
+                // Validate player ID
+                if (!playerId || playerId.length > 100) {
+                    showError("Invalid player selection");
+                    return;
+                }
+                
+                currentPlayerIdForValue = playerId;
+                
+                // Show the modal
+                document.getElementById('valueModal').style.display = 'flex';
+                document.getElementById('playerValueInput').focus();
+                
+                // Reset form values and generate new CSRF token
+                document.getElementById('playerValueInput').value = '';
+                document.getElementById('contractTypeSelect').value = 'Permanent';
+                generateCSRFToken();
+            }
+        });
+
+        // Handle save value operation
+        async function handleSaveValue() {
+            const valueInput = document.getElementById('playerValueInput');
+            const contractTypeSelect = document.getElementById('contractTypeSelect');
+            const value = valueInput.value.trim();
+            const contractType = contractTypeSelect.value;
+            
+            // Input validation
+            if (!value || isNaN(value) || value <= 0 || value > 1000000000) {
+                alert("Please enter a valid player value between $1 and $1,000,000,000");
+                return;
+            }
+            
+            const saveBtn = document.getElementById('saveValueBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            
+            try {
+                await db.collection("playerRegistry").doc(currentPlayerIdForValue).update({
+                    MarketStatus: "Awaiting Offer",
+                    playerValue: Number(value),
+                    contractType: contractType
+                });
+                
+                showStatus(`Player marked for ${contractType.toLowerCase()} transfer with value $${value}`, 'success');
+                document.getElementById('valueModal').style.display = 'none';
+                valueInput.value = '';
+                
+                // Generate new CSRF token after successful operation
+                generateCSRFToken();
+                
+                fetchPlayers(); // Refresh the player list to show the new status
+            } catch (error) {
+                console.error("Error updating player:", error);
+                showStatus(`Error updating player. Please try again.`, 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = 'Save';
+                clearSensitiveData();
+            }
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = sanitizeHTML(message);
+            statusEl.className = `status-message ${type}`;
+            
+            setTimeout(() => {
+                statusEl.style.opacity = '0';
+                setTimeout(() => {
+                    statusEl.className = 'status-message';
+                    statusEl.style.opacity = '1';
+                }, 500);
+            }, 3000);
+        }
+
+        function showError(message) {
+            const playersGrid = document.getElementById("playersGrid");
+            playersGrid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>${sanitizeHTML(message)}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

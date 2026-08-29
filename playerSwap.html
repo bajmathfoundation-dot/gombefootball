@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gombe Football | Player Trade</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f4f7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #014421;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+    }
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .player-list {
+      margin-top: 10px;
+    }
+    .player-list select {
+      margin-bottom: 10px;
+    }
+    button {
+      background-color: #014421;
+      color: white;
+      padding: 12px 18px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #02743a;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <header>Transfer Market: Team-to-Team Player Trade</header>
+  <main>
+    <label for="teamA">Select Team A</label>
+    <select id="teamA"></select>
+
+    <div class="player-list">
+      <label for="playerA">Player from Team A</label>
+      <select id="playerA"></select>
+    </div>
+
+    <label for="teamB">Select Team B</label>
+    <select id="teamB"></select>
+
+    <div class="player-list">
+      <label for="playerB">Player from Team B</label>
+      <select id="playerB"></select>
+    </div>
+
+    <button onclick="executeTrade()">⚖️ Trade Players</button>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const teamA = document.getElementById("teamA");
+    const playerA = document.getElementById("playerA");
+    const teamB = document.getElementById("teamB");
+    const playerB = document.getElementById("playerB");
+
+    async function loadTeams() {
+      const teams = [];
+      const snapshot = await db.collection("leaguezones").get();
+      snapshot.forEach(doc => {
+        const arr = doc.data().teams;
+        if (Array.isArray(arr)) teams.push(...arr);
+      });
+
+      teams.sort();
+      ["teamA", "teamB"].forEach(id => {
+        const dropdown = document.getElementById(id);
+        dropdown.innerHTML = '<option value="">-- Select Team --</option>';
+        teams.forEach(team => {
+          const opt = document.createElement("option");
+          opt.value = team;
+          opt.textContent = team;
+          dropdown.appendChild(opt);
+        });
+      });
+    }
+
+    async function loadPlayers(teamName, dropdownId) {
+      const dropdown = document.getElementById(dropdownId);
+      dropdown.innerHTML = '<option value="">Loading players...</option>';
+      const snapshot = await db.collection("playerRegistry")
+        .where("teamName", "==", teamName).get();
+
+      if (snapshot.empty) {
+        dropdown.innerHTML = '<option>No players</option>';
+        return;
+      }
+
+      dropdown.innerHTML = '<option value="">-- Select Player --</option>';
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const opt = document.createElement("option");
+        opt.value = doc.id;
+        opt.textContent = `#${data.jerseyNumber} - ${data.name}`;
+        dropdown.appendChild(opt);
+      });
+    }
+
+    teamA.addEventListener("change", () => {
+      loadPlayers(teamA.value, "playerA");
+    });
+
+    teamB.addEventListener("change", () => {
+      loadPlayers(teamB.value, "playerB");
+    });
+
+    async function getAvailableJersey(teamName) {
+      const taken = new Set();
+      const snap = await db.collection("playerRegistry")
+        .where("teamName", "==", teamName).get();
+      snap.forEach(doc => {
+        const n = doc.data().jerseyNumber;
+        if (typeof n === "number") taken.add(n);
+      });
+      for (let i = 1; i <= 99; i++) {
+        if (!taken.has(i)) return i;
+      }
+      return null;
+    }
+
+    async function executeTrade() {
+      const psnA = playerA.value;
+      const psnB = playerB.value;
+      if (!psnA || !psnB) return alert("Please select both players.");
+
+      const docA = await db.collection("playerRegistry").doc(psnA).get();
+      const docB = await db.collection("playerRegistry").doc(psnB).get();
+
+      const dataA = docA.data();
+      const dataB = docB.data();
+
+      const newJerseyA = await getAvailableJersey(dataB.teamName);
+      const newJerseyB = await getAvailableJersey(dataA.teamName);
+      if (!newJerseyA || !newJerseyB) return alert("One of the teams is full.");
+
+      const updatedA = {
+        ...dataA,
+        teamName: dataB.teamName,
+        jerseyNumber: newJerseyA,
+        teamID: psnA + "_" + dataB.teamName
+      };
+
+      const updatedB = {
+        ...dataB,
+        teamName: dataA.teamName,
+        jerseyNumber: newJerseyB,
+        teamID: psnB + "_" + dataA.teamName
+      };
+
+      try {
+        await db.collection("playerRegistry").doc(psnA).set(updatedA);
+        await db.collection("playerRegistry").doc(psnB).set(updatedB);
+        alert(`✅ ${dataA.name} and ${dataB.name} have been traded successfully!`);
+        document.getElementById("playerA").innerHTML = "";
+        document.getElementById("playerB").innerHTML = "";
+      } catch (err) {
+        console.error("❌ Trade error:", err);
+        alert("Trade failed. See console for error.");
+      }
+    }
+
+    loadTeams();
+  </script>
+</body>
+</html>

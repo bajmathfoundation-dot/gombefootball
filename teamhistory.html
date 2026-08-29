@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team History | Gombe Football</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #1a2a6c;
+      --secondary: #3494e6;
+      --accent: #1a6cff;
+      --light: #ffffff;
+      --dark: #0c1d3d;
+      --text: #333333;
+      --text-light: #666666;
+      --border: #e0e0e0;
+      --card-bg: #f8fafc;
+      --highlight: #f0f7ff;
+      --success: #27ae60;
+      --error: #e74c3c;
+      --warning: #f39c12;
+      --win: #2ecc71;
+      --draw: #f1c40f;
+      --loss: #e74c3c;
+      --league: #1a2a6c;
+      --championscup: #8e44ad;
+      --facup: #e74c3c;
+      --worriorscup: #3498db;
+      --trophy-gold: #FFD700;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e6f0ff 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      position: relative;
+      z-index: 10;
+    }
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .logo i {
+      color: var(--light);
+      animation: pulse 2s infinite;
+    }
+    
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .team-banner {
+      text-align: center;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      max-width: 800px;
+      border: 1px solid var(--border);
+    }
+    
+    .team-banner strong {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.2em;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+    
+    .season-controls {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--border);
+      max-width: 800px;
+      margin: 20px auto;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .season-select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+    
+    .search-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .search-btn:hover {
+      background: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(26, 42, 108, 0.3);
+    }
+    
+    .section-title {
+      color: var(--primary);
+      font-size: 1.8rem;
+      margin: 30px 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--border);
+    }
+    
+    .section-title i {
+      color: var(--accent);
+    }
+    
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+    
+    .stats-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    
+    .stats-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stats-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .stats-card-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .competition-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+    
+    .league-icon { background: var(--league); }
+    .championscup-icon { background: var(--championscup); }
+    .facup-icon { background: var(--facup); }
+    .worriorscup-icon { background: var(--worriorscup); }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    
+    .stat-item {
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    
+    .stat-item:hover {
+      transform: scale(1.03);
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 5px 0;
+    }
+    
+    .stat-label {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+    
+    .win-stat .stat-value { color: var(--win); }
+    .draw-stat .stat-value { color: var(--draw); }
+    .loss-stat .stat-value { color: var(--loss); }
+    
+    .trophies-container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    
+    .trophies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 20px;
+    }
+    
+    .trophy-card {
+      background: linear-gradient(135deg, #fff9db 0%, #ffec99 100%);
+      border-radius: 12px;
+      padding: 25px;
+      text-align: center;
+      border: 1px solid #ffe066;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .trophy-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .trophy-card::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
+      transform: rotate(30deg);
+      pointer-events: none;
+    }
+    
+    .trophy-icon {
+      font-size: 4rem;
+      color: var(--trophy-gold);
+      margin-bottom: 15px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .trophy-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 5px;
+    }
+    
+    .trophy-season {
+      color: var(--text-light);
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    
+    .trophy-years-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 15px;
+      justify-content: center;
+    }
+    
+    .trophy-year-badge {
+      background: rgba(255, 215, 0, 0.2);
+      border: 1px solid var(--trophy-gold);
+      color: var(--dark);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .trophy-count {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-top: 10px;
+    }
+    
+    .trophy-desc {
+      color: var(--text);
+      font-size: 0.95rem;
+      margin-top: 15px;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px 30px;
+      color: var(--primary);
+    }
+    
+    .loading i {
+      font-size: 2.5rem;
+      animation: spin 1.5s infinite linear;
+      margin-bottom: 15px;
+    }
+    
+    .no-records {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-light);
+      font-style: italic;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 50px;
+      padding: 25px;
+      color: var(--text-light);
+      font-size: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    
+    /* Animations */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+      
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .trophies-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <i class="fas fa-futbol"></i>
+        <span>Gombe Football</span>
+      </div>
+      <h1>Team History</h1>
+      <button class="back-btn" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </button>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="team-banner">
+      <h2>Team History: <strong id="teamName">Loading...</strong></h2>
+      <p>Comprehensive statistics and achievements across all competitions</p>
+    </div>
+
+    <!-- Season controls for stats section -->
+    <div class="season-controls">
+      <div class="form-group">
+        <label for="seasonInput" class="form-label">
+          <i class="fas fa-calendar-alt"></i> Enter Season
+        </label>
+        <input 
+          type="text" 
+          id="seasonInput" 
+          class="season-select" 
+          placeholder="Format: SeasonYYYY-YY (e.g., Season2024-25)"
+          autocomplete="off"
+          value="Season2024-25"
+        >
+        <span class="input-hint">Enter the season in the format shown above</span>
+      </div>
+      
+      <button id="loadStatsBtn" class="search-btn">
+        <i class="fas fa-search"></i> Load Statistics
+      </button>
+    </div>
+
+    <div class="section-title">
+      <i class="fas fa-chart-bar"></i>
+      <span>Season Statistics</span>
+    </div>
+    
+    <div class="stats-container" id="statsContainer">
+      <div class="loading">
+        <i class="fas fa-spinner"></i>
+        <p>Enter a season to view statistics</p>
+      </div>
+    </div>
+    
+    <div class="section-title">
+      <i class="fas fa-trophy"></i>
+      <span>Trophy Cabinet</span>
+    </div>
+    
+    <div class="trophies-container" id="trophiesContainer">
+      <div class="loading">
+        <i class="fas fa-spinner"></i>
+        <p>Loading trophy data...</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    Gombe Football Management System © 2025
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // DOM elements
+    const seasonInput = document.getElementById("seasonInput");
+    const loadStatsBtn = document.getElementById("loadStatsBtn");
+    const statsContainer = document.getElementById("statsContainer");
+    const trophiesContainer = document.getElementById("trophiesContainer");
+    const teamNameElement = document.getElementById("teamName");
+
+    // Competition configurations
+    const competitions = [
+      {
+        id: "league",
+        name: "League",
+        icon: "shield-alt",
+        collection: "GombeSeason",
+        path: ""
+      },
+      {
+        id: "championscup",
+        name: "Champions Cup",
+        icon: "trophy",
+        collection: "GombeChampionsCupMatchesDemo",
+        path: ""
+      },
+      {
+        id: "facup",
+        name: "FA Cup",
+        icon: "trophy",
+        collection: "GombeFAcupsMatch",
+        path: ""
+      },
+      {
+        id: "worriorscup",
+        name: "Warriors Cup",
+        icon: "shield-alt",
+        collection: "GombeWorriorsCupMatches",
+        path: ""
+      }
+    ];
+
+    // Global stats object
+    const teamStats = {
+      league: { matches: 0, wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0 },
+      championscup: { matches: 0, wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0 },
+      facup: { matches: 0, wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0 },
+      worriorscup: { matches: 0, wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0 }
+    };
+
+    // Trophy data
+    let trophies = [];
+    let coachTeam = null;
+    let coachTeamId = null;
+
+    // Sanitize input to prevent XSS
+    function sanitize(input) {
+      const div = document.createElement("div");
+      div.textContent = input;
+      return div.innerHTML;
+    }
+
+    // Format numbers with commas
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // Calculate win percentage
+    function calculateWinPercentage(wins, matches) {
+      return matches > 0 ? Math.round((wins / matches) * 100) : 0;
+    }
+
+    // Validate season format
+    function validateSeasonFormat(season) {
+      const pattern = /^Season\d{4}-\d{2}$/;
+      return pattern.test(season);
+    }
+
+    // Render competition statistics
+    function renderStats() {
+      statsContainer.innerHTML = "";
+      
+      competitions.forEach(comp => {
+        const stats = teamStats[comp.id];
+        const winPercentage = calculateWinPercentage(stats.wins, stats.matches);
+        
+        const card = document.createElement("div");
+        card.className = "stats-card";
+        card.style.animation = "fadeIn 0.5s ease forwards";
+        card.innerHTML = `
+          <div class="stats-card-header">
+            <div class="stats-card-title">${sanitize(comp.name)}</div>
+            <div class="competition-icon ${comp.id}-icon">
+              <i class="fas fa-${sanitize(comp.icon)}"></i>
+            </div>
+          </div>
+          
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value">${numberWithCommas(stats.matches)}</div>
+              <div class="stat-label">Matches Played</div>
+            </div>
+            
+            <div class="stat-item win-stat">
+              <div class="stat-value">${numberWithCommas(stats.wins)}</div>
+              <div class="stat-label">Wins (${winPercentage}%)</div>
+            </div>
+            
+            <div class="stat-item draw-stat">
+              <div class="stat-value">${numberWithCommas(stats.draws)}</div>
+              <div class="stat-label">Draws</div>
+            </div>
+            
+            <div class="stat-item loss-stat">
+              <div class="stat-value">${numberWithCommas(stats.losses)}</div>
+              <div class="stat-label">Losses</div>
+            </div>
+            
+            <div class="stat-item">
+              <div class="stat-value">${numberWithCommas(stats.goalsScored)}</div>
+              <div class="stat-label">Goals Scored</div>
+            </div>
+            
+            <div class="stat-item">
+              <div class="stat-value">${numberWithCommas(stats.goalsConceded)}</div>
+              <div class="stat-label">Goals Conceded</div>
+            </div>
+            
+            <div class="stat-item">
+              <div class="stat-value">${numberWithCommas(stats.goalsScored - stats.goalsConceded)}</div>
+              <div class="stat-label">Goal Difference</div>
+            </div>
+          </div>
+        `;
+        statsContainer.appendChild(card);
+      });
+    }
+
+    // Render trophies grouped by competition
+    function renderTrophies() {
+      if (trophies.length === 0) {
+        trophiesContainer.innerHTML = '<div class="no-records">No trophies won yet</div>';
+        return;
+      }
+      
+      // Group trophies by competition
+      const groupedTrophies = {};
+      trophies.forEach(trophy => {
+        if (!groupedTrophies[trophy.competition]) {
+          groupedTrophies[trophy.competition] = {
+            years: [],
+            icon: trophy.icon,
+            zone: trophy.zone
+          };
+        }
+        groupedTrophies[trophy.competition].years.push(trophy.year);
+      });
+      
+      trophiesContainer.innerHTML = '<div class="trophies-grid" id="trophiesGrid"></div>';
+      const grid = document.getElementById("trophiesGrid");
+      
+      // Create one card per competition with all years
+      Object.entries(groupedTrophies).forEach(([competition, data]) => {
+        const card = document.createElement("div");
+        card.className = "trophy-card";
+        card.style.animation = "fadeIn 0.5s ease forwards";
+        
+        // Sort years in descending order
+        data.years.sort((a, b) => b.localeCompare(a));
+        
+        card.innerHTML = `
+          <div class="trophy-icon">
+            <i class="fas fa-${data.icon || 'trophy'}"></i>
+          </div>
+          <div class="trophy-name">${sanitize(competition)}</div>
+          ${data.zone ? `<div class="trophy-season">${sanitize(data.zone)}</div>` : ''}
+          <div class="trophy-count">${data.years.length} Time${data.years.length > 1 ? 's' : ''} Winner</div>
+          <div class="trophy-years-container">
+            ${data.years.map(year => `<span class="trophy-year-badge">${sanitize(year)}</span>`).join('')}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Fetch stats for selected season
+    async function fetchCompetitionStats(competition, season) {
+      try {
+        // Reset stats for this competition
+        teamStats[competition.id] = { 
+          matches: 0, wins: 0, draws: 0, losses: 0, 
+          goalsScored: 0, goalsConceded: 0 
+        };
+
+        // Get reference to the team's season subcollection
+        const seasonRef = db.collection(competition.collection)
+                          .doc(coachTeam)
+                          .collection(season);
+        
+        // Query only completed matches
+        const querySnapshot = await seasonRef.where("matchCompleted", "==", true).get();
+        
+        if (querySnapshot.empty) {
+          console.log(`No completed matches found for ${competition.name} in ${season}`);
+          return;
+        }
+
+        // Process each match
+        querySnapshot.forEach(doc => {
+          const match = doc.data();
+          const stats = teamStats[competition.id];
+          
+          stats.matches++;
+          stats.goalsScored += match.goalsScored || 0;
+          stats.goalsConceded += match.goalsConceded || 0;
+          
+          if (match.goalsScored > match.goalsConceded) {
+            stats.wins++;
+          } else if (match.goalsScored < match.goalsConceded) {
+            stats.losses++;
+          } else {
+            stats.draws++;
+          }
+        });
+        
+      } catch (error) {
+        console.error(`Error fetching ${competition.name} stats:`, error);
+      }
+    }
+
+    // Fetch trophy data from multiple collections
+    async function fetchTrophies() {
+      try {
+        const trophyPromises = [
+          fetchTrophyData("GombeChampionsCupDemo/WinnerRecords/Teams", "Champions Cup", "trophy"),
+          fetchTrophyData("GombeWorriorsCup/WinnerRecords/Teams", "Warriors Cup", "shield-alt"),
+          fetchTrophyData("GombeFAcups", "FA Cup", "trophy", true),
+          fetchTrophyData("GombeLeagueWinners", "League Division", "star", true)
+        ];
+        
+        const results = await Promise.all(trophyPromises);
+        trophies = results.flat();
+        
+        renderTrophies();
+      } catch (error) {
+        console.error("Error fetching trophies:", error);
+        trophiesContainer.innerHTML = 
+          '<div class="no-records">Error loading trophy data</div>';
+      }
+    }
+
+    // Helper function to fetch trophy data from a specific path
+    async function fetchTrophyData(path, competitionName, icon, isZoneBased = false) {
+      try {
+        let querySnapshot;
+        let teamZone = "All Zones";
+        
+        if (isZoneBased) {
+          const teamDoc = await db.collection("GombeTeams").doc(coachTeamId).get();
+          teamZone = teamDoc.exists ? teamDoc.data().zone : "Central Zone";
+          const zonePath = teamZone.replace(/ /g, "-").toLowerCase();
+          
+          if (competitionName === "FA Cup") {
+            querySnapshot = await db.collection(path)
+              .doc(teamZone)
+              .collection("WinnerRecords")
+              .where("teamName", "==", coachTeam)
+              .get();
+          } else {
+            querySnapshot = await db.collection(path)
+              .doc(zonePath)
+              .collection("Teams")
+              .where("teamName", "==", coachTeam)
+              .get();
+          }
+        } else {
+          const pathParts = path.split('/');
+          if (pathParts.length === 3) {
+            querySnapshot = await db.collection(pathParts[0])
+              .doc(pathParts[1])
+              .collection(pathParts[2])
+              .where("teamName", "==", coachTeam)
+              .get();
+          } else {
+            querySnapshot = await db.collection(pathParts[0])
+              .where("teamName", "==", coachTeam)
+              .get();
+          }
+        }
+
+        const trophyData = [];
+        if (querySnapshot && !querySnapshot.empty) {
+          querySnapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.years && Array.isArray(data.years)) {
+              data.years.forEach(year => {
+                trophyData.push({
+                  competition: competitionName,
+                  year: year,
+                  icon: icon,
+                  zone: isZoneBased ? teamZone : undefined
+                });
+              });
+            }
+          });
+        }
+        return trophyData;
+      } catch (error) {
+        console.error(`Error fetching ${competitionName} trophies:`, error);
+        return [];
+      }
+    }
+
+    // Load stats for selected season
+    async function loadStats() {
+      const season = seasonInput.value.trim();
+      
+      if (!season) {
+        alert("Please enter a season");
+        return;
+      }
+      
+      if (!validateSeasonFormat(season)) {
+        alert("Invalid season format. Please use SeasonYYYY-YY (e.g., Season2024-25)");
+        return;
+      }
+      
+      try {
+        statsContainer.innerHTML = `
+          <div class="loading">
+            <i class="fas fa-spinner"></i>
+            <p>Loading statistics for ${sanitize(season)}...</p>
+          </div>
+        `;
+        
+        // Reset all stats
+        competitions.forEach(comp => {
+          teamStats[comp.id] = { matches: 0, wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0 };
+        });
+        
+        // Update competition paths with current team
+        competitions.forEach(comp => {
+          comp.path = coachTeam;
+        });
+        
+        // Load stats for all competitions in parallel
+        await Promise.all(competitions.map(comp => fetchCompetitionStats(comp, season)));
+        renderStats();
+        
+      } catch (error) {
+        console.error("Error loading stats:", error);
+        statsContainer.innerHTML = 
+          '<div class="no-records">Error loading statistics</div>';
+      }
+    }
+
+    // Load all data
+    async function loadData() {
+      try {
+        // First verify we have required IDs
+        if (!coachTeam || !coachTeamId) {
+          throw new Error("Missing team information");
+        }
+        
+        // Set team name in banner
+        teamNameElement.textContent = coachTeam;
+        
+        // Load trophies (all-time, not season-dependent)
+        await fetchTrophies();
+        
+      } catch (error) {
+        console.error("Error loading data:", error);
+        
+        if (!coachTeam || !coachTeamId) {
+          statsContainer.innerHTML = `
+            <div class="no-records">
+              <i class="fas fa-exclamation-triangle"></i>
+              <p>Team information not found</p>
+              <button onclick="goBack()" class="back-btn" style="margin-top: 15px;">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+              </button>
+            </div>
+          `;
+          trophiesContainer.innerHTML = `
+            <div class="no-records">
+              <p>Cannot load trophies without team information</p>
+            </div>
+          `;
+        } else {
+          trophiesContainer.innerHTML = `
+            <div class="no-records">
+              <i class="fas fa-exclamation-triangle"></i>
+              <p>Error loading trophy data</p>
+            </div>
+          `;
+        }
+      }
+    }
+
+    // Go back to previous page
+    function goBack() {
+      window.location.href = "CoachProfile.html";
+    }
+    
+    // Event listeners
+    loadStatsBtn.addEventListener('click', loadStats);
+    
+    // Allow Enter key to trigger search
+    seasonInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        loadStats();
+      }
+    });
+
+    // Initialize the page
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.href = "CoachLogin.html";
+      } else {
+        // Get team data from sessionStorage
+        coachTeam = sessionStorage.getItem("teamName");
+        coachTeamId = sessionStorage.getItem("teamId");
+        
+        if (!coachTeam || !coachTeamId) {
+          // Try to get from URL parameters if not in sessionStorage
+          const urlParams = new URLSearchParams(window.location.search);
+          coachTeam = urlParams.get('teamName') || "Unknown Team";
+          coachTeamId = urlParams.get('teamId') || "unknown";
+        }
+        
+        loadData();
+      }
+    });
+  </script>
+</body>
+</html>

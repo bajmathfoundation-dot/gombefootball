@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team State Wide Competition Assignment</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs, 
+            updateDoc, 
+            doc,
+            query,
+            where,
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball",
+            storageBucket: "gombefootball.appspot.com",
+            messagingSenderId: "120731655706",
+            appId: "1:120731655706:web:9c99d6831aca3df563bba3",
+            measurementId: "G-8SCVPBSKPG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Define our StateWideCompetition options
+        const StateWideCompetition = {
+            "champions-cup": "Champions Cup",
+            "worriors-cup": "Warriors Cup",
+            "": "None (No Promotion)"
+        };
+
+        // Track assignments to save
+        let assignments = {};
+        const selectedZone = "central-zone"; // Hardcoded zone value
+
+        async function fetchTeams() {
+            const teamContainer = document.getElementById("teams-container");
+            teamContainer.innerHTML = "<p>Loading teams...</p>";
+            
+            try {
+                // Clear previous teams
+                teamContainer.innerHTML = '';
+                
+                // Get the central-zonedocument
+                const zoneDoc = await getDoc(doc(db, "leaguezones", selectedZone));
+                const zoneData = zoneDoc.data();
+                const teamNames = zoneData.teams || [];
+                
+                // Header for the zone
+                const zoneHeader = document.createElement("h2");
+                zoneHeader.textContent = `Zone: ${selectedZone}`;
+                teamContainer.appendChild(zoneHeader);
+                
+                // Fetch team data in parallel
+                const teamPromises = teamNames.map(teamName => 
+                    getDocs(query(collection(db, "GombeTeams"), where("name", "==", teamName)))
+                );
+                
+                const teamSnapshots = await Promise.all(teamPromises);
+                
+                for (let i = 0; i < teamSnapshots.length; i++) {
+                    const snapshot = teamSnapshots[i];
+                    if (snapshot.empty) continue;
+                    
+                    const teamDoc = snapshot.docs[0];
+                    const teamData = teamDoc.data();
+                    
+                    // Only show teams with tier "league_phase"
+                    if (teamData.tier === "league_phase") {
+                        createTeamRow(teamData.name, teamData.StateWideCompetition);
+                    }
+                }
+                
+                if (teamContainer.children.length === 1) { // Only the header
+                    teamContainer.innerHTML += "<p>No league phase teams found in this zone</p>";
+                } else {
+                    // Add Save All button at the bottom
+                    const saveAllContainer = document.createElement("div");
+                    saveAllContainer.className = "save-all-container";
+                    
+                    const saveAllBtn = document.createElement("button");
+                    saveAllBtn.id = "save-all-btn";
+                    saveAllBtn.textContent = "Save All Assignments";
+                    saveAllBtn.addEventListener("click", saveAllAssignments);
+                    
+                    saveAllContainer.appendChild(saveAllBtn);
+                    teamContainer.appendChild(saveAllContainer);
+                }
+                
+            } catch (error) {
+                console.error("Error loading teams:", error);
+                teamContainer.innerHTML = `<p class="error">Error loading teams: ${error.message}</p>`;
+            }
+        }
+
+        function createTeamRow(teamName, currentStateWideCompetition) {
+            const teamContainer = document.getElementById("teams-container");
+            
+            const row = document.createElement("div");
+            row.className = "team-row";
+            row.dataset.team = teamName;
+            
+            const teamSpan = document.createElement("span");
+            teamSpan.textContent = teamName;
+            teamSpan.className = "team-name";
+            
+            const select = document.createElement("select");
+            select.className = "StateWideCompetition-select";
+            select.dataset.team = teamName;
+            
+            // Add default option
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.textContent = "Assign State Wide Competitions";
+            defaultOption.disabled = true;
+            select.appendChild(defaultOption);
+            
+            // Add StateWideCompetition options
+            for (const [value, label] of Object.entries(StateWideCompetition)) {
+                const option = document.createElement("option");
+                option.value = value;
+                option.textContent = label;
+                if (currentStateWideCompetition === value) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            }
+            
+            // Save button for individual team
+            const saveBtn = document.createElement("button");
+            saveBtn.className = "save-btn";
+            saveBtn.textContent = "Save";
+            saveBtn.dataset.team = teamName;
+            
+            // Event listener for save button
+            saveBtn.addEventListener("click", () => {
+                saveAssignment(teamName, select.value);
+            });
+            
+            // Event listener for dropdown change
+            select.addEventListener("change", () => {
+                assignments[teamName] = select.value;
+                saveBtn.disabled = false;
+                saveBtn.textContent = "Save*";
+                saveBtn.classList.add("unsaved");
+            });
+            
+            const btnContainer = document.createElement("div");
+            btnContainer.className = "btn-container";
+            btnContainer.appendChild(saveBtn);
+            
+            row.appendChild(teamSpan);
+            row.appendChild(select);
+            row.appendChild(btnContainer);
+            teamContainer.appendChild(row);
+        }
+
+        async function saveAssignment(teamName,StateWideCompetition) {
+            try {
+                const q = query(
+                    collection(db, "GombeTeams"), 
+                    where("name", "==", teamName)
+                );
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    const teamDoc = querySnapshot.docs[0];
+                    await updateDoc(teamDoc.ref, { StateWideCompetition });
+                    
+                    // Visual feedback
+                    const select = document.querySelector(`.StateWideCompetition-select[data-team="${teamName}"]`);
+                    const saveBtn = document.querySelector(`.save-btn[data-team="${teamName}"]`);
+                    
+                    if (select) {
+                        select.classList.add("updated");
+                        setTimeout(() => select.classList.remove("updated"), 1000);
+                    }
+                    
+                    if (saveBtn) {
+                        saveBtn.textContent = "Saved!";
+                        saveBtn.classList.remove("unsaved");
+                        setTimeout(() => {
+                            saveBtn.textContent = "Save";
+                            saveBtn.disabled = false;
+                        }, 1500);
+                    }
+                    
+                    // Remove from assignments tracker
+                    delete assignments[teamName];
+                    
+                    return true;
+                }
+                console.warn(`Team not found in GombeTeams: ${teamName}`);
+                return false;
+            } catch (error) {
+                console.error(`Error updating ${teamName}:`, error);
+                return false;
+            }
+        }
+        
+        async function saveAllAssignments() {
+            const saveAllBtn = document.getElementById("save-all-btn");
+            saveAllBtn.disabled = true;
+            saveAllBtn.textContent = "Saving...";
+            
+            const teamNames = Object.keys(assignments);
+            const totalTeams = teamNames.length;
+            
+            if (totalTeams === 0) {
+                saveAllBtn.textContent = "No changes to save!";
+                setTimeout(() => {
+                    saveAllBtn.textContent = "Save All Assignments";
+                    saveAllBtn.disabled = false;
+                }, 2000);
+                return;
+            }
+            
+            let savedCount = 0;
+            
+            for (const teamName of teamNames) {
+                const success = await saveAssignment(teamName, assignments[teamName]);
+                if (success) savedCount++;
+            }
+            
+            saveAllBtn.textContent = `Saved ${savedCount}/${totalTeams} teams!`;
+            
+            setTimeout(() => {
+                saveAllBtn.textContent = "Save All Assignments";
+                saveAllBtn.disabled = false;
+            }, 3000);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchTeams();
+        });
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+        .zone-display-container {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #e8f4fd;
+            border-left: 4px solid #1a73e8;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .zone-display {
+            padding: 10px;
+            background: #b3d9ff;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #1a2a6c;
+            display: inline-block;
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-top: 25px;
+            font-size: 1.4rem;
+        }
+        .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .team-row:hover {
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+        }
+        .team-name {
+            font-weight: 500;
+            font-size: 16px;
+            flex: 1;
+        }
+        .StateWideCompetition-select {
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            min-width: 250px;
+            font-size: 14px;
+            transition: all 0.3s;
+            margin: 0 15px;
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+        .StateWideCompetition-select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        .StateWideCompetition-select.updated {
+            background-color: #e8f5e9;
+            border-color: #4caf50;
+        }
+        .btn-container {
+            display: flex;
+            gap: 10px;
+        }
+        .save-btn {
+            padding: 10px 18px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 80px;
+        }
+        .save-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        .save-btn.unsaved {
+            background: #f39c12;
+            animation: pulse 1.5s infinite;
+        }
+        .save-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #save-all-btn {
+            padding: 14px 28px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 25px;
+            width: 100%;
+            max-width: 300px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #save-all-btn:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        #save-all-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .save-all-container {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #eee;
+        }
+        .loading {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 30px;
+        }
+        .error {
+            color: #e74c3c;
+            padding: 15px;
+            background: #fdeded;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: #2c3e50;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(243, 156, 18, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Team State Wide Competition Assignment</h1>
+        
+        <div class="zone-display-container">
+            <label>Zone:</label>
+            <div class="zone-display">
+                central-zone(Fixed Selection)
+            </div>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span>Teams Loaded</span>
+                <span class="stat-number" id="teams-count">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Assignments Pending</span>
+                <span class="stat-number" id="pending-count">0</span>
+            </div>
+        </div>
+        
+        <div id="teams-container">
+            <p>Loading teams from central-zone...</p>
+        </div>
+    </div>
+
+    <script>
+        // Simple stats counter
+        document.addEventListener('DOMContentLoaded', () => {
+            setInterval(() => {
+                const teamRows = document.querySelectorAll('.team-row');
+                const pending = document.querySelectorAll('.save-btn.unsaved').length;
+                
+                document.getElementById('teams-count').textContent = teamRows.length;
+                document.getElementById('pending-count').textContent = pending;
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

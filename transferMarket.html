@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Market</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a2a6c;
+            --secondary: #3494e6;
+            --accent: #fdbb2d;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --danger: #e74c3c;
+            --success: #27ae60;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f5ff, #e6f0ff);
+            margin: 0;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin: 30px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+            color: var(--primary);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box input, .search-box select {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid var(--light-gray);
+            flex-grow: 1;
+            min-width: 200px;
+        }
+
+        .search-box button {
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .player-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .player-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            overflow: hidden;
+        }
+
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-info {
+            flex-grow: 1;
+        }
+
+        .player-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .player-position {
+            font-size: 0.95rem;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+
+        .player-details {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .player-status {
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        .free-agent {
+            color: var(--secondary);
+        }
+
+        .for-sale {
+            color: var(--accent);
+        }
+
+        .player-value {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .contract-info {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0d1a4a;
+        }
+
+        .btn-accent {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-accent:hover {
+            background-color: #e6a91e;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+        }
+
+        .loader {
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(52, 148, 230, 0.2);
+            border-top-color: var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background-color: rgba(39, 174, 96, 0.2);
+            color: var(--success);
+            display: block;
+        }
+
+        .error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger);
+            display: block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--light-gray);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .agent-info {
+            margin-bottom: 20px;
+        }
+
+        .agent-info h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .agent-detail {
+            margin-bottom: 8px;
+            display: flex;
+        }
+
+        .agent-detail strong {
+            min-width: 120px;
+            display: inline-block;
+        }
+
+        .contract-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--light-gray);
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Transfer Market</h1>
+            <p>Browse and acquire players for your team</p>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+
+        <!-- Search Section -->
+        <h2 class="section-title">Player Search</h2>
+        <div class="search-box">
+            <input type="text" id="searchName" placeholder="Player name" maxlength="100">
+            <select id="searchPosition">
+                <option value="">All Positions</option>
+                <option value="Goalkeeper">Goalkeeper</option>
+                <optgroup label="Defender">
+                    <option value="Left Back (LB)">Left Back (LB)</option>
+                    <option value="Center Back (CB)">Center Back (CB)</option>
+                    <option value="Wing Back (WB)">Wing Back (WB)</option>
+                    <option value="Right Back (RB)">Right Back (RB)</option>
+                    <option value="Sweeper (SW)">Sweeper (SW)</option>
+                </optgroup>
+                <optgroup label="Midfielder">
+                    <option value="Defensive Midfielder (CDM)">Defensive Midfielder (CDM)</option>
+                    <option value="Central Midfielder (CM)">Central Midfielder (CM)</option>
+                    <option value="Attacking Midfielder (CAM)">Attacking Midfielder (CAM)</option>
+                    <option value="Right Midfielder (RM)">Right Midfielder (RM)</option>
+                    <option value="Left Midfielder (LM)">Left Midfielder (LM)</option>
+                    <option value="Wide Midfielder">Wide Midfielder</option>
+                </optgroup>
+                <optgroup label="Forward">
+                    <option value="Striker (ST)">Striker (ST)</option>
+                    <option value="Center Forward (CF)">Center Forward (CF)</option>
+                    <option value="Second Striker (SS)">Second Striker (SS)</option>
+                    <option value="Right Winger (RW)">Right Winger (RW)</option>
+                    <option value="Left Winger (LW)">Left Winger (LW)</option>
+                </optgroup>
+            </select>
+            <button id="searchButton"><i class="fas fa-search"></i> Search</button>
+        </div>
+        <div class="players-grid" id="searchResults">
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <p>Search for players above</p>
+            </div>
+        </div>
+
+        <!-- Free Agents Section -->
+        <h2 class="section-title">Free Agents</h2>
+        <div class="players-grid" id="freeAgentsGrid">
+            <div class="loading">
+                <div class="loader"></div>
+            </div>
+        </div>
+
+        <!-- Players For Sale Section -->
+        <h2 class="section-title">Players For Sale</h2>
+        <div class="players-grid" id="forSaleGrid">
+            <div class="loading">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agent Info Modal -->
+    <div id="agentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Player Agent Information</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="agentInfoContent">
+                <!-- Agent information will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Contract Extension Modal -->
+    <div id="contractModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Extend Player Contract</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div>
+                <p>This player is already in your team. You can extend their contract period.</p>
+                <form id="contractForm">
+                    <input type="hidden" id="csrfToken" name="csrfToken">
+                    <div class="form-group">
+                        <label for="contractEndDate">New End Date:</label>
+                        <input type="date" id="contractEndDate" min="">
+                    </div>
+                    <button id="extendContractBtn" class="btn btn-primary" type="submit">Extend Contract</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-check-compat.js"></script>
+    
+    <script>
+        // Security configuration
+        const SECURITY_CONFIG = {
+            CSRF_TOKEN_LENGTH: 32,
+            CSRF_TOKEN_EXPIRY: 30 * 60 * 1000, // 30 minutes
+            RECAPTCHA_ENTERPRISE_SITE_KEY: 'your-recaptcha-enterprise-site-key-here',
+            MAX_INPUT_LENGTH: 100
+        };
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball",
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Initialize Firebase App Check
+        const appCheck = firebase.appCheck();
+        appCheck.activate(SECURITY_CONFIG.RECAPTCHA_ENTERPRISE_SITE_KEY, true);
+        
+        // Security state management
+        let securityState = {
+            csrfTokens: new Map(),
+            currentToken: null
+        };
+
+        // Get team ID from URL parameters with sanitization
+        const urlParams = new URLSearchParams(window.location.search);
+        const teamId = sanitizeInput(urlParams.get('teamId'));
+        let currentTeamName = "";
+        let allPlayers = []; // Store all players for client-side filtering
+
+        // Modal functionality
+        const agentModal = document.getElementById('agentModal');
+        const contractModal = document.getElementById('contractModal');
+        const closeModalButtons = document.querySelectorAll('.close-modal');
+        
+        // Initialize security features
+        initializeSecurity();
+
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                agentModal.style.display = 'none';
+                contractModal.style.display = 'none';
+            });
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === agentModal) agentModal.style.display = 'none';
+            if (e.target === contractModal) contractModal.style.display = 'none';
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!teamId) {
+                showError("No team selected. Please access this page from the Manager Profile.");
+            } else {
+                // Get team name
+                db.collection("GombeTeams").doc(teamId).get()
+                    .then(teamDoc => {
+                        if (teamDoc.exists) {
+                            const teamData = teamDoc.data();
+                            currentTeamName = sanitizeInput(teamData.name || teamData.teamName || "");
+                            loadAllPlayers(); // Load all players for search
+                            loadFreeAgents();
+                            loadPlayersForSale();
+                        } else {
+                            showError("Team not found.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error loading team:", error);
+                        showError("Error loading team information.");
+                    });
+            }
+
+            // Setup search button
+            document.getElementById('searchButton').addEventListener('click', searchPlayers);
+            
+            // Setup real-time search as user types
+            document.getElementById('searchName').addEventListener('input', function() {
+                if (this.value.length >= 2 || this.value.length === 0) {
+                    searchPlayers();
+                }
+            });
+            
+            // Setup position filter change
+            document.getElementById('searchPosition').addEventListener('change', searchPlayers);
+            
+            // Setup contract extension form
+            document.getElementById('contractForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formToken = document.getElementById('csrfToken').value;
+                if (!validateCSRFToken(formToken)) {
+                    showError("Security token expired. Please refresh the page and try again.");
+                    return;
+                }
+                
+                extendContract();
+            });
+            
+            // Set minimum date for contract extension to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('contractEndDate').min = today;
+        });
+
+        // Security initialization
+        function initializeSecurity() {
+            generateCSRFToken();
+            setupSecurityEventListeners();
+        }
+
+        // Generate and store CSRF token
+        function generateCSRFToken() {
+            const token = generateRandomString(SECURITY_CONFIG.CSRF_TOKEN_LENGTH);
+            const expiry = Date.now() + SECURITY_CONFIG.CSRF_TOKEN_EXPIRY;
+            
+            securityState.csrfTokens.set(token, expiry);
+            securityState.currentToken = token;
+            
+            document.getElementById('csrfToken').value = token;
+            
+            // Clean up expired tokens
+            cleanupExpiredTokens();
+        }
+
+        // Validate CSRF token
+        function validateCSRFToken(token) {
+            if (!token) return false;
+            
+            const expiry = securityState.csrfTokens.get(token);
+            if (!expiry || expiry < Date.now()) {
+                securityState.csrfTokens.delete(token);
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Generate random string for tokens
+        function generateRandomString(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            const crypto = window.crypto || window.msCrypto;
+            const values = new Uint32Array(length);
+            
+            crypto.getRandomValues(values);
+            for (let i = 0; i < length; i++) {
+                result += chars[values[i] % chars.length];
+            }
+            return result;
+        }
+
+        // Clean up expired CSRF tokens
+        function cleanupExpiredTokens() {
+            const now = Date.now();
+            for (const [token, expiry] of securityState.csrfTokens.entries()) {
+                if (expiry < now) {
+                    securityState.csrfTokens.delete(token);
+                }
+            }
+        }
+
+        // Setup security event listeners
+        function setupSecurityEventListeners() {
+            // Clear sensitive data when modal is closed
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', clearSensitiveData);
+            });
+            
+            // Clear sensitive data when page is unloaded
+            window.addEventListener('beforeunload', clearSensitiveData);
+        }
+
+        // Clear sensitive data from memory
+        function clearSensitiveData() {
+            document.getElementById('contractEndDate').value = '';
+        }
+
+        // Input sanitization function
+        function sanitizeInput(input) {
+            if (typeof input !== 'string') return '';
+            
+            return input
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#x27;')
+                .replace(/\//g, '&#x2F;')
+                .substring(0, SECURITY_CONFIG.MAX_INPUT_LENGTH);
+        }
+
+        // Output sanitization for HTML content
+        function sanitizeHTML(content) {
+            const temp = document.createElement('div');
+            temp.textContent = content;
+            return temp.innerHTML;
+        }
+
+        // Helper function to format date
+        function formatDate(dateString) {
+            if (!dateString) return "N/A";
+            
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+        
+        // Helper function to calculate days remaining
+        function getDaysRemaining(endDate) {
+            if (!endDate) return null;
+            
+            const today = new Date();
+            const end = new Date(endDate);
+            const diffTime = end - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            return diffDays;
+        }
+
+        // Load all players for search functionality
+        async function loadAllPlayers() {
+            try {
+                const querySnapshot = await db.collection("playerRegistry").get();
+                allPlayers = [];
+                
+                querySnapshot.forEach(doc => {
+                    allPlayers.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // After loading all players, perform an initial search to show all players
+                searchPlayers();
+            } catch (error) {
+                console.error("Error loading all players:", error);
+                document.getElementById("searchResults").innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error loading players</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadFreeAgents() {
+            const grid = document.getElementById("freeAgentsGrid");
+            grid.innerHTML = '<div class="loading"><div class="loader"></div></div>';
+            
+            try {
+                const querySnapshot = await db.collection("playerRegistry")
+                    .where("teamName", "==", "Free Agent")
+                    .get();
+
+                if (querySnapshot.empty) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-user-slash"></i>
+                            <p>No free agents available</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = '';
+                
+                querySnapshot.forEach(doc => {
+                    const player = { id: doc.id, ...doc.data() };
+                    createPlayerCard(player, grid, 'free-agent');
+                });
+            } catch (error) {
+                console.error("Error loading free agents:", error);
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error loading free agents</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadPlayersForSale() {
+            const grid = document.getElementById("forSaleGrid");
+            grid.innerHTML = '<div class="loading"><div class="loader"></div></div>';
+            
+            try {
+                const querySnapshot = await db.collection("playerRegistry")
+                    .where("MarketStatus", "==", "Awaiting Offer")
+                    .get();
+
+                if (querySnapshot.empty) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-tag"></i>
+                            <p>No players currently for sale</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = '';
+                
+                querySnapshot.forEach(doc => {
+                    const player = { id: doc.id, ...doc.data() };
+                    // Only show players who are not already on this team
+                    if (player.teamName !== currentTeamName) {
+                        createPlayerCard(player, grid, 'for-sale');
+                    }
+                });
+            } catch (error) {
+                console.error("Error loading players for sale:", error);
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error loading players for sale</p>
+                    </div>
+                `;
+            }
+        }
+
+        function searchPlayers() {
+            const nameQuery = document.getElementById('searchName').value.toLowerCase().trim();
+            const positionQuery = document.getElementById('searchPosition').value;
+            const grid = document.getElementById("searchResults");
+            
+            // If we haven't loaded all players yet, show loading state
+            if (allPlayers.length === 0) {
+                grid.innerHTML = '<div class="loading"><div class="loader"></div></div>';
+                setTimeout(searchPlayers, 500); // Try again after a short delay
+                return;
+            }
+            
+            grid.innerHTML = '<div class="loading"><div class="loader"></div></div>';
+            
+            // Use setTimeout to allow the UI to update before filtering
+            setTimeout(() => {
+                let filteredPlayers = [...allPlayers];
+                
+                // Apply name filter
+                if (nameQuery) {
+                    filteredPlayers = filteredPlayers.filter(player => 
+                        player.name && player.name.toLowerCase().includes(nameQuery)
+                    );
+                }
+                
+                // Apply position filter
+                if (positionQuery) {
+                    filteredPlayers = filteredPlayers.filter(player => 
+                        player.position === positionQuery
+                    );
+                }
+                
+                if (filteredPlayers.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-user-slash"></i>
+                            <p>No players found matching your criteria</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = '';
+                
+                filteredPlayers.forEach(player => {
+                    let status = '';
+                    if (player.teamName === "Free Agent") {
+                        status = 'free-agent';
+                    } else if (player.MarketStatus === "Awaiting Offer") {
+                        status = 'for-sale';
+                    }
+                    createPlayerCard(player, grid, status);
+                });
+            }, 100);
+        }
+
+        function createPlayerCard(player, container, status) {
+            const card = document.createElement('div');
+            card.className = 'player-card';
+            
+            let buttonText = '<i class="fas fa-user-plus"></i> Sign';
+            let buttonClass = 'btn-primary';
+            
+            // Check if player is already on this team
+            if (player.teamName === currentTeamName) {
+                buttonText = '<i class="fas fa-file-contract"></i> Extend Contract';
+                buttonClass = 'btn-accent';
+            }
+            
+            // Sanitize player data
+            const safePlayerName = sanitizeHTML(player.name || "Unknown Player");
+            const safePosition = sanitizeHTML(player.position || "No position specified");
+            const safeJerseyNumber = sanitizeHTML(player.jerseyNumber || "N/A");
+            const safeLGA = sanitizeHTML(player.LGAs || "N/A");
+            const safePlayerValue = player.playerValue ? `$${player.playerValue.toLocaleString()}` : '';
+            
+            // Calculate contract info
+            const contractInfo = player.contractEnd ? 
+                `Ends: ${formatDate(player.contractEnd)}` : 
+                "No contract";
+                
+            const daysRemaining = player.contractEnd ? getDaysRemaining(player.contractEnd) : null;
+            
+            // Safe image handling with onerror fallback
+            const imageHtml = player.imageUrl ? 
+                `<img src="${sanitizeHTML(player.imageUrl)}" alt="${safePlayerName}" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-user\'></i>'">` : 
+                `<i class="fas fa-user"></i>`;
+            
+            card.innerHTML = `
+                <div class="player-avatar">
+                    ${imageHtml}
+                </div>
+                <div class="player-info">
+                    <div class="player-name">${safePlayerName}</div>
+                    <div class="player-position">${safePosition}</div>
+                    <div class="player-details">
+                        <div>#${safeJerseyNumber}</div>
+                        <div>${safeLGA}</div>
+                        ${status === 'free-agent' ? 
+                            `<div class="player-status free-agent">Free Agent</div>` : ''}
+                        ${status === 'for-sale' ? 
+                            `<div class="player-status for-sale">For Sale</div>` : ''}
+                        ${player.playerValue ? 
+                            `<div class="player-value">${safePlayerValue}</div>` : ''}
+                        <div class="contract-info">${sanitizeHTML(contractInfo)}</div>
+                        ${daysRemaining !== null ? 
+                            `<div class="contract-info">${daysRemaining} days remaining</div>` : ''}
+                    </div>
+                </div>
+                <button class="btn ${buttonClass} sign-btn" data-player-id="${sanitizeHTML(player.id)}" data-player-name="${sanitizeHTML(player.name || '')}">
+                    ${buttonText}
+                </button>
+            `;
+            
+            container.appendChild(card);
+        }
+
+        // Handle sign button clicks
+        document.addEventListener('click', async function(e) {
+            if (e.target.closest('.sign-btn')) {
+                const button = e.target.closest('.sign-btn');
+                const playerId = button.getAttribute('data-player-id');
+                const playerName = button.getAttribute('data-player-name');
+                
+                // Validate player ID
+                if (!playerId || playerId.length > 100) {
+                    showError("Invalid player selection");
+                    return;
+                }
+                
+                try {
+                    // Get player data
+                    const playerDoc = await db.collection("playerRegistry").doc(playerId).get();
+                    if (!playerDoc.exists) {
+                        throw new Error("Player no longer exists");
+                    }
+                    
+                    const playerData = playerDoc.data();
+                    
+                    // Check if player is already on this team
+                    if (playerData.teamName === currentTeamName) {
+                        // Show contract extension modal
+                        document.getElementById('extendContractBtn').setAttribute('data-player-id', playerId);
+                        
+                        // Set current end date as minimum for extension
+                        const currentEndDate = playerData.contractEnd || new Date().toISOString().split('T')[0];
+                        document.getElementById('contractEndDate').value = "";
+                        document.getElementById('contractEndDate').min = currentEndDate;
+                        
+                        // Generate new CSRF token for the form
+                        generateCSRFToken();
+                        
+                        contractModal.style.display = 'flex';
+                        return;
+                    }
+                    
+                    // Check if player has agent approval
+                    if (playerData.AgentTeamAproval) {
+                        if (playerData.AgentTeamAproval === currentTeamName) {
+                            // Agent has approved this team - proceed with signing
+                            await signPlayer(playerId, playerData, button);
+                        } else {
+                            // Agent has approved a different team - show agent info
+                            showAgentInfo(playerData);
+                        }
+                    } else if (playerData.teamName === "Free Agent") {
+                        // Free agent - sign without agent approval
+                        await signPlayer(playerId, playerData, button);
+                    } else {
+                        // Player is not free agent and has no agent approval - show agent info
+                        showAgentInfo(playerData);
+                    }
+                    
+                } catch (error) {
+                    console.error("Error processing player:", error);
+                    showStatus("Error processing player request. Please try again.", 'error');
+                }
+            }
+        });
+
+        // Sign a player to the team
+        async function signPlayer(playerId, playerData, button) {
+            if (!confirm(`Are you sure you want to sign ${sanitizeHTML(playerData.name)} to your team?`)) {
+                return;
+            }
+            
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            
+            try {
+                // Generate teamID (teamName + playerId)
+                const newTeamId = `${currentTeamName}_${playerId}`;
+                
+                // Calculate contract dates (default 2 years if not specified)
+                const startDate = new Date().toISOString().split('T')[0];
+                const endDate = new Date();
+                endDate.setFullYear(endDate.getFullYear() + 2);
+                const endDateString = endDate.toISOString().split('T')[0];
+                
+                // Update player document
+                await db.collection("playerRegistry").doc(playerId).update({
+                    teamId: newTeamId,
+                    teamName: currentTeamName,
+                    team: currentTeamName,
+                    MarketStatus: null,
+                    playerValue: null,
+                    contractStart: startDate,
+                    contractEnd: endDateString
+                });
+                
+                showStatus(`Player ${sanitizeHTML(playerData.name)} signed successfully with a 2-year contract!`, 'success');
+                
+                // Refresh all sections
+                loadAllPlayers(); // Reload all players for search
+                loadFreeAgents();
+                loadPlayersForSale();
+                searchPlayers(); // Refresh search results
+                
+            } catch (error) {
+                console.error("Error signing player:", error);
+                showStatus("Error signing player. Please try again.", 'error');
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-user-plus"></i> Sign';
+            }
+        }
+
+        // Extend player contract
+        async function extendContract() {
+            const playerId = document.getElementById('extendContractBtn').getAttribute('data-player-id');
+            const newEndDate = document.getElementById('contractEndDate').value;
+            
+            if (!playerId || !newEndDate) {
+                showStatus("Please select a valid end date", "error");
+                return;
+            }
+            
+            const button = document.getElementById('extendContractBtn');
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            
+            try {
+                // Get current player data
+                const playerDoc = await db.collection("playerRegistry").doc(playerId).get();
+                if (!playerDoc.exists) {
+                    throw new Error("Player no longer exists");
+                }
+                
+                const playerData = playerDoc.data();
+                
+                // Update contract end date
+                await db.collection("playerRegistry").doc(playerId).update({
+                    contractEnd: newEndDate
+                });
+                
+                showStatus(`Contract extended until ${formatDate(newEndDate)} for ${sanitizeHTML(playerData.name)}`, 'success');
+                contractModal.style.display = 'none';
+                
+                // Generate new CSRF token after successful operation
+                generateCSRFToken();
+                
+            } catch (error) {
+                console.error("Error extending contract:", error);
+                showStatus("Error extending contract. Please try again.", 'error');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = 'Extend Contract';
+            }
+        }
+
+        // Show agent information
+        async function showAgentInfo(playerData) {
+            const agentInfoContent = document.getElementById('agentInfoContent');
+            
+            if (playerData.agentId) {
+                try {
+                    // Try to get agent info from GombeAgents collection
+                    const agentDoc = await db.collection("GombeAgents").doc(playerData.agentId).get();
+                    
+                    if (agentDoc.exists) {
+                        const agentData = agentDoc.data();
+                        agentInfoContent.innerHTML = `
+                            <div class="agent-info">
+                                <h3>Player Agent Information</h3>
+                                <div class="agent-detail"><strong>Name:</strong> ${sanitizeHTML(agentData.name || 'N/A')}</div>
+                                <div class="agent-detail"><strong>Phone:</strong> ${sanitizeHTML(agentData.phone || 'N/A')}</div>
+                                <div class="agent-detail"><strong>Local Government:</strong> ${sanitizeHTML(agentData.localGovernment || 'N/A')}</div>
+                                <div class="agent-detail"><strong>Address:</strong> ${sanitizeHTML(agentData.address || 'N/A')}</div>
+                            </div>
+                            <p>Please contact the agent to discuss transferring this player to your team.</p>
+                        `;
+                    } else {
+                        agentInfoContent.innerHTML = `<p>Agent information not available.</p>`;
+                    }
+                } catch (error) {
+                    console.error("Error loading agent info:", error);
+                    agentInfoContent.innerHTML = `<p>Error loading agent information.</p>`;
+                }
+            } else {
+                agentInfoContent.innerHTML = `<p>This player does not have an agent registered.</p>`;
+            }
+            
+            agentModal.style.display = 'flex';
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = sanitizeHTML(message);
+            statusEl.className = `status-message ${type}`;
+            
+            setTimeout(() => {
+                statusEl.style.opacity = '0';
+                setTimeout(() => {
+                    statusEl.className = 'status-message';
+                    statusEl.style.opacity = '1';
+                }, 500);
+            }, 3000);
+        }
+
+        function showError(message) {
+            const container = document.querySelector('.container');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>${sanitizeHTML(message)}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Trophies | Gombe Football</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #1a2a6c;
+      --secondary: #3494e6;
+      --accent: #fdbb2d;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+      --success: #28a745;
+      --warning: #ffc107;
+      --danger: #dc3545;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #f0f5ff, #e6f0ff);
+      margin: 0;
+      padding: 20px;
+      color: var(--dark);
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 30px;
+      font-weight: 500;
+      font-size: 2.2rem;
+    }
+    .team-header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      border-radius: 15px;
+      color: white;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .team-header::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), #C0C0C0, #CD7F32);
+    }
+    .team-name {
+      font-size: 2rem;
+      margin-bottom: 5px;
+      position: relative;
+      z-index: 1;
+    }
+    .team-badge {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #C0C0C0);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 0 auto 15px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .trophy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .trophy-section {
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--light-gray);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    .trophy-section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    .trophy-header {
+      background: linear-gradient(to right, var(--secondary), var(--primary));
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.2rem;
+    }
+    .trophy-icon {
+      font-size: 1.5rem;
+      color: var(--accent);
+    }
+    .trophy-body {
+      padding: 20px;
+      min-height: 100px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .trophy-summary {
+      padding: 15px;
+      background-color: var(--light);
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .trophy-count {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .trophy-years {
+      font-size: 0.9rem;
+      color: var(--gray);
+    }
+    .record-list {
+      border-top: 1px solid var(--light-gray);
+      padding-top: 10px;
+    }
+    .record {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--light-gray);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .record:last-child {
+      border-bottom: none;
+    }
+    .year {
+      font-weight: 500;
+      color: var(--primary);
+    }
+    .badge {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    .winner-badge {
+      background-color: var(--success);
+      color: white;
+    }
+    .runner-up-badge {
+      background-color: var(--warning);
+      color: var(--dark);
+    }
+    .no-records {
+      color: var(--gray);
+      text-align: center;
+      padding: 20px 0;
+      font-style: italic;
+    }
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
+    .loader {
+      width: 30px;
+      height: 30px;
+      border: 4px solid rgba(52, 148, 230, 0.2);
+      border-top-color: var(--secondary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .total-trophies {
+      text-align: center;
+      margin-top: 30px;
+      padding: 15px;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      font-size: 1.1rem;
+      font-weight: 500;
+      border: 2px solid var(--accent);
+    }
+    .total-trophies span {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.3rem;
+    }
+    .zone-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-left: 5px;
+    }
+
+    /* Security notification */
+    .security-notification {
+      background: #ff5252;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+    }
+
+    /* Access denied message */
+    .access-denied {
+      text-align: center;
+      padding: 40px 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      margin-top: 50px;
+    }
+    .access-denied i {
+      font-size: 4rem;
+      color: var(--danger);
+      margin-bottom: 20px;
+    }
+    .access-denied h2 {
+      color: var(--danger);
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .trophy-grid {
+        grid-template-columns: 1fr;
+      }
+      .team-name {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Security Notification -->
+  <div class="security-notification" id="securityNotification">
+    <i class="fas fa-shield-alt"></i> Security verification in progress...
+  </div>
+
+  <div class="container" id="mainContent" style="display: none;">
+    <div class="team-header">
+      <div class="team-badge" id="teamBadge">T</div>
+      <h1 class="team-name" id="teamName">Team Name</h1>
+    </div>
+
+    <div class="trophy-grid">
+      <!-- Champions Cup -->
+      <div class="trophy-section">
+        <div class="trophy-header">
+          <i class="fas fa-trophy trophy-icon"></i>
+          <h2>Champions Cup</h2>
+        </div>
+        <div class="trophy-body" id="champions-records">
+          <div class="loading">
+            <div class="loader"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Worriors Cup -->
+      <div class="trophy-section">
+        <div class="trophy-header">
+          <i class="fas fa-shield-alt trophy-icon"></i>
+          <h2>Worriors Cup</h2>
+        </div>
+        <div class="trophy-body" id="worriors-records">
+          <div class="loading">
+            <div class="loader"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FA Cup -->
+      <div class="trophy-section">
+        <div class="trophy-header">
+          <i class="fas fa-crown trophy-icon"></i>
+          <h2>FA Cup</h2>
+        </div>
+        <div class="trophy-body" id="FA-records">
+          <div class="loading">
+            <div class="loader"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- League Division -->
+      <div class="trophy-section">
+        <div class="trophy-header">
+          <i class="fas fa-star trophy-icon"></i>
+          <h2>League Division</h2>
+        </div>
+        <div class="trophy-body" id="league_phase-records">
+          <div class="loading">
+            <div class="loader"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Championship Division -->
+      <div class="trophy-section">
+        <div class="trophy-header">
+          <i class="fas fa-medal trophy-icon"></i>
+          <h2>Championship Division</h2>
+        </div>
+        <div class="trophy-body" id="championship-records">
+          <div class="loading">
+            <div class="loader"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Heritage Cup -->
+      <div class="trophy-section">
+        <div class="trophy-header">
+          <i class="fas fa-trophy trophy-icon"></i>
+          <h2>Heritage Cup</h2>
+        </div>
+        <div class="trophy-body" id="heritage-records">
+          <div class="loading">
+            <div class="loader"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unity Shield -->
+      <div class="trophy-section">
+        <div class="trophy-header">
+          <i class="fas fa-shield-virus trophy-icon"></i>
+          <h2>Unity Shield</h2>
+        </div>
+        <div class="trophy-body" id="unity-shield-records">
+          <div class="loading">
+            <div class="loader"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="total-trophies">
+      Total Trophies: <span id="totalCount">0</span>
+    </div>
+  </div>
+
+  <!-- Access Denied Message (Hidden by default) -->
+  <div class="access-denied" id="accessDenied" style="display: none;">
+    <i class="fas fa-ban"></i>
+    <h2>Access Denied</h2>
+    <p>You don't have permission to view this content.</p>
+    <p>Please contact the administrator if you believe this is an error.</p>
+    <button id="backToLogin" class="btn btn-primary" style="margin-top: 20px;">
+      <i class="fas fa-arrow-left"></i> Back to Login
+    </button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball",
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // Get team ID from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const teamId = urlParams.get('teamId');
+    const teamName = urlParams.get('teamName');
+
+    // Security variables
+    let totalTrophies = 0;
+    let accessGranted = false;
+    let verificationAttempts = 0;
+    const MAX_VERIFICATION_ATTEMPTS = 3;
+
+    // Define competitions and their data paths
+    const competitions = [
+      {
+        name: "Champions Cup",
+        path: "GombeChampionsCup/WinnerRecords/Teams",
+        containerId: "champions-records",
+        icon: "fas fa-trophy"
+      },
+      {
+        name: "Worriors Cup",
+        path: "GombeWorriorsCup/WinnerRecords/Teams",
+        containerId: "worriors-records",
+        icon: "fas fa-shield-alt"
+      },
+      {
+        name: "FA Cup",
+        path: "GombeFAcups",
+        containerId: "FA-records",
+        icon: "fas fa-crown",
+        isZoneBased: true
+      },
+      {
+        name: "League Division",
+        path: "GombeLeagueWinners",
+        containerId: "league_phase-records",
+        icon: "fas fa-star",
+        isZoneBased: true
+      },
+      {
+        name: "Championship Division",
+        path: "GombeChampionshipWinners",
+        containerId: "championship-records",
+        icon: "fas fa-medal",
+        isZoneBased: true
+      },
+      {
+        name: "Heritage Cup",
+        path: "GombeHeritageCup",
+        containerId: "heritage-records",
+        icon: "fas fa-trophy",
+        isZoneBased: true
+      },
+      {
+        name: "Unity Shield",
+        path: "GombeUnityShield/WinnerRecords/Teams",
+        containerId: "unity-shield-records",
+        icon: "fas fa-shield-virus"
+      }
+    ];
+
+    // Initialize the page with security checks
+    document.addEventListener('DOMContentLoaded', function() {
+      initPage();
+    });
+
+    // Back to login button
+    document.getElementById('backToLogin').addEventListener('click', function() {
+      window.location.href = 'ManagerLogin.html';
+    });
+
+    async function initPage() {
+      // Show security notification
+      const securityNotification = document.getElementById('securityNotification');
+      securityNotification.style.display = 'block';
+      
+      try {
+        // First verify authentication
+        const isAuthenticated = await verifyAuthentication();
+        
+        if (!isAuthenticated) {
+          showAccessDenied("Authentication failed. Please log in again.");
+          return;
+        }
+
+        // Then verify authorization
+        const isAuthorized = await verifyAuthorization();
+        
+        if (!isAuthorized) {
+          showAccessDenied("You are not authorized to view this content.");
+          return;
+        }
+
+        // If both checks pass, show content
+        accessGranted = true;
+        securityNotification.style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        
+        // Load the trophy data
+        await loadTrophyData();
+        
+      } catch (error) {
+        console.error("Security verification error:", error);
+        showAccessDenied("Security verification failed. Please try again later.");
+      }
+    }
+
+    async function verifyAuthentication() {
+      return new Promise((resolve) => {
+        // Check if user is logged in
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            // User is signed in
+            resolve(true);
+          } else {
+            // No user is signed in
+            resolve(false);
+          }
+        });
+        
+        // Timeout for authentication check
+        setTimeout(() => {
+          resolve(false);
+        }, 5000);
+      });
+    }
+
+    async function verifyAuthorization() {
+      verificationAttempts++;
+      
+      if (verificationAttempts > MAX_VERIFICATION_ATTEMPTS) {
+        console.error("Too many verification attempts");
+        return false;
+      }
+
+      if (!teamId && !teamName) {
+        console.error("No team identifier provided");
+        return false;
+      }
+
+      try {
+        // For trophy view, we can be more permissive but still validate
+        // that the team exists in the database
+        if (teamId) {
+          const teamDoc = await db.collection("GombeTeams").doc(teamId).get();
+          return teamDoc.exists;
+        } else if (teamName) {
+          // If only teamName is provided, we need to verify it exists
+          const teamsQuery = await db.collection("GombeTeams")
+            .where("teamName", "==", teamName)
+            .limit(1)
+            .get();
+          
+          return !teamsQuery.empty;
+        }
+        
+        return false;
+      } catch (error) {
+        console.error("Authorization verification error:", error);
+        return false;
+      }
+    }
+
+    function showAccessDenied(message) {
+      const securityNotification = document.getElementById('securityNotification');
+      securityNotification.style.display = 'block';
+      securityNotification.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+      securityNotification.style.background = '#dc3545';
+      
+      document.getElementById('accessDenied').style.display = 'block';
+      document.getElementById('mainContent').style.display = 'none';
+    }
+
+    async function loadTrophyData() {
+      if (!accessGranted) return;
+      
+      try {
+        let finalTeamName = teamName;
+        let finalTeamId = teamId;
+
+        // If we have teamId but no teamName, fetch team details
+        if (teamId && !teamName) {
+          const teamDoc = await db.collection("GombeTeams").doc(teamId).get();
+          if (teamDoc.exists) {
+            const teamData = teamDoc.data();
+            finalTeamName = teamData.teamName || teamData.name || "Unknown Team";
+          } else {
+            showError("Team not found");
+            return;
+          }
+        }
+
+        // Update UI with team name
+        document.getElementById("teamName").textContent = finalTeamName;
+        document.getElementById("teamBadge").textContent = finalTeamName.charAt(0).toUpperCase();
+
+        // Get team zone for zone-based competitions
+        const teamZone = await getTeamZone(finalTeamId, finalTeamName);
+
+        // Fetch all trophy data
+        await fetchAllTrophyData(finalTeamName, teamZone);
+        document.getElementById("totalCount").textContent = totalTrophies;
+      } catch (error) {
+        console.error("Error loading trophy data:", error);
+        showError("Error loading trophy data");
+      }
+    }
+
+    // Get team's zone from GombeTeams collection
+    async function getTeamZone(teamId, teamName) {
+      if (!teamId) return "All Zones";
+      
+      try {
+        const teamDoc = await db.collection("GombeTeams").doc(teamId).get();
+        if (teamDoc.exists) {
+          return teamDoc.data().zone || "Central Zone";
+        }
+        return "Central Zone";
+      } catch (error) {
+        console.error("Error fetching team zone:", error);
+        return "Central Zone";
+      }
+    }
+
+    async function fetchAllTrophyData(teamName, teamZone) {
+      try {
+        for (const competition of competitions) {
+          await fetchTrophyData(competition, teamName, teamZone);
+        }
+      } catch (error) {
+        console.error("Error fetching trophies:", error);
+        showError("Error loading trophy data");
+      }
+    }
+
+    async function fetchTrophyData(competition, teamName, teamZone) {
+      const container = document.getElementById(competition.containerId);
+      container.innerHTML = '<div class="loading"><div class="loader"></div></div>';
+      
+      try {
+        let querySnapshot;
+        
+        if (competition.isZoneBased) {
+          // Handle zone-based competitions (FA Cup, League, Championship, Heritage)
+          const zonePath = teamZone.replace(/ /g, "-").toLowerCase();
+          
+          if (competition.name === "FA Cup") {
+            querySnapshot = await db.collection(competition.path)
+              .doc(teamZone)
+              .collection("WinnerRecords")
+              .where("teamName", "==", teamName)
+              .get();
+          } 
+          else if (competition.name === "Heritage Cup") {
+            // Heritage Cup uses team name as document ID (slugified)
+            const teamIdSlug = teamName.toLowerCase()
+              .replace(/[^a-z0-9]/g, '-')
+              .replace(/-+/g, '-')
+              .replace(/^-|-$/g, '');
+            
+            const docRef = db.collection(competition.path)
+              .doc(zonePath)
+              .collection("WinnerRecords")
+              .doc(teamIdSlug);
+              
+            const doc = await docRef.get();
+            if (doc.exists) {
+              displayRecords([doc.data()], container, competition.name, teamZone);
+              return;
+            } else {
+              container.innerHTML = `<div class="no-records">No trophies won in ${competition.name} (${teamZone})</div>`;
+              return;
+            }
+          }
+          else {
+            // League and Championship divisions - use the zone path
+            const zoneDocRef = db.collection(competition.path).doc(zonePath);
+            const zoneDoc = await zoneDocRef.get();
+            
+            if (zoneDoc.exists) {
+              querySnapshot = await zoneDocRef.collection("Teams")
+                .where("teamName", "==", teamName)
+                .get();
+            } else {
+              container.innerHTML = `<div class="no-records">No trophies won in ${competition.name} (${teamZone})</div>`;
+              return;
+            }
+          }
+        } 
+        else {
+          // Standard competition handling (Champions Cup, Worriors Cup, Unity Shield)
+          const pathParts = competition.path.split('/');
+          
+          if (pathParts.length === 3) {
+            // Collection/Document/Collection pattern
+            querySnapshot = await db.collection(pathParts[0])
+              .doc(pathParts[1])
+              .collection(pathParts[2])
+              .where("teamName", "==", teamName)
+              .get();
+          } else {
+            // Simple collection pattern
+            querySnapshot = await db.collection(pathParts[0])
+              .where("teamName", "==", teamName)
+              .get();
+          }
+        }
+
+        if (!querySnapshot || querySnapshot.empty) {
+          const zoneText = competition.isZoneBased ? ` (${teamZone})` : '';
+          container.innerHTML = `<div class="no-records">No trophies won in ${competition.name}${zoneText}</div>`;
+        } else {
+          const records = [];
+          querySnapshot.forEach(doc => {
+            records.push(doc.data());
+          });
+          displayRecords(records, container, competition.name, teamZone);
+        }
+      } catch (error) {
+        console.error(`Error fetching ${competition.name} data:`, error);
+        container.innerHTML = '<div class="no-records">Error loading data</div>';
+      }
+    }
+
+    function displayRecords(records, container, competitionName, zone) {
+      if (!records || records.length === 0) {
+        const zoneText = zone ? ` (${zone})` : '';
+        container.innerHTML = `<div class="no-records">No trophies won in ${competitionName}${zoneText}</div>`;
+        return;
+      }
+
+      // Combine all records
+      const combined = {
+        years: [],
+        trophyCount: 0,
+        zone: zone
+      };
+
+      records.forEach(record => {
+        if (record.years && Array.isArray(record.years)) {
+          combined.years.push(...record.years);
+        } else if (record.year) {
+          combined.years.push(record.year);
+        }
+        
+        if (record.trophyCount) {
+          combined.trophyCount += record.trophyCount;
+        } else if (record.years && Array.isArray(record.years)) {
+          combined.trophyCount += record.years.length;
+        } else {
+          combined.trophyCount += 1;
+        }
+      });
+
+      // Update total trophies
+      totalTrophies += combined.trophyCount;
+
+      // Sort years in descending order
+      combined.years.sort((a, b) => {
+        if (typeof a === 'string' && typeof b === 'string') {
+          return b.localeCompare(a);
+        }
+        return b - a;
+      });
+
+      // Clear loading indicator
+      container.innerHTML = '';
+
+      // Create summary section
+      const summaryDiv = document.createElement('div');
+      summaryDiv.className = 'trophy-summary';
+      
+      const countSpan = document.createElement('span');
+      countSpan.className = 'trophy-count';
+      countSpan.textContent = `${combined.trophyCount} Trophy${combined.trophyCount !== 1 ? 'ies' : ''}`;
+      
+      const yearsSpan = document.createElement('span');
+      yearsSpan.className = 'trophy-years';
+      yearsSpan.textContent = `${combined.years.length} Season${combined.years.length !== 1 ? 's' : ''}`;
+      
+      if (zone) {
+        const zoneSpan = document.createElement('span');
+        zoneSpan.className = 'zone-badge';
+        zoneSpan.textContent = zone;
+        countSpan.appendChild(zoneSpan);
+      }
+      
+      summaryDiv.appendChild(countSpan);
+      summaryDiv.appendChild(yearsSpan);
+      container.appendChild(summaryDiv);
+
+      // Create records list
+      const recordsDiv = document.createElement('div');
+      recordsDiv.className = 'record-list';
+      
+      if (combined.years.length === 0) {
+        recordsDiv.innerHTML = '<div class="no-records">No season records available</div>';
+      } else {
+        combined.years.forEach(year => {
+          const recordDiv = document.createElement('div');
+          recordDiv.className = 'record';
+          
+          const yearSpan = document.createElement('span');
+          yearSpan.className = 'year';
+          yearSpan.textContent = year;
+          
+          const badgeSpan = document.createElement('span');
+          badgeSpan.className = 'badge winner-badge';
+          badgeSpan.textContent = 'Winner';
+          
+          recordDiv.appendChild(yearSpan);
+          recordDiv.appendChild(badgeSpan);
+          recordsDiv.appendChild(recordDiv);
+        });
+      }
+      
+      container.appendChild(recordsDiv);
+    }
+
+    function showError(message) {
+      document.getElementById("teamName").textContent = "Error";
+      document.getElementById("teamBadge").textContent = "!";
+      document.querySelectorAll(".trophy-body").forEach(el => {
+        el.innerHTML = `<div class="no-records">${message}</div>`;
+      });
+    }
+  </script>
+</body>
+</html>

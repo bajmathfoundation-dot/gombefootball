@@ -1,0 +1,408 @@
+rules_version = '2';
+
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+
+    // Allow full access to GombeChampionsCup collection and all subcollections
+
+    match /GombeChampionsCup/{document=**} {
+
+      allow read, write: if true;
+
+    }
+     match /GombeChampionsCupDemo/{document=**} {
+
+      allow read, write: if true;
+
+    }
+    match /GombeAgents/{document=**} {
+
+      allow read, write: if true;
+
+    }
+     match /GombeAgentsLicense/{document=**} {
+
+      allow read, write: if true;
+
+    }
+    match /GombeCommissionerAssignments/{psn} {
+
+      allow read, write: if true;
+
+      match /{seasonId}/{documentId} {
+
+        allow read, write: if true;
+
+      }
+
+    }
+    match /GombeRefereesAssignments/{psn} {
+
+      allow read, write: if true;
+
+      match /{seasonId}/{documentId} {
+
+        allow read, write: if true;
+
+      }
+
+    }
+    match /GombeLeagueWinners/{zone} {
+      allow read, write: if true;
+  match /Teams/{team} {
+        allow read, write: if true;
+        match /Wins/{win} {
+          allow read, write: if true;
+    }
+    }
+    }
+    match /GombeSeason/{teamId} {
+      // Allow team admins to manage their team's data
+      allow read: if true;
+      allow write:if true;
+match /{seasonId}/{matchId} {
+        allow read: if true;
+        allow create: if true;
+        allow write:if true;
+      
+}
+}
+ match /GombeSeasonRecord/{division}/{zoneId} {
+      // Allow team admins to manage their team's data
+      allow read: if true;
+      allow write:if true;
+
+}
+match /GombeFAcupsMatch/{teamId} {
+      // Allow team admins to manage their team's data
+      allow read: if true;
+      allow write:if true;
+match /{seasonId}/{matchId} {
+        allow read: if true;
+        allow create: if true;
+        allow write:if true;
+      
+}
+}
+match /GombeChampionsCupMatches/{teamId} {
+      // Allow team admins to manage their team's data
+      allow read: if true;
+      allow write:if true;
+match /{seasonId}/{matchId} {
+        allow read: if true;
+        allow create: if true;
+        allow write:if true;
+      
+}
+}
+ match /GombeChampionsCupMatchesDemo/{teamId} {
+      // Allow team admins to manage their team's data
+      allow read: if true;
+      allow write:if true;
+match /{seasonId}/{matchId} {
+        allow read: if true;
+        allow create: if true;
+        allow write:if true;
+      
+}
+}
+ 
+ match /GombeWorriorsCupMatches/{teamId} {
+      // Allow team admins to manage their team's data
+      allow read: if true;
+      allow write:if true;
+      
+match /{seasonId}/{matchId} {
+        allow read: if true;
+        allow create: if true;
+        allow write:if true;
+        }
+        }
+    match /GombeChampionshipWinners/{zone} {
+     allow read, write: if true;
+  match /Teams/{team} {
+        allow read, write: if true;
+        match /Wins/{win} {
+          allow read, write: if true;
+    }
+    
+    }
+    }
+
+
+    match /GombeWorriorsCup/{document=**} {
+
+      allow read, write: if true;
+
+    }
+
+    
+
+    match /GombeUnityShield/{document=**} { 
+
+      allow read, write: if true; 
+
+    } 
+
+    
+
+    match /GombeHeritageCup/{document=**} { 
+
+      allow read, write: if true; 
+
+    } 
+
+    // Existing rules for GombeFAcups collection
+
+    match /GombeFAcups/{zoneId} {
+
+      allow read, write: if true;
+
+      match /{roundCollection}/{documentId} {
+
+        allow read, write: if true;
+
+      }
+
+    }
+
+    // Modified rules to allow date/time updates
+
+    match /{seasonCollection} {
+
+      function isValidSeasonCollection() {
+
+        return seasonCollection.matches("Season\\d{4}-\\d{2}");
+
+      }
+
+      
+
+      allow read, write: if isValidSeasonCollection();
+
+      
+
+      match /{teamId} {
+
+        allow read, write: if isValidSeasonCollection();
+
+        
+
+        match /Matches/{matchId} {
+
+          allow read, write: if isValidSeasonCollection();
+
+        }
+
+      }
+
+    }
+
+    
+
+    // Updated rules to allow date/time updates
+
+    match /GombeTeams/{teamId} {
+
+      allow read, create: if true;
+
+      allow update: if true;
+
+      allow delete: if false;
+
+      
+
+      match /{seasonCollection}/{documentId} {
+
+        allow create: if (
+
+          documentId == '.init' && 
+
+          request.resource.data.keys().hasAll(['initialized', 'note'])
+
+        );
+
+        
+
+        allow delete: if documentId == '.init';
+
+        
+
+        allow read: if seasonCollection.matches("Season\\d{4}-\\d{2}");
+
+        
+
+        // Modified to allow date/time updates without requiring all fields
+
+        allow create, update: if (
+
+          seasonCollection.matches("Season\\d{4}-\\d{2}") && 
+
+          (
+
+            // Allow partial updates for date/time
+
+            request.resource.data.keys().hasAny(['datePlayed', 'time']) ||
+
+            
+
+            // Full document creation requirements
+
+            request.resource.data.keys().hasAll([
+
+              'league_phase', 'matchday', 'datePlayed', 
+
+              'opponent', 'venue'
+
+            ]) || 
+
+            request.resource.data.keys().hasAll([
+
+              'championship', 'matchday', 'datePlayed', 
+
+              'opponent', 'venue'
+
+            ])
+
+          )
+
+        );
+
+        
+
+        allow delete: if seasonCollection.matches("Season\\d{4}-\\d{2}");
+
+      }
+
+    }
+
+    
+
+    // Existing rules for other collections
+
+    match /leaguezones/{zoneId} {
+
+      allow read, create, update: if true;
+
+    }
+
+    
+
+    match /leaguezones {
+
+      allow list: if true;
+
+    }
+
+    
+
+    match /zones/{zoneId} {
+
+      allow read, create, update, delete: if true;
+
+    }
+
+    
+
+    match /league_division/{zone} {
+
+      allow read, write: if true;
+
+    }
+
+    
+
+    match /Championship_division/{zone} {
+
+      allow read, write: if true;
+
+    }
+
+    
+
+    match /saved_fixtures/{document=**} {
+
+      allow read, write: if true;
+
+    }
+
+    
+
+    match /playerRegistry/{psn} {
+
+      allow read, write: if true;
+
+    }
+
+    
+
+    match /GombeCoaches/{coachID} {
+
+      allow read, write: if true;
+                
+      match /MyRecords/{document=**} {
+        allow read: if true;
+
+   }
+}
+    
+
+    match /counters/{docId} {
+
+      allow read, write: if true;
+
+    }
+
+    
+
+    match /MatchCommissioners/{psn} {
+
+      allow read, write: if true;
+
+    }
+
+    
+
+    match /MatchReferees/{psn} {
+
+      allow read, write: if true;
+
+      match /{subCollection=**} {
+
+        allow read, write: if true;
+
+      }
+
+    }
+
+    
+
+    match /postponed_matches/{documentId} {
+
+      allow read, write: if true;
+
+    }
+
+    
+
+    match /postponed_matches {
+
+      allow list: if true;
+
+    }
+
+    
+
+    // Allow collection listing
+
+    match /{document=**} {
+
+      allow list: if true;
+
+    }
+
+  }
+
+}
+    

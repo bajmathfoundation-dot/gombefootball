@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Settings | Gombe Football</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #1a2a6c;
+            --secondary: #3494e6;
+            --accent: #fdbb2d;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f5ff, #e6f0ff);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-content h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            color: white;
+            padding: 20px;
+        }
+        
+        .card-header h2 {
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+        
+        .color-input {
+            height: 50px;
+        }
+        
+        /* Password toggle styles */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 40px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--gray);
+            transition: color 0.3s;
+            z-index: 10;
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+        
+        /* Team Logo Preview */
+        .logo-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .logo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* File Upload Styles */
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload-btn {
+            background: var(--secondary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .file-upload-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        /* Players Grid */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .player-card {
+            display: flex;
+            padding: 15px;
+            border-radius: 10px;
+            background: var(--light);
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .player-info {
+            flex-grow: 1;
+        }
+        
+        .player-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .jersey-input {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid var(--light-gray);
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .jersey-number-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .number-conflict {
+            border-color: var(--danger);
+            background-color: #ffe6e6;
+        }
+        
+        .number-warning {
+            font-size: 0.8rem;
+            color: var(--danger);
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* Loading and Messages */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .message-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .header-content {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <h1><i class="fas fa-cog"></i> Team Settings</h1>
+                <p id="team-name">Loading team information...</p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="backBtn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </button>
+            </div>
+        </header>
+
+        <!-- Success/Error Messages -->
+        <div id="messageContainer"></div>
+
+        <!-- Team Information Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-info-circle"></i> Basic Information</h2>
+            </div>
+            <div class="card-body">
+                <form id="teamInfoForm">
+                    <input type="hidden" id="csrfToken" name="csrfToken">
+                    <div class="form-group">
+                        <label for="managerName">Manager Name</label>
+                        <input type="text" id="managerName" class="form-control" required maxlength="100">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="managerPhone">Manager Phone</label>
+                        <input type="tel" id="managerPhone" class="form-control" maxlength="20" pattern="[0-9+\-\s()]*">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="walletName">Wallet Name</label>
+                        <input type="text" id="walletName" class="form-control" maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="Location">Location</label>
+                        <input type="text" id="Location" class="form-control" maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="Stadium">Stadium</label>
+                        <input type="text" id="Stadium" class="form-control" maxlength="100">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Team Logo</label>
+                        <div class="logo-preview" id="logoPreview">
+                            <i class="fas fa-futbol" style="font-size: 2rem; color: var(--gray);"></i>
+                        </div>
+                        <div class="file-upload">
+                            <div class="file-upload-btn">
+                                <i class="fas fa-upload"></i> Choose Image
+                            </div>
+                            <input type="file" id="logoUpload" class="file-upload-input" accept="image/jpeg,image/png,image/gif">
+                        </div>
+                        <div id="fileName" style="margin-top: 10px; font-size: 0.9rem;"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Change Password Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-lock"></i> Change Password</h2>
+            </div>
+            <div class="card-body">
+                <form id="passwordForm">
+                    <input type="hidden" id="passwordCsrfToken" name="csrfToken">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" class="form-control" required minlength="6" maxlength="100">
+                        <i class="fas fa-eye password-toggle" id="toggleCurrentPassword"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" class="form-control" required minlength="6" maxlength="100">
+                        <i class="fas fa-eye password-toggle" id="toggleNewPassword"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" class="form-control" required minlength="6" maxlength="100">
+                        <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-key"></i> Change Password
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Kit Colors Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-tshirt"></i> Kit Colors</h2>
+            </div>
+            <div class="card-body">
+                <form id="kitColorsForm">
+                    <input type="hidden" id="kitCsrfToken" name="csrfToken">
+                    <div class="form-group">
+                        <label for="kitColorHome">Home Kit Color</label>
+                        <input type="color" id="kitColorHome" class="form-control color-input" value="#1a2a6c">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="kitColorAway">Away Kit Color</label>
+                        <input type="color" id="kitColorAway" class="form-control color-input" value="#ffffff">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="kitColorThird">Third Kit Color</label>
+                        <input type="color" id="kitColorThird" class="form-control color-input" value="#fdbb2d">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Save Kit Colors
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Player Jersey Numbers Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-tshirt"></i> Player Jersey Numbers</h2>
+            </div>
+            <div class="card-body">
+                <div id="playersLoading" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading players...
+                </div>
+                <div id="playersContainer" style="display: none;">
+                    <div id="jerseyConflictMessage" class="message message-error" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        <span id="conflictText">Jersey number conflict detected!</span>
+                    </div>
+                    <form id="jerseyNumbersForm">
+                        <input type="hidden" id="jerseyCsrfToken" name="csrfToken">
+                        <div class="players-grid" id="playersGrid">
+                            <!-- Players will be loaded here -->
+                        </div>
+                        <button type="submit" class="btn btn-success" style="margin-top: 20px;">
+                            <i class="fas fa-save"></i> Save Jersey Numbers
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-check-compat.js"></script>
+    <script>
+        // Security configuration
+        const SECURITY_CONFIG = {
+            CSRF_TOKEN_LENGTH: 32,
+            CSRF_TOKEN_EXPIRY: 30 * 60 * 1000, // 30 minutes
+            RECAPTCHA_ENTERPRISE_SITE_KEY: 'your-recaptcha-enterprise-site-key-here',
+            MAX_INPUT_LENGTH: 100,
+            ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/gif'],
+            MAX_IMAGE_SIZE: 5 * 1024 * 1024 // 5MB
+        };
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Initialize Firebase App Check
+        const appCheck = firebase.appCheck();
+        appCheck.activate(SECURITY_CONFIG.RECAPTCHA_ENTERPRISE_SITE_KEY, true);
+        
+        // Security state management
+        let securityState = {
+            csrfTokens: new Map(),
+            currentTokens: {}
+        };
+
+        // Get team ID from URL parameters with sanitization
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentTeamId = sanitizeInput(urlParams.get('teamId'));
+        let playersData = []; // Store players data for jersey number validation
+        let logoFile = null; // Store the selected logo file
+        let currentTeamName = ''; // Store the team name for player lookup
+
+        // Initialize security features
+        initializeSecurity();
+
+        if (!currentTeamId) {
+            showMessage('Team ID not provided! Redirecting to login...', 'error');
+            setTimeout(() => {
+                window.location.href = 'TeamManagerLogin.html';
+            }, 3000);
+        } else {
+            // Set back button URL
+            document.getElementById('backBtn').onclick = () => {
+                window.location.href = `ManagerProfile.html?teamId=${encodeURIComponent(currentTeamId)}`;
+            };
+            
+            // Initialize the settings page
+            loadTeamData();
+        }
+        
+        // Security initialization
+        function initializeSecurity() {
+            generateCSRFTokens();
+            setupSecurityEventListeners();
+            setupPasswordToggles();
+        }
+
+        // Setup password visibility toggles
+        function setupPasswordToggles() {
+            // Toggle for current password
+            document.getElementById('toggleCurrentPassword').addEventListener('click', function() {
+                togglePasswordVisibility('currentPassword', this);
+            });
+            
+            // Toggle for new password
+            document.getElementById('toggleNewPassword').addEventListener('click', function() {
+                togglePasswordVisibility('newPassword', this);
+            });
+            
+            // Toggle for confirm password
+            document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+                togglePasswordVisibility('confirmPassword', this);
+            });
+        }
+        
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, toggleIcon) {
+            const passwordInput = document.getElementById(inputId);
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        // Generate and store CSRF tokens for all forms
+        function generateCSRFTokens() {
+            const forms = ['teamInfoForm', 'passwordForm', 'kitColorsForm', 'jerseyNumbersForm'];
+            
+            forms.forEach(formId => {
+                const token = generateRandomString(SECURITY_CONFIG.CSRF_TOKEN_LENGTH);
+                const expiry = Date.now() + SECURITY_CONFIG.CSRF_TOKEN_EXPIRY;
+                
+                securityState.csrfTokens.set(token, expiry);
+                securityState.currentTokens[formId] = token;
+                
+                document.querySelector(`#${formId} input[name="csrfToken"]`).value = token;
+            });
+            
+            // Clean up expired tokens
+            cleanupExpiredTokens();
+        }
+
+        // Validate CSRF token
+        function validateCSRFToken(token) {
+            if (!token) return false;
+            
+            const expiry = securityState.csrfTokens.get(token);
+            if (!expiry || expiry < Date.now()) {
+                securityState.csrfTokens.delete(token);
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Generate random string for tokens
+        function generateRandomString(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            const crypto = window.crypto || window.msCrypto;
+            const values = new Uint32Array(length);
+            
+            crypto.getRandomValues(values);
+            for (let i = 0; i < length; i++) {
+                result += chars[values[i] % chars.length];
+            }
+            return result;
+        }
+
+        // Clean up expired CSRF tokens
+        function cleanupExpiredTokens() {
+            const now = Date.now();
+            for (const [token, expiry] of securityState.csrfTokens.entries()) {
+                if (expiry < now) {
+                    securityState.csrfTokens.delete(token);
+                }
+            }
+        }
+
+        // Setup security event listeners
+        function setupSecurityEventListeners() {
+            // Clear sensitive data when forms are submitted
+            document.getElementById('passwordForm').addEventListener('submit', function() {
+                setTimeout(() => {
+                    document.getElementById('passwordForm').reset();
+                }, 1000);
+            });
+            
+            // Clear sensitive data when page is unloaded
+            window.addEventListener('beforeunload', clearSensitiveData);
+        }
+
+        // Clear sensitive data from memory
+        function clearSensitiveData() {
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        // Input sanitization function
+        function sanitizeInput(input) {
+            if (typeof input !== 'string') return '';
+            
+            return input
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#x27;')
+                .replace(/\//g, '&#x2F;')
+                .substring(0, SECURITY_CONFIG.MAX_INPUT_LENGTH);
+        }
+
+        // Output sanitization for HTML content
+        function sanitizeHTML(content) {
+            const temp = document.createElement('div');
+            temp.textContent = content;
+            return temp.innerHTML;
+        }
+
+        // Validate image file
+        function validateImageFile(file) {
+            if (!SECURITY_CONFIG.ALLOWED_IMAGE_TYPES.includes(file.type)) {
+                throw new Error('Only JPG, PNG and GIF images are allowed');
+            }
+            
+            if (file.size > SECURITY_CONFIG.MAX_IMAGE_SIZE) {
+                throw new Error('Image size must be less than 5MB');
+            }
+            
+            return true;
+        }
+        
+        // Load team data
+        function loadTeamData() {
+            db.collection("GombeTeams").doc(currentTeamId).get()
+                .then(doc => {
+                    if (!doc.exists) {
+                        throw new Error("Team not found!");
+                    }
+                    
+                    const teamData = doc.data();
+                    currentTeamName = sanitizeInput(teamData.teamName || teamData.name || "");
+                    document.getElementById('team-name').textContent = sanitizeHTML(currentTeamName) || "Unknown Team";
+                    
+                    // Fill form fields with sanitized data
+                    document.getElementById('managerName').value = sanitizeInput(teamData.managerName || teamData.manager || "");
+                    document.getElementById('managerPhone').value = sanitizeInput(teamData.managerPhone || "");
+                    document.getElementById('walletName').value = sanitizeInput(teamData.walletName || teamData.wallet || "");
+                    document.getElementById('Location').value = sanitizeInput(teamData.Location || teamData.Location || "");
+                    // Update logo preview
+                    updateLogoPreview(teamData.logoUrl);
+                    
+                    // Fill kit colors
+                    if (teamData.kitColorHome) document.getElementById('kitColorHome').value = sanitizeInput(teamData.kitColorHome);
+                    if (teamData.kitColorAway) document.getElementById('kitColorAway').value = sanitizeInput(teamData.kitColorAway);
+                    if (teamData.kitColorThird) document.getElementById('kitColorThird').value = sanitizeInput(teamData.kitColorThird);
+                    
+                    // Load players after we have team data
+                    loadPlayers();
+                })
+                .catch(error => {
+                    showMessage('Error loading team data. Please try again.', 'error');
+                    console.error('Team loading error:', error);
+                });
+        }
+        
+        // Enhanced player loading with multiple query attempts
+        function loadPlayers() {
+            document.getElementById('playersLoading').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading players...';
+            
+            // First try querying by team ID if available
+            const queryByTeamId = db.collection("playerRegistry")
+                .where("teamId", "==", currentTeamId)
+                .get();
+
+            queryByTeamId.then(querySnapshot => {
+                if (!querySnapshot.empty) {
+                    return processPlayers(querySnapshot);
+                }
+
+                // If no results by ID, try by name if available
+                if (currentTeamName) {
+                    return db.collection("playerRegistry")
+                        .where("teamName", "==", currentTeamName)
+                        .get()
+                        .then(nameQuerySnapshot => {
+                            if (!nameQuerySnapshot.empty) {
+                                return processPlayers(nameQuerySnapshot);
+                            }
+                            throw new Error("No players found");
+                        });
+                }
+                throw new Error("No team identifier available");
+            })
+            .then(() => {
+                document.getElementById('playersLoading').style.display = 'none';
+                document.getElementById('playersContainer').style.display = 'block';
+            })
+            .catch(error => {
+                console.error("Error fetching players:", error);
+                document.getElementById('playersLoading').innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i><p>No players found</p></div>';
+            });
+        }
+
+        function processPlayers(querySnapshot) {
+            const playersGrid = document.getElementById('playersGrid');
+            playersGrid.innerHTML = '';
+            playersData = [];
+            
+            if (querySnapshot.empty) {
+                playersGrid.innerHTML = '<p>No players found for this team.</p>';
+                return;
+            }
+            
+            querySnapshot.forEach(doc => {
+                const player = doc.data();
+                const playerId = doc.id;
+                player.id = playerId;
+                playersData.push(player);
+                
+                // Sanitize player data
+                const safePlayerName = sanitizeHTML(player.name || "Unknown Player");
+                const safePosition = sanitizeHTML(player.position || "No position");
+                const safeJerseyNumber = sanitizeHTML(player.jerseyNumber || '');
+                
+                // Safe image handling with onerror fallback
+                const imageHtml = player.imageUrl ? 
+                    `<img src="${sanitizeHTML(player.imageUrl)}" alt="${safePlayerName}" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\\'fas fa-user\\'></i>'">` : 
+                    `<i class="fas fa-user"></i>`;
+                
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card';
+                playerCard.innerHTML = `
+                    <div class="player-avatar">
+                        ${imageHtml}
+                    </div>
+                    <div class="player-info">
+                        <div class="player-name">${safePlayerName}</div>
+                        <div>${safePosition}</div>
+                        <div class="number-warning" id="warning-${playerId}">Number already assigned</div>
+                    </div>
+                    ${safeJerseyNumber ? `<div class="jersey-number-badge">${safeJerseyNumber}</div>` : ''}
+                    <input type="number" 
+                           class="jersey-input" 
+                           name="${sanitizeHTML(playerId)}" 
+                           value="${safeJerseyNumber}" 
+                           placeholder="Number"
+                           min="1" max="99"
+                           onchange="validateJerseyNumber(this, '${sanitizeHTML(playerId)}')">
+                `;
+                
+                playersGrid.appendChild(playerCard);
+            });
+        }
+        
+        // Validate jersey number
+        function validateJerseyNumber(input, playerId) {
+            const number = parseInt(input.value);
+            const warningElement = document.getElementById(`warning-${playerId}`);
+            
+            // Reset styling
+            input.classList.remove('number-conflict');
+            warningElement.style.display = 'none';
+            document.getElementById('jerseyConflictMessage').style.display = 'none';
+            
+            // Validate range
+            if (number && (number < 1 || number > 99)) {
+                input.classList.add('number-conflict');
+                warningElement.textContent = "Number must be between 1-99";
+                warningElement.style.display = 'block';
+                return;
+            }
+            
+            // Check for conflicts
+            if (number) {
+                const conflicts = playersData.filter(player => {
+                    return player.id !== playerId && player.jerseyNumber === number;
+                });
+                
+                if (conflicts.length > 0) {
+                    input.classList.add('number-conflict');
+                    warningElement.textContent = `Number ${number} is already assigned to ${sanitizeHTML(conflicts[0].name || 'another player')}`;
+                    warningElement.style.display = 'block';
+                    
+                    // Show global conflict message
+                    const conflictMessage = document.getElementById('jerseyConflictMessage');
+                    const conflictText = document.getElementById('conflictText');
+                    conflictText.textContent = `Jersey number ${number} is already assigned to ${sanitizeHTML(conflicts[0].name || 'another player')}. Please resolve conflicts before saving.`;
+                    conflictMessage.style.display = 'block';
+                }
+            }
+        }
+        
+        // Update logo preview
+        function updateLogoPreview(url) {
+            const preview = document.getElementById('logoPreview');
+            if (url) {
+                preview.innerHTML = `<img src="${sanitizeHTML(url)}" alt="Team Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiNlOWVjZWYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzljYTZiZCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0Ij5Mb2dvIEVycm9yPC90ZXh0Pjwvc3ZnPg==';">`;
+            } else {
+                preview.innerHTML = '<i class="fas fa-futbol" style="font-size: 2rem; color: var(--gray);"></i>';
+            }
+        }
+        
+        // Show message
+        function showMessage(message, type) {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = `
+                <div class="message message-${type}">
+                    ${sanitizeHTML(message)}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                messageContainer.innerHTML = '';
+            }, 5000);
+        }
+        
+        // Event Listeners
+        document.getElementById('teamInfoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formToken = document.getElementById('csrfToken').value;
+            if (!validateCSRFToken(formToken)) {
+                showMessage("Security token expired. Please refresh the page and try again.", 'error');
+                return;
+            }
+            
+            saveTeamInfo();
+        });
+        
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formToken = document.getElementById('passwordCsrfToken').value;
+            if (!validateCSRFToken(formToken)) {
+                showMessage("Security token expired. Please refresh the page and try again.", 'error');
+                return;
+            }
+            
+            changePassword();
+        });
+        
+        document.getElementById('kitColorsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formToken = document.getElementById('kitCsrfToken').value;
+            if (!validateCSRFToken(formToken)) {
+                showMessage("Security token expired. Please refresh the page and try again.", 'error');
+                return;
+            }
+            
+            saveKitColors();
+        });
+        
+        document.getElementById('jerseyNumbersForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formToken = document.getElementById('jerseyCsrfToken').value;
+            if (!validateCSRFToken(formToken)) {
+                showMessage("Security token expired. Please refresh the page and try again.", 'error');
+                return;
+            }
+            
+            saveJerseyNumbers();
+        });
+        
+        document.getElementById('logoUpload').addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                try {
+                    validateImageFile(this.files[0]);
+                    logoFile = this.files[0];
+                    document.getElementById('fileName').textContent = `Selected: ${sanitizeHTML(logoFile.name)}`;
+                    
+                    // Preview image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('logoPreview').innerHTML = `<img src="${sanitizeHTML(e.target.result)}" alt="Team Logo">`;
+                    }
+                    reader.readAsDataURL(logoFile);
+                } catch (error) {
+                    showMessage(error.message, 'error');
+                    this.value = '';
+                    logoFile = null;
+                }
+            }
+        });
+        
+        // Save team information
+        function saveTeamInfo() {
+            const managerName = sanitizeInput(document.getElementById('managerName').value);
+            const managerPhone = sanitizeInput(document.getElementById('managerPhone').value);
+            const walletName = sanitizeInput(document.getElementById('walletName').value);
+            const Location = sanitizeInput(document.getElementById('Location').value);
+            const Stadium = sanitizeInput(document.getElementById('Stadium').value);
+            if (!managerName) {
+                showMessage('Manager name is required', 'error');
+                return;
+            }
+            
+            const updates = {
+                managerName: managerName,
+                managerPhone: managerPhone,
+                walletName: walletName,
+                Location: Location,
+                Stadium: Stadium
+            };
+            
+            db.collection("GombeTeams").doc(currentTeamId).update(updates)
+                .then(() => {
+                    showMessage('Team information updated successfully!', 'success');
+                    // Generate new CSRF token after successful operation
+                    generateCSRFTokens();
+                })
+                .catch(error => {
+                    showMessage('Error updating team information. Please try again.', 'error');
+                    console.error('Update error:', error);
+                });
+        }
+        
+        // Change password
+        function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword !== confirmPassword) {
+                showMessage('New passwords do not match!', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showMessage('New password must be at least 6 characters long!', 'error');
+                return;
+            }
+            
+            // In a real application, you would verify the current password and update it
+            // This is a placeholder for the password change functionality
+            showMessage('Password change functionality would be implemented here', 'success');
+            
+            // Reset form and generate new CSRF token
+            document.getElementById('passwordForm').reset();
+            generateCSRFTokens();
+        }
+        
+        // Save kit colors
+        function saveKitColors() {
+            const updates = {
+                kitColorHome: document.getElementById('kitColorHome').value,
+                kitColorAway: document.getElementById('kitColorAway').value,
+                kitColorThird: document.getElementById('kitColorThird').value
+            };
+            
+            db.collection("GombeTeams").doc(currentTeamId).update(updates)
+                .then(() => {
+                    showMessage('Kit colors updated successfully!', 'success');
+                    // Generate new CSRF token after successful operation
+                    generateCSRFTokens();
+                })
+                .catch(error => {
+                    showMessage('Error updating kit colors. Please try again.', 'error');
+                    console.error('Kit color error:', error);
+                });
+        }
+        
+        // Save jersey numbers
+        function saveJerseyNumbers() {
+            const jerseyInputs = document.querySelectorAll('.jersey-input');
+            const conflicts = document.querySelectorAll('.number-conflict');
+            
+            // Check for conflicts before saving
+            if (conflicts.length > 0) {
+                showMessage('Please resolve all jersey number conflicts before saving.', 'error');
+                return;
+            }
+            
+            const updatePromises = [];
+            const numberAssignments = {};
+            
+            // First validate all numbers
+            jerseyInputs.forEach(input => {
+                const playerId = input.name;
+                const jerseyNumber = input.value ? parseInt(input.value) : null;
+                
+                if (jerseyNumber && numberAssignments[jerseyNumber]) {
+                    showMessage(`Jersey number ${jerseyNumber} is assigned to multiple players!`, 'error');
+                    return;
+                }
+                
+                if (jerseyNumber) {
+                    numberAssignments[jerseyNumber] = playerId;
+                }
+            });
+            
+            // If validation passed, update all players
+            jerseyInputs.forEach(input => {
+                const playerId = input.name;
+                const jerseyNumber = input.value ? parseInt(input.value) : null;
+                
+                if (playerId) {
+                    updatePromises.push(
+                        db.collection("playerRegistry").doc(playerId).update({
+                            jerseyNumber: jerseyNumber
+                        })
+                    );
+                }
+            });
+            
+            Promise.all(updatePromises)
+                .then(() => {
+                    showMessage('Jersey numbers updated successfully!', 'success');
+                    // Generate new CSRF token after successful operation
+                    generateCSRFTokens();
+                    // Reload players to refresh the display
+                    loadPlayers();
+                })
+                .catch(error => {
+                    showMessage('Error updating jersey numbers. Please try again.', 'error');
+                    console.error('Jersey number error:', error);
+                });
+        }
+    </script>
+</body>
+</html>

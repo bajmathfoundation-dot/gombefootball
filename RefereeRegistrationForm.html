@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Register Referee | Gombe Football</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #014421;
+      --secondary: #0d7a3e;
+      --accent: #00b894;
+      --light: #f1f8f4;
+      --dark: #0c2d1d;
+      --gradient-start: #0c2d1d;
+      --gradient-end: #1a5338;
+      --card-bg: rgba(255, 255, 255, 0.08);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --glow: 0 0 15px rgba(0, 184, 148, 0.4);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      color: var(--light);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+    
+    /* Enchanted background elements */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 30%, rgba(0, 184, 148, 0.1) 0%, transparent 40%),
+                  radial-gradient(circle at 80% 70%, rgba(0, 184, 148, 0.1) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    /* Animated floating particles */
+    .particle {
+      position: absolute;
+      background: rgba(0, 184, 148, 0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.5rem;
+      z-index: 10;
+    }
+    
+    .logo i {
+      color: var(--accent);
+      text-shadow: var(--glow);
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 40px 30px;
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(0, 184, 148, 0.1);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .card:hover {
+      box-shadow: 0 8px 35px rgba(0, 0, 0, 0.3), var(--glow), inset 0 0 25px rgba(0, 184, 148, 0.15);
+    }
+    
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(0, 184, 148, 0.1), transparent);
+      transition: all 0.5s ease;
+      z-index: -1;
+    }
+    
+    .card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      animation: glowLine 3s infinite linear;
+    }
+    
+    h2 {
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 1.8rem;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    
+    h2::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(to right, transparent, var(--accent), transparent);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 10px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--light);
+      transition: all 0.3s;
+    }
+    
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.3);
+    }
+    
+    input[readonly] {
+      background-color: rgba(0, 0, 0, 0.15);
+      cursor: not-allowed;
+    }
+    
+    .file-input {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .file-input input[type="file"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    
+    .file-input label {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 12px 20px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .file-input label:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+    
+    .file-name {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 5px;
+      padding-left: 40px;
+    }
+    
+    button {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), var(--glow);
+    }
+    
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      z-index: 1000;
+      animation: fadeInOut 3s forwards;
+      display: none;
+    }
+    
+    /* Animations */
+    @keyframes glowLine {
+      0% { background-position: -100% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(-20px); }
+      10% { opacity: 1; transform: translateY(0); }
+      90% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(5deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+      .card {
+        padding: 30px 20px;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <i class="fas fa-futbol"></i>
+    <span>Gombe Football</span>
+  </div>
+  
+  <div class="card">
+    <h2><i class="fas fa-whistle"></i> Register Referee</h2>
+    
+    <div class="form-group">
+      <label for="name"><i class="fas fa-user"></i> Full Name</label>
+      <input type="text" id="name" placeholder="Enter full name" />
+    </div>
+    
+    <div class="form-group">
+      <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
+      <input type="tel" id="phone" placeholder="+234..." />
+    </div>
+    
+    <div class="form-group">
+      <label for="lga"><i class="fas fa-map-marker-alt"></i> Local Government Area</label>
+      <select id="lga">
+        <option value="">-- Select LGA --</option>
+        <option>Akko</option>
+        <option>Gombe</option>
+        <option>Kwami</option>
+        <option>Billiri</option>
+        <option>Shongom</option>
+        <option>Kaltungo</option>
+        <option>Nafada</option>
+        <option>Dukku</option>
+        <option>Funakaye</option>
+        <option>Yamaltu Deba</option>
+        <option>Balanga</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="zone"><i class="fas fa-globe-africa"></i> Zone</label>
+      <input type="text" id="zone" placeholder="Zone (auto-filled)" readonly />
+    </div>
+    
+    <div class="form-group">
+      <label><i class="fas fa-camera"></i> Profile Photo</label>
+      <div class="file-input">
+        <input type="file" id="imageFile" accept="image/*" />
+        <label for="imageFile">
+          <i class="fas fa-upload"></i> 
+          <span id="fileLabel">Choose a file...</span>
+        </label>
+      </div>
+      <div id="fileName" class="file-name"></div>
+    </div>
+    
+    <button id="registerBtn" onclick="registerReferee()">
+      <i class="fas fa-user-plus"></i> Register Referee
+    </button>
+  </div>
+  
+  <div class="notification" id="notification"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage-compat.js"></script>
+  
+  <script>
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.body;
+      const particleCount = 20;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random size and position
+        const size = Math.random() * 10 + 2;
+        const posX = Math.random() * 100;
+        const posY = Math.random() * 100;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${posX}%`;
+        particle.style.top = `${posY}%`;
+        particle.style.opacity = Math.random() * 0.5 + 0.1;
+        particle.style.animation = `float ${Math.random() * 10 + 10}s infinite ease-in-out`;
+        particle.style.animationDelay = `${Math.random() * 5}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+    
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    const lgaToZoneMap = {
+      "Akko": "Central Zone",
+      "Gombe": "Central Zone",
+      "Kwami": "Central Zone",
+      "Billiri": "Southern Zone",
+      "Shongom": "Southern Zone",
+      "Kaltungo": "Southern Zone",
+      "Nafada": "Northern Zone",
+      "Dukku": "Northern Zone",
+      "Funakaye": "Northern Zone",
+      "Yamaltu Deba": "Eastern Zone",
+      "Balanga": "Eastern Zone"
+    };
+
+    // FIX: Ensure zone auto-fill works
+    document.getElementById("lga").addEventListener("change", function() {
+      const lga = this.value;
+      const zone = lgaToZoneMap[lga] || "";
+      document.getElementById("zone").value = zone;
+    });
+
+    // Handle file input display
+    document.getElementById("imageFile").addEventListener("change", function() {
+      const fileName = this.files.length ? this.files[0].name : "No file chosen";
+      document.getElementById("fileName").textContent = fileName;
+      document.getElementById("fileLabel").textContent = fileName.length > 20 ? 
+        fileName.substring(0, 20) + "..." : fileName;
+    });
+
+    async function registerReferee() {
+      const registerBtn = document.getElementById("registerBtn");
+      const notification = document.getElementById("notification");
+      
+      registerBtn.disabled = true;
+      registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const lga = document.getElementById("lga").value;
+      const zone = document.getElementById("zone").value;
+      const imageFile = document.getElementById("imageFile").files[0];
+      let imageUrl = "";
+
+      // Validation
+      if (!name) {
+        showNotification("Please enter full name", "error");
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register Referee';
+        return;
+      }
+      
+      if (!phone) {
+        showNotification("Please enter phone number", "error");
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register Referee';
+        return;
+      }
+      
+      if (!lga) {
+        showNotification("Please select LGA", "error");
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register Referee';
+        return;
+      }
+      
+      if (!zone) {
+        showNotification("Zone not found for selected LGA", "error");
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register Referee';
+        return;
+      }
+
+      try {
+        // Upload image if selected
+        if (imageFile) {
+          const storageRef = storage.ref(`refereeImages/${Date.now()}_${imageFile.name}`);
+          const snapshot = await storageRef.put(imageFile);
+          imageUrl = await snapshot.ref.getDownloadURL();
+        }
+
+        // Generate PSN (R001 format)
+        const counterRef = db.collection("counters").doc("refereeCount");
+        const counterDoc = await counterRef.get();
+        let currentCount = 1;
+        if (counterDoc.exists) {
+          currentCount = counterDoc.data().value + 1;
+        }
+        const psn = "R" + String(currentCount).padStart(3, "0");
+
+        const refereeData = {
+          psn,
+          name,
+          phone,
+          lga,
+          zone,
+          matcheshandled: 0,
+          yellowCards: 0,
+          redCards: 0,
+          avgRating: null,
+          lastMatchDate: null,
+          password: null,
+          league: null,
+          role: null,
+          remark: null,
+          imageUrl,
+          createdAt: new Date().toISOString()
+        };
+
+        await db.collection("MatchReferees").doc(psn).set(refereeData);
+        await counterRef.set({ value: currentCount });
+
+        showNotification(`✅ Referee registered successfully! PSN: ${psn}`, "success");
+        
+        // Reset form
+        document.getElementById("name").value = "";
+        document.getElementById("phone").value = "";
+        document.getElementById("lga").value = "";
+        document.getElementById("zone").value = "";
+        document.getElementById("imageFile").value = "";
+        document.getElementById("fileName").textContent = "";
+        document.getElementById("fileLabel").textContent = "Choose a file...";
+      } catch (err) {
+        console.error("❌ Registration failed:", err);
+        showNotification("❌ Registration failed. Please try again.", "error");
+      } finally {
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Register Referee';
+      }
+    }
+    
+    function showNotification(message, type) {
+      const notification = document.getElementById("notification");
+      notification.textContent = message;
+      notification.style.display = "block";
+      notification.style.background = type === "error" ? "#e74c3c" : "#014421";
+      
+      // Auto-hide after 3 seconds
+      setTimeout(() => {
+        notification.style.display = "none";
+      }, 3000);
+    }
+
+    // Initialize particles when page loads
+    window.addEventListener('load', createParticles);
+  </script>
+</body>
+</html>

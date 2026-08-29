@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gombe Future Labs · Youth Development</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(145deg, #eaf8e8 0%, #d1e6d0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        
+        /* youth header – fresh & energetic */
+        .youth-header {
+            text-align: center;
+            padding: 45px 20px 40px;
+            background: linear-gradient(135deg, #0f4c2e, #1f7a5c, #2e8b6f);
+            color: white;
+            border-radius: 40px 40px 40px 40px;
+            box-shadow: 0 20px 30px rgba(15, 60, 30, 0.3);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid #f9e084;
+        }
+        
+        .youth-header:before {
+            content: "⚽⚡";
+            font-size: 12rem;
+            color: rgba(255, 255, 200, 0.1);
+            position: absolute;
+            bottom: -40px;
+            right: -30px;
+            transform: rotate(20deg);
+            white-space: nowrap;
+        }
+        
+        .sprout-icon {
+            font-size: 5rem;
+            text-shadow: 0 6px 12px #0b3b2a;
+            animation: bounceSoft 3s infinite;
+            background: rgba(255,240,150,0.2);
+            width: 130px;
+            height: 130px;
+            line-height: 130px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 4px solid #f9e084;
+        }
+        
+        @keyframes bounceSoft {
+            0%,100%{ transform: translateY(0); }
+            50%{ transform: translateY(-10px); }
+        }
+        
+        .youth-header h1 {
+            font-size: 3.8rem;
+            letter-spacing: 2px;
+            font-weight: 800;
+            text-shadow: 3px 3px 0 #1e4f3a;
+        }
+        
+        .youth-sub {
+            font-size: 1.9rem;
+            font-weight: 300;
+            background: rgba(255,255,200,0.2);
+            display: inline-block;
+            padding: 0.6rem 2.5rem;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            margin-top: 10px;
+            border: 2px solid #ffdb7c;
+        }
+        
+        .intro-text {
+            max-width: 850px;
+            margin: 30px auto 10px;
+            font-size: 1.4rem;
+            background: rgba(0,60,30,0.4);
+            padding: 20px 30px;
+            border-radius: 90px;
+            color: #f9f3d9;
+            font-weight: 500;
+        }
+        
+        /* cards grid */
+        .program-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 40px 0 30px;
+            justify-content: center;
+        }
+        
+        .program-card {
+            flex: 1 1 320px;
+            max-width: 370px;
+            background: white;
+            border-radius: 35px;
+            overflow: hidden;
+            box-shadow: 0 30px 35px -15px rgba(20, 70, 0, 0.4);
+            transition: all 0.25s ease;
+            border: 2px solid #ffdb7c;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .program-card:hover {
+            transform: translateY(-14px);
+            box-shadow: 0 40px 45px -10px #1b4f2b;
+        }
+        
+        .card-head {
+            padding: 28px 20px 18px;
+            color: white;
+            background: linear-gradient(110deg, #216b4e, #107a65);
+            text-align: center;
+        }
+        
+        .card-head i {
+            font-size: 3.5rem;
+            background: #f9e998;
+            color: #0b5e42;
+            padding: 20px;
+            border-radius: 60px;
+            width: 90px;
+            height: 90px;
+            margin-bottom: 10px;
+            box-shadow: 0 8px 0 #0a4633;
+        }
+        
+        .card-head h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .card-body {
+            padding: 28px 25px 20px;
+            background: #fdfff7;
+            flex: 1;
+        }
+        
+        .program-tag {
+            display: inline-block;
+            background: #faedb3;
+            color: #1f5e3f;
+            padding: 6px 22px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 18px;
+            border: 1px solid #e1b530;
+        }
+        
+        .program-description {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #1e3f2a;
+        }
+        
+        .organizer-block {
+            background: #ecfbe9;
+            border-radius: 28px;
+            padding: 18px;
+            margin: 18px 0 22px;
+            border-left: 8px solid #f3b33d;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .organizer-icon {
+            background: #11806a;
+            color: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+        
+        .organizer-info p {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #003323;
+        }
+        
+        .organizer-info a {
+            color: #0f643f;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 2px dotted #ffb347;
+        }
+        
+        .organizer-info a:hover {
+            color: #c2410c;
+            border-bottom: 2px solid;
+        }
+        
+        .btn-link {
+            display: inline-block;
+            background: #ffd966;
+            color: #1e5a37;
+            padding: 14px 22px;
+            border-radius: 60px;
+            font-weight: 700;
+            text-decoration: none;
+            border: 2px solid #b5761a;
+            transition: 0.15s;
+            width: fit-content;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .btn-link i {
+            margin-right: 8px;
+            color: #ac4e00;
+        }
+        
+        .btn-link:hover {
+            background: #f3cd5a;
+            border-color: #865d17;
+            transform: scale(1.02);
+        }
+        
+        .extra-agencies {
+            background: white;
+            border-radius: 60px;
+            padding: 35px 30px;
+            margin: 50px 0 20px;
+            border: 4px solid #f7d44a;
+            box-shadow: inset 0 -6px 0 #b9942c;
+        }
+        
+        .agencies-title {
+            font-size: 2rem;
+            color: #12462f;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .agency-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px 40px;
+        }
+        
+        .badge-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #f3ffec;
+            padding: 15px 35px 15px 25px;
+            border-radius: 50px;
+            border: 2px solid #2f8f6b;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .badge-item i {
+            font-size: 2.2rem;
+            color: #15805c;
+        }
+        
+        .quote-youth {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 30px 0;
+            background: #faf1cf;
+            padding: 25px 35px;
+            border-radius: 100px 30px 100px 30px;
+            border: 2px solid #cca34b;
+            color: #2d5a44;
+        }
+        
+        .footer-dev {
+            text-align: center;
+            padding: 30px;
+            color: #236b4a;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 700px) {
+            .youth-header h1 { font-size: 2.8rem; }
+            .intro-text { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    
+    <!-- header – growing champions -->
+    <div class="youth-header">
+        <div class="sprout-icon">
+            <i class="fas fa-seedling"></i>
+        </div>
+        <h1>Gombe Future Labs</h1>
+        <div class="youth-sub">🌱 youth development · academy pathway 🌱</div>
+        <div class="intro-text">
+            <i class="fas fa-futbol"></i>  nurturing talent from the four zones — because today's rookie is tomorrow's champion
+        </div>
+    </div>
+    
+    <!-- program cards: current initiatives and organisers -->
+    <div class="program-grid">
+        
+        <!-- card 1: rising stars program -->
+        <div class="program-card">
+            <div class="card-head">
+                <i class="fas fa-star"></i>
+                <h2>rising stars</h2>
+            </div>
+            <div class="card-body">
+                <div class="program-tag"><i class="fas fa-calendar"></i> year-round · U15–U17</div>
+                <p class="program-description">
+                    Elite training camps across all four zones. Players are scouted from zonal school tournaments and regional cups. Weekly technical sessions & mental coaching.
+                </p>
+                <div class="organizer-block">
+                    <div class="organizer-icon"><i class="fas fa-building"></i></div>
+                    <div class="organizer-info">
+                        <p>📋 organised by:</p>
+                        <a href="#"><i class="fas fa-globe"></i> Gombe Youth Football Academy (GYFA)</a><br>
+                        <span style="font-size:0.9rem;">director@gyfa.gombe</span>
+                    </div>
+                </div>
+                <a href="#" class="btn-link" onclick="alert('GYFA program details · demo link'); return false;"><i class="fas fa-chevron-circle-right"></i> view scouting calendar</a>
+            </div>
+        </div>
+        
+        <!-- card 2: schools cup & grassroots -->
+        <div class="program-card">
+            <div class="card-head">
+                <i class="fas fa-school"></i>
+                <h2>schools championship</h2>
+            </div>
+            <div class="card-body">
+                <div class="program-tag"><i class="fas fa-flag"></i> april–july · U13 & U19</div>
+                <p class="program-description">
+                    Inter‑zonal schools competition, involving 128 secondary schools. Boys & girls categories. Provides direct talent pipeline to zonal academies.
+                </p>
+                <div class="organizer-block">
+                    <div class="organizer-icon"><i class="fas fa-user-graduate"></i></div>
+                    <div class="organizer-info">
+                        <p>📋 organised by:</p>
+                        <a href="#"><i class="fas fa-globe"></i> Ministry of Sports & Education</a><br>
+                        <span>zonal coordinators: central, hills, dam, cattle</span>
+                    </div>
+                </div>
+                <a href="#" class="btn-link" onclick="alert('schools cup fixtures · demo'); return false;"><i class="fas fa-chevron-circle-right"></i> schools hub & results</a>
+            </div>
+        </div>
+        
+        <!-- card 3: future warriors / champions path -->
+        <div class="program-card">
+            <div class="card-head">
+                <i class="fas fa-shield-halved"></i>
+                <h2>nextgen scouting</h2>
+            </div>
+            <div class="card-body">
+                <div class="program-tag"><i class="fas fa-calendar-plus"></i> U20 · feeder initiative</div>
+                <p class="program-description">
+                    Joint program between Champions Cup & Warriors Cup clubs. Academies register their U20 squads; top prospects are drafted into senior teams.
+                </p>
+                <div class="organizer-block">
+                    <div class="organizer-icon"><i class="fas fa-users"></i></div>
+                    <div class="organizer-info">
+                        <p>📋 organised by:</p>
+                        <a href="#"><i class="fas fa-globe"></i> Gombe FA youth committee</a><br>
+                        <span>in partnership with all 64 clubs</span>
+                    </div>
+                </div>
+                <a href="#" class="btn-link" onclick="alert('nextgen scouting platform · demo'); return false;"><i class="fas fa-chevron-circle-right"></i> player registration portal</a>
+            </div>
+        </div>
+        
+        <!-- card 4: female talent ID (extra) -->
+        <div class="program-card">
+            <div class="card-head">
+                <i class="fas fa-futbol"></i>
+                <h2>she kicks Gombe</h2>
+            </div>
+            <div class="card-body">
+                <div class="program-tag"><i class="fas fa-venus"></i> U15 / U17 girls</div>
+                <p class="program-description">
+                    Dedicated development league for female footballers. 12 regional centres, with festivals and showcase matches. Pathway to zonal women's senior teams.
+                </p>
+                <div class="organizer-block">
+                    <div class="organizer-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                    <div class="organizer-info">
+                        <p>📋 organised by:</p>
+                        <a href="#"><i class="fas fa-globe"></i> Gombe Women's FA</a><br>
+                        <span>sponsored by unity foundation</span>
+                    </div>
+                </div>
+                <a href="#" class="btn-link" onclick="alert('she kicks program · demo'); return false;"><i class="fas fa-chevron-circle-right"></i> registration & trials</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- additional organisers & supporters block (like a hub) -->
+    <div class="extra-agencies">
+        <div class="agencies-title">
+            <i class="fas fa-handshake"></i>  key organisers & partners  <i class="fas fa-leaf"></i>
+        </div>
+        <div class="agency-badges">
+            <div class="badge-item"><i class="fas fa-trophy"></i> Gombe FA youth dept.</div>
+            <div class="badge-item"><i class="fas fa-mountain"></i> Hills FA</div>
+            <div class="badge-item"><i class="fas fa-water"></i> Dam FA</div>
+            <div class="badge-item"><i class="fas fa-cow"></i> Cattle FA</div>
+            <div class="badge-item"><i class="fas fa-wheat-alt"></i> Farmers FA</div>
+            <div class="badge-item"><i class="fas fa-university"></i> Gombe Sports Institute</div>
+        </div>
+        <div style="text-align:center; margin-top:30px;">
+            <a href="#" class="btn-link" style="background:#1f8a6b; color:white; border:3px solid #f9e084;" onclick="alert('youth development directory — demo'); return false;"><i class="fas fa-address-book"></i>  contact all youth coordinators</a>
+        </div>
+    </div>
+    
+    <!-- inspirational quote (youth focus) -->
+    <div class="quote-youth">
+        <i class="fas fa-quote-left" style="color:#cca34b;"></i> 
+        every champion was once a child who refused to stop chasing the ball. 
+        <i class="fas fa-quote-right" style="color:#cca34b;"></i> <br>
+        <span style="font-size:1rem; display:block; margin-top:15px;">— Gombe youth pledge</span>
+    </div>
+    
+    <!-- <!-- footer with continuity to cups --> -->
+    <!-- <div class="footer-dev"> -->
+        <!-- <p><i class="fas fa-seedling"></i>  future stars grow here · from grassroots to Champions & Warriors Cups  <i class="fas fa-seedling"></i></p> -->
+        <!-- <p style="margin-top: 20px;">© 2025 Gombe Football Ecosystem · youth development division</p> -->
+        <!-- <!-- subtle link back to main cups (simulated) --> -->
+        <!-- <p style="font-size:1rem;"><a href="#" style="color:#216b4e; font-weight:600;" onclick="alert('return to Gombe Cups overview (demo)'); return false;">← back to champions & warriors cups</a></p> -->
+    <!-- </div> -->
+    
+</div>
+</body>
+</html>

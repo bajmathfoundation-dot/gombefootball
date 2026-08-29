@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Squad Management | Gombe Football</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #1a2a6c;
+      --secondary: #3494e6;
+      --accent: #007bff;
+      --light: #ffffff;
+      --dark: #343a40;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+      --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    
+    body {
+      background: #f8f9fa;
+      color: #333;
+      min-height: 100vh;
+    }
+    
+    header {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.2rem;
+    }
+    
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .team-banner {
+      text-align: center;
+      padding: 15px;
+      background: white;
+      font-size: 1.1rem;
+      border-bottom: var(--border);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .team-banner strong {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .panel {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      border: var(--border);
+      margin-bottom: 20px;
+    }
+    
+    .panel-title {
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--light-gray);
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      align-items: center;
+    }
+    
+    label {
+      font-size: 0.95rem;
+      color: var(--dark);
+      min-width: 120px;
+      font-weight: 500;
+    }
+    
+    select, input[type="date"], input[type="number"] {
+      background: white;
+      border: var(--border);
+      padding: 10px 12px;
+      border-radius: 6px;
+      flex: 1;
+      max-width: 220px;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+    
+    select:focus, input[type="date"]:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(52, 148, 230, 0.1);
+    }
+    
+    button {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .player-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .player-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      border: var(--border);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .player-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    
+    .player-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+    
+    .player-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .player-position {
+      background: var(--light-gray);
+      color: var(--dark);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .player-info {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .player-stats-container {
+      margin: 15px 0;
+    }
+    
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 10px;
+      background: #f9fafb;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    
+    .stat-item:hover {
+      background: #f1f5f9;
+      transform: translateY(-2px);
+    }
+    
+    .stat-value {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+    
+    .coach-remarks {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: var(--border);
+    }
+    
+    .remark-comment {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--dark);
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 8px;
+      line-height: 1.5;
+    }
+    
+    .no-remark {
+      color: var(--gray);
+      font-style: italic;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 10px;
+    }
+    
+    .last-trained {
+      font-size: 0.8rem;
+      color: var(--gray);
+      margin-top: 10px;
+      text-align: center;
+    }
+    
+    .report-btn {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      width: 100%;
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .report-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .training-player {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: var(--border);
+    }
+    
+    .training-player:last-child {
+      border-bottom: none;
+    }
+    
+    .rating-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .rating-input input {
+      width: 60px;
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      border: var(--border);
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: var(--gray);
+      font-size: 0.85rem;
+      margin-top: 30px;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: var(--border);
+    }
+    
+    .modal-title {
+      font-size: 1.3rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--gray);
+      transition: all 0.2s ease;
+    }
+    
+    .close-modal:hover {
+      color: var(--dark);
+    }
+    
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .form-group label {
+      min-width: auto;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    .form-group input, .form-group textarea {
+      padding: 12px;
+      border: var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+    
+    .form-group input:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(52, 148, 230, 0.1);
+    }
+    
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    
+    .btn-cancel {
+      background: var(--light-gray);
+      color: var(--dark);
+    }
+    
+    .btn-cancel:hover {
+      background: #e5e7eb;
+    }
+    
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      
+      select, input[type="date"], input[type="number"] {
+        max-width: 100%;
+        width: 100%;
+      }
+      
+      .modal-content {
+        padding: 20px;
+      }
+      
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      
+      .player-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <i class="fas fa-futbol"></i>
+      <span>Gombe Football</span>
+    </div>
+    <h1>Squad Management</h1>
+    <button class="back-btn" onclick="goToProfile()">
+      <i class="fas fa-arrow-left"></i> Profile
+    </button>
+  </header>
+  
+  <div class="team-banner" id="teamBanner">
+    Managing Team: <strong id="teamName">Loading...</strong>
+  </div>
+
+  <main>
+    <div class="panel">
+      <h2 class="panel-title"><i class="fas fa-crown"></i> Team Leadership</h2>
+      
+      <div class="form-row">
+        <label for="captainSelect">Captain:</label>
+        <select id="captainSelect"></select>
+      </div>
+      
+      <div class="form-row">
+        <label for="viceSelect">Vice Captain:</label>
+        <select id="viceSelect"></select>
+      </div>
+      
+      <button onclick="saveLeaders()">
+        <i class="fas fa-save"></i> Save Leadership
+      </button>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title"><i class="fas fa-running"></i> Record Training</h2>
+      
+      <div class="form-row">
+        <label for="trainingDate">Date:</label>
+        <input type="date" id="trainingDate" />
+      </div>
+      
+      <button onclick="loadTrainingInputs()">
+        <i class="fas fa-users"></i> Load Squad
+      </button>
+      
+      <div id="trainingInputs" style="margin-top: 15px;"></div>
+      
+      <button onclick="submitTraining()" style="margin-top: 10px; width: 100%;">
+        <i class="fas fa-paper-plane"></i> Submit Training
+      </button>
+    </div>
+
+    <div class="panel">
+      <h2 class="panel-title"><i class="fas fa-users"></i> Squad Players</h2>
+      
+      <div id="playerGrid" class="player-grid">
+        Loading players...
+      </div>
+    </div>
+  </main>
+  
+  <div class="footer">
+    Gombe Football Management System © 2025
+  </div>
+
+  <!-- Player Remarks Modal -->
+  <div class="modal-overlay" id="remarksModal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title"><i class="fas fa-edit"></i> <span id="modalPlayerName">Player Name</span></h2>
+        <button class="close-modal" onclick="closeRemarksModal()">&times;</button>
+      </div>
+      
+      <div class="modal-form">
+        <div class="form-group">
+          <label for="playerRating">Rating (1-10):</label>
+          <input type="number" id="playerRating" min="1" max="10" value="5">
+        </div>
+        
+        <div class="form-group">
+          <label for="playerComment">Coach Comments:</label>
+          <textarea id="playerComment" placeholder="Enter your comments about this player..."></textarea>
+        </div>
+        
+        <div class="modal-actions">
+          <button class="btn btn-cancel" onclick="closeRemarksModal()">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <button class="btn" onclick="savePlayerRemarks()">
+            <i class="fas fa-save"></i> Save Remarks
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  
+  <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+      authDomain: "gombefootball.firebaseapp.com",
+      projectId: "gombefootball"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const coachPSN = urlParams.get('coachId');
+    const teamId = urlParams.get('teamId');
+
+    // DOM elements
+    const captainSelect = document.getElementById("captainSelect");
+    const viceSelect = document.getElementById("viceSelect");
+    const playerGrid = document.getElementById("playerGrid");
+    const trainingInputs = document.getElementById("trainingInputs");
+    const teamBanner = document.getElementById("teamName");
+    const remarksModal = document.getElementById("remarksModal");
+    const modalPlayerName = document.getElementById("modalPlayerName");
+    const playerRating = document.getElementById("playerRating");
+    const playerComment = document.getElementById("playerComment");
+
+    let players = [];
+    let teamName = '';
+    let teamData = {};
+    let currentPlayerId = null;
+
+    // Check authentication and load data
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        window.location.href = "CoachLogin.html";
+      } else {
+        loadTeamData();
+      }
+    });
+
+    // Load team data
+    async function loadTeamData() {
+      try {
+        // Get coach data first to confirm team assignment
+        const coachDoc = await db.collection("GombeCoaches").doc(coachPSN).get();
+        if (!coachDoc.exists) {
+          throw new Error("Coach not found");
+        }
+
+        const coachData = coachDoc.data();
+        teamName = coachData.teamName;
+        
+        if (!teamName) {
+          throw new Error("No team assigned to this coach");
+        }
+
+        // Update UI
+        teamBanner.textContent = teamName;
+
+        // Get team data (using teamId if available, otherwise fall back to name)
+        let teamDoc;
+        if (teamId) {
+          teamDoc = await db.collection("GombeTeams").doc(teamId).get();
+        } else {
+          const querySnapshot = await db.collection("GombeTeams")
+            .where("name", "==", teamName)
+            .limit(1)
+            .get();
+          
+          if (!querySnapshot.empty) {
+            teamDoc = querySnapshot.docs[0];
+          }
+        }
+
+        if (teamDoc && teamDoc.exists) {
+          teamData = teamDoc.data();
+          loadPlayers();
+        } else {
+          throw new Error("Team data not found");
+        }
+      } catch (error) {
+        console.error("Error loading team data:", error);
+        teamBanner.textContent = "Error loading team data";
+        playerGrid.innerHTML = `<div class="error">${error.message}</div>`;
+      }
+    }
+
+    // Load players and fill select options
+    async function loadPlayers() {
+      playerGrid.innerHTML = "Loading players...";
+      
+      try {
+        const snapshot = await db.collection("playerRegistry")
+          .where("teamName", "==", teamName)
+          .get();
+
+        players = [];
+        captainSelect.innerHTML = '<option value="">Select Captain</option>';
+        viceSelect.innerHTML = '<option value="">Select Vice Captain</option>';
+
+        if (snapshot.empty) {
+          playerGrid.innerHTML = 'No players found in your squad';
+          return;
+        }
+
+        playerGrid.innerHTML = '';
+        snapshot.forEach(doc => {
+          const p = doc.data();
+          p.id = doc.id;
+          players.push(p);
+          
+          // Add to dropdowns
+          const option = `<option value="${p.id}">${p.name} (#${p.jerseyNumber})</option>`;
+          captainSelect.innerHTML += option;
+          viceSelect.innerHTML += option;
+
+          // Create player card with improved layout
+          const card = document.createElement("div");
+          card.className = "player-card";
+          card.innerHTML = `
+            <div class="player-header">
+              <div class="player-name">
+                <i class="fas fa-user"></i>
+                ${p.name}
+              </div>
+              <div class="player-position">${p.position || 'N/A'}</div>
+            </div>
+            
+            <div class="player-info">
+              <i class="fas fa-tshirt"></i>
+              Jersey #${p.jerseyNumber}
+            </div>
+            
+            <div class="player-stats-container">
+              <div class="stats-row">
+                <div class="stat-item">
+                  <div class="stat-value">${p.matchesPlayed || 0}</div>
+                  <div class="stat-label">Matches</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">${p.goals || 0}</div>
+                  <div class="stat-label">Goals</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">${p.assists || 0}</div>
+                  <div class="stat-label">Assists</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">${p.cleanSheets || 0}</div>
+                  <div class="stat-label">Clean Sheets</div>
+                </div>
+              </div>
+              
+              <div class="stats-row">
+                <div class="stat-item">
+                  <div class="stat-value">${p.yellowCards || 0}</div>
+                  <div class="stat-label">Yellow Cards</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">${p.redCards || 0}</div>
+                  <div class="stat-label">Red Cards</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">${p.chancesCreated || 0}</div>
+                  <div class="stat-label">Chances Created</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">${p.coachRemark ? p.coachRemark : 'N/A'}</div>
+                  <div class="stat-label">Coach Rating</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="coach-remarks">
+              ${p.coachComment ? `
+                <div class="remark-comment">${p.coachComment}</div>
+              ` : `
+                <div class="no-remark">No coach comments yet</div>
+              `}
+              ${p.lastTrainingDate ? `
+                <div class="last-trained">Last trained: ${p.lastTrainingDate}</div>
+              ` : ''}
+            </div>
+            
+            <button class="report-btn" onclick="showRemarksModal('${p.id}', '${p.name}', ${p.coachRemark || 5}, '${p.coachComment || ''}')">
+              <i class="fas fa-edit"></i> Update Remarks
+            </button>
+          `;
+          playerGrid.appendChild(card);
+        });
+
+        // Load previous leadership from coach document
+        const coachDoc = await db.collection("GombeCoaches").doc(coachPSN).get();
+        if (coachDoc.exists) {
+          const c = coachDoc.data();
+          if (c.captain) {
+            captainSelect.value = c.captain;
+          }
+          if (c.viceCaptain) {
+            viceSelect.value = c.viceCaptain;
+          }
+        }
+      } catch (error) {
+        console.error("Error loading players:", error);
+        playerGrid.innerHTML = `<div class="error">Error loading players: ${error.message}</div>`;
+      }
+    }
+
+    async function saveLeaders() {
+      const captainId = captainSelect.value;
+      const viceId = viceSelect.value;
+      
+      if (!captainId || !viceId) {
+        alert("Please select both a captain and vice captain");
+        return;
+      }
+      
+      try {
+        // Get player names for display
+        const captain = players.find(p => p.id === captainId);
+        const vice = players.find(p => p.id === viceId);
+        
+        await db.collection("GombeCoaches").doc(coachPSN).update({
+          captain: captainId,
+          captainName: captain ? captain.name : '',
+          viceCaptain: viceId,
+          viceCaptainName: vice ? vice.name : '',
+          lastUpdated: new Date().toISOString()
+        });
+        
+        alert("Leadership saved successfully!");
+      } catch (error) {
+        console.error("Error saving leaders:", error);
+        alert("Error saving leadership. Please try again.");
+      }
+    }
+
+    function loadTrainingInputs() {
+      const date = document.getElementById("trainingDate").value;
+      if (!date) {
+        alert("Please select a date");
+        return;
+      }
+      
+      trainingInputs.innerHTML = "";
+      players.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "training-player";
+        div.innerHTML = `
+          <span>${p.name} (#${p.jerseyNumber})</span>
+          <div class="rating-input">
+            <input type="number" id="rate_${p.id}" min="1" max="10" value="${p.coachRemark || 5}">
+          </div>
+        `;
+        trainingInputs.appendChild(div);
+      });
+    }
+
+    async function submitTraining() {
+      const date = document.getElementById("trainingDate").value;
+      if (!date) return alert("Select a date");
+      
+      const ratings = {};
+      const batch = db.batch();
+      
+      // 1. Prepare updates
+      players.forEach(p => {
+        const rating = parseInt(document.getElementById(`rate_${p.id}`).value);
+        if (rating) {
+          ratings[p.id] = rating;
+          
+          // Update player document
+          const playerRef = db.collection("playerRegistry").doc(p.id);
+          batch.update(playerRef, {
+            coachRemark: rating,
+            lastTrainingDate: date
+          });
+        }
+      });
+      
+      // 2. Save training report
+      const reportRef = db.collection("trainingReports").doc(`${date}_${teamName}`);
+      batch.set(reportRef, {
+        date,
+        coachPSN,
+        teamName,
+        teamId: teamId || '',
+        ratings,
+        createdAt: new Date().toISOString()
+      });
+      
+      // 3. Execute batch
+      try {
+        await batch.commit();
+        alert("Training saved to both session and player records!");
+        loadPlayers(); // Refresh view
+      } catch (error) {
+        console.error("Error saving training:", error);
+        alert("Error saving data. Check console.");
+      }
+    }
+
+    function showRemarksModal(playerId, playerName, currentRating, currentComment) {
+      currentPlayerId = playerId;
+      modalPlayerName.textContent = playerName;
+      playerRating.value = currentRating;
+      playerComment.value = currentComment || '';
+      remarksModal.style.display = 'flex';
+    }
+
+    function closeRemarksModal() {
+      remarksModal.style.display = 'none';
+      currentPlayerId = null;
+    }
+
+    async function savePlayerRemarks() {
+      if (!currentPlayerId) return;
+      
+      const rating = parseInt(playerRating.value);
+      const comment = playerComment.value.trim();
+      
+      if (isNaN(rating) || rating < 1 || rating > 10) {
+        alert("Please enter a valid rating between 1 and 10");
+        return;
+      }
+      
+      try {
+        await db.collection("playerRegistry").doc(currentPlayerId).update({
+          coachRemark: rating,
+          coachComment: comment,
+          lastUpdated: new Date().toISOString()
+        });
+        
+        alert("Remarks updated successfully!");
+        closeRemarksModal();
+        loadPlayers(); // Refresh the player list to show updated remarks
+      } catch (error) {
+        console.error("Error updating remarks:", error);
+        alert("Error updating remarks. Please try again.");
+      }
+    }
+    
+    function goToProfile() {
+      window.location.href = `CoachProfile.html?coachId=${coachPSN}${teamId ? `&teamId=${teamId}` : ''}`;
+    }
+
+    // Set today's date as default
+    document.getElementById("trainingDate").valueAsDate = new Date();
+  </script>
+</body>
+</html>

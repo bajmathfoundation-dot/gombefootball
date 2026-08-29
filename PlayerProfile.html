@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Profile | Gombe Football</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #1a2a6c;
+            --secondary: #3494e6;
+            --accent: #fdbb2d;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f5ff, #e6f0ff);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .welcome-text {
+            color: var(--gray);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .profile-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 30px;
+            flex-shrink: 0;
+            overflow: hidden;
+            font-size: 3rem;
+            color: var(--primary);
+            border: 4px solid white;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-info {
+            flex-grow: 1;
+        }
+        
+        .profile-name {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .profile-team {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+        
+        .profile-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            color: white;
+            padding: 20px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .detail-item {
+            margin-bottom: 15px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            color: var(--dark);
+        }
+        
+        .agent-info-section {
+            background: #e8f4fc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .agent-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .agent-info-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .agent-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stats-card {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stats-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        
+        .stats-label {
+            color: var(--gray);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .stats-icon {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--light-gray);
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .agent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .agent-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .agent-item:hover {
+            background-color: var(--light-gray);
+        }
+        
+        .agent-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .agent-name {
+            font-weight: 600;
+        }
+        
+        .agent-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-message.info {
+            background: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        /* New styles for confirmation modal */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .confirmation-content {
+            background-color: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        .confirmation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .no-agent-btn {
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .profile-meta {
+                justify-content: center;
+            }
+            
+            .header-bar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .user-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .user-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .agent-details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+            
+            .agent-info-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header with user info and logout -->
+        <div class="header-bar">
+            <div class="logo">
+                <i class="fas fa-futbol"></i>
+                <span>Gombe Football Association</span>
+            </div>
+            <div class="user-actions">
+                <button class="btn btn-info" id="settingsBtn">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+                <button class="btn btn-secondary" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button class="btn btn-danger" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+        
+        <!-- Status message area -->
+        <div id="statusMessage" class="status-message" style="display: none;"></div>
+        
+        <!-- Player Header -->
+        <div class="profile-header" id="profileHeader">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-name" id="playerName">Loading...</h1>
+                <div class="profile-team" id="playerTeam">Loading team...</div>
+                <div class="profile-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-tshirt"></i>
+                        <span id="jerseyNumber">#-</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="playerLGA">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-birthday-cake"></i>
+                        <span id="playerDOB">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Player Details -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-info-circle"></i> Player Details
+            </div>
+            <div class="card-body">
+                <div class="details-grid" id="playerDetails">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+                
+                <!-- Agent Information Section -->
+                <div id="agentInfoSection" class="agent-info-section" style="display: none;">
+                    <div class="agent-info-header">
+                        <div class="agent-info-title">
+                            <i class="fas fa-user-tie"></i> Agent Information
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="changeAgentBtn">
+                            <i class="fas fa-sync-alt"></i> Change Agent
+                        </button>
+                    </div>
+                    <div class="agent-details-grid" id="agentDetails">
+                        <!-- Agent details will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="manageAgentBtn">
+                        <i class="fas fa-user-tie"></i> Manage Agent
+                    </button>
+                    <button class="btn btn-danger" id="retirePlayerBtn">
+                        <i class="fas fa-user-slash"></i> Retire Player
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Player Statistics -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-chart-line"></i> Player Statistics
+            </div>
+            <div class="card-body">
+                <div id="playerStatsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agent Selection Modal -->
+    <div class="modal" id="agentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Manage Player Agent</h3>
+                <button id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body" id="agentModalBody">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="cancelModalBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="confirmation-modal" id="confirmationModal">
+        <div class="confirmation-content">
+            <h3 id="confirmationTitle">Confirm Action</h3>
+            <p id="confirmationMessage">Are you sure you want to proceed?</p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-secondary" id="confirmCancelBtn">Cancel</button>
+                <button class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+            authDomain: "gombefootball.firebaseapp.com",
+            projectId: "gombefootball"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        // DOM Elements
+        const settingsBtn = document.getElementById('settingsBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const changeAgentBtn = document.getElementById('changeAgentBtn');
+        const agentInfoSection = document.getElementById('agentInfoSection');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmationTitle = document.getElementById('confirmationTitle');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const confirmActionBtn = document.getElementById('confirmActionBtn');
+        const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+        
+        let currentPlayerId = null;
+        let currentPlayerData = null;
+        let pendingAgentAction = null;
+        
+        // Check authentication state
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // User is signed in
+                await findPlayerByUserId(user.uid);
+            } else {
+                // No user is signed in, redirect to login
+                showStatus('You need to be logged in to access this page. Redirecting to login...', 'error');
+                setTimeout(() => {
+                    window.location.href = 'PlayerLogin.html';
+                }, 2000);
+            }
+        });
+        
+        // Find player document by user ID
+        async function findPlayerByUserId(userId) {
+            showStatus('Loading your player profile...', 'info');
+            
+            try {
+                // Query playerRegistry for the user's ID
+                const playersRef = db.collection("playerRegistry");
+                const querySnapshot = await playersRef.where("userId", "==", userId).get();
+                
+                if (querySnapshot.empty) {
+                    showStatus('No player profile found for your account. Please contact administrator.', 'error');
+                    return;
+                }
+                
+                // Get the first matching document (should only be one)
+                const playerDoc = querySnapshot.docs[0];
+                currentPlayerId = playerDoc.id;
+                currentPlayerData = playerDoc.data();
+                
+                // Load player data
+                await loadPlayerData();
+                
+            } catch (error) {
+                console.error("Error finding player:", error);
+                showStatus(`Error loading profile: ${error.message}`, 'error');
+            }
+        }
+        
+        async function loadPlayerData() {
+            try {
+                // Load main player document
+                const playerDoc = await db.collection("playerRegistry").doc(currentPlayerId).get();
+                
+                if (!playerDoc.exists) {
+                    throw new Error("Player not found");
+                }
+                
+                const playerData = playerDoc.data();
+                currentPlayerData = playerData;
+                displayPlayerInfo(playerData);
+                
+                // Load agent information if exists
+                if (playerData.agentId) {
+                    await loadAgentInfo(playerData.agentId);
+                }
+                
+                // Load player statistics
+                loadPlayerStats(playerData);
+                
+                // Set up event listeners
+                setupEventListeners();
+                
+                // Clear status message
+                hideStatus();
+                
+            } catch (error) {
+                console.error("Error loading player:", error);
+                showStatus(`Error loading player data: ${error.message}`, 'error');
+            }
+        }
+        
+        function displayPlayerInfo(player) {
+            // Header section
+            const avatar = document.querySelector('.profile-avatar');
+            if (player.imageUrl) {
+                avatar.innerHTML = `<img src="${player.imageUrl}" alt="${player.name}">`;
+            } else {
+                avatar.innerHTML = `<i class="fas fa-user"></i>`;
+            }
+            
+            document.getElementById('playerName').textContent = player.name || "Unknown Player";
+            document.getElementById('playerTeam').textContent = player.teamName || "No team";
+            document.getElementById('jerseyNumber').textContent = `#${player.jerseyNumber || "-"}`;
+            document.getElementById('playerLGA').textContent = player.LGAs || "-";
+            document.getElementById('playerDOB').textContent = player.DOB || "-";
+            
+            // Details section
+            const detailsGrid = document.getElementById('playerDetails');
+            detailsGrid.innerHTML = '';
+            
+            const detailsToShow = [
+                { label: "Position", value: player.position, icon: "fas fa-running" },
+                { label: "Coach Comment", value: player.coachComment, icon: "fas fa-comment" },
+                { label: "Coach Remark", value: player.coachRemark, icon: "fas fa-sticky-note" },
+                { label: "Market Value", value: player.playerValue, icon: "fas fa-dollar-sign" },
+                { label: "Contract Until", value: player.contractEnd, icon: "fas fa-file-signature" },
+                { label: "AgentTeamAproval", value: player.AgentTeamAproval, icon: "fas fa-file-signature" },
+                { label: "Status", value: player.MarketStatus, icon: "fas fa-info-circle" }
+            ];
+            
+            detailsToShow.forEach(detail => {
+                if (detail.value) {
+                    const detailItem = document.createElement('div');
+                    detailItem.className = 'detail-item';
+                    detailItem.innerHTML = `
+                        <div class="detail-label"><i class="${detail.icon}"></i> ${detail.label}</div>
+                        <div class="detail-value">${detail.value}</div>
+                    `;
+                    detailsGrid.appendChild(detailItem);
+                }
+            });
+            
+            if (detailsGrid.children.length === 0) {
+                detailsGrid.innerHTML = `
+                    <div class="empty-state" style="width: 100%;">
+                        <i class="fas fa-info-circle"></i>
+                        <p>No additional details available</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function loadAgentInfo(agentId) {
+            try {
+                const agentDoc = await db.collection("GombeAgents").doc(agentId).get();
+                
+                if (!agentDoc.exists) {
+                    agentInfoSection.style.display = 'none';
+                    return;
+                }
+                
+                const agentData = agentDoc.data();
+                
+                // Show agent section
+                agentInfoSection.style.display = 'block';
+                
+                // Populate agent details
+                const agentDetails = document.getElementById('agentDetails');
+                agentDetails.innerHTML = '';
+                
+                const agentFields = [
+                    { field: 'name', label: 'Name', icon: 'fas fa-user' },
+                    { field: 'phone', label: 'Phone', icon: 'fas fa-phone' },
+                    { field: 'localGovernment', label: 'Local Government', icon: 'fas fa-map-marker-alt' },
+                    { field: 'specialization', label: 'Specialization', icon: 'fas fa-star' },
+                    { field: 'address', label: 'Address', icon: 'fas fa-home' }
+                ];
+                
+                agentFields.forEach(field => {
+                    if (agentData[field.field]) {
+                        const detailItem = document.createElement('div');
+                        detailItem.className = 'detail-item';
+                        detailItem.innerHTML = `
+                            <div class="detail-label"><i class="${field.icon}"></i> ${field.label}</div>
+                            <div class="detail-value">${agentData[field.field]}</div>
+                        `;
+                        agentDetails.appendChild(detailItem);
+                    }
+                });
+                
+            } catch (error) {
+                console.error("Error loading agent info:", error);
+                agentInfoSection.style.display = 'none';
+            }
+        }
+        
+        function loadPlayerStats(player) {
+            const container = document.getElementById('playerStatsContainer');
+            
+            // Define the stats to display
+            const statsToShow = [
+                {field: 'contractType', label: 'Contract Type', icon: 'fas fa-file-contract'},
+                {field: 'draws', label: 'Draws', icon: 'fas fa-equals'},
+                {field: 'appearances', label: 'appearances', icon: 'fas fa-futbol'},
+                {field: 'matchesPlayed', label: 'Matches Played', icon: 'fas fa-futbol'},
+                {field: 'minutesPlayed', label: 'Minutes Played', icon: 'fas fa-clock'},
+                {field: 'wins', label: 'Wins', icon: 'fas fa-trophy'},
+                {field: 'chancesCreated', label: 'Chances Created', icon: 'fas fa-lightbulb'},
+                {field: 'yellowCards', label: 'Yellow Cards', icon: 'fas fa-square'},
+                {field: 'assists', label: 'Assists', icon: 'fas fa-handshake'},
+                {field: 'goals', label: 'Goals', icon: 'fas fa-futbol'},
+                {field: 'redCards', label: 'Red Cards', icon: 'fas fa-square'},
+                {field: 'cleanSheets', label: 'Clean Sheets', icon: 'fas fa-shield-alt'},
+                {field: 'losses', label: 'Losses', icon: 'fas fa-times-circle'}
+            ];
+            
+            // Check if we have any stats to show
+            const hasStats = statsToShow.some(stat => player[stat.field] !== undefined && player[stat.field] !== null);
+            
+            if (!hasStats) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>No statistics available for this player</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '<div class="stats-grid" id="statsGrid"></div>';
+            const grid = document.getElementById('statsGrid');
+            
+            statsToShow.forEach(stat => {
+                if (player[stat.field] !== undefined && player[stat.field] !== null) {
+                    const statCard = document.createElement('div');
+                    statCard.className = 'stats-card';
+                    statCard.innerHTML = `
+                        <div class="stats-icon"><i class="${stat.icon}"></i></div>
+                        <div class="stats-value">${player[stat.field]}</div>
+                        <div class="stats-label">${stat.label}</div>
+                    `;
+                    grid.appendChild(statCard);
+                }
+            });
+        }
+        
+        function setupEventListeners() {
+            // Settings button
+            settingsBtn.addEventListener('click', () => {
+                window.location.href = 'PlayerSettings.html';
+            });
+            
+            // Refresh button
+            refreshBtn.addEventListener('click', async () => {
+                if (currentPlayerId) {
+                    showStatus('Refreshing data...', 'info');
+                    await loadPlayerData();
+                }
+            });
+            
+            // Change Agent button
+            changeAgentBtn.addEventListener('click', () => {
+                document.getElementById('agentModal').style.display = 'flex';
+                loadAgents();
+            });
+            
+            // Logout button
+            logoutBtn.addEventListener('click', async () => {
+                try {
+                    await auth.signOut();
+                    showStatus('Logging out...', 'info');
+                    setTimeout(() => {
+                        window.location.href = 'PlayerLogin.html';
+                    }, 1000);
+                } catch (error) {
+                    console.error("Error signing out:", error);
+                    showStatus(`Error signing out: ${error.message}`, 'error');
+                }
+            });
+            
+            // Retirement button
+            document.getElementById('retirePlayerBtn').addEventListener('click', async () => {
+                if (confirm("Are you sure you want to retire this player? This will remove them from their current team.")) {
+                    try {
+                        await db.collection("playerRegistry").doc(currentPlayerId).update({
+                            teamName: "Retired",
+                            teamId: null
+                        });
+                        
+                        // Update the UI
+                        document.getElementById('playerTeam').textContent = "Retired";
+                        showStatus("Player has been retired successfully", 'success');
+                    } catch (error) {
+                        console.error("Error retiring player:", error);
+                        showStatus(`Failed to retire player: ${error.message}`, 'error');
+                    }
+                }
+            });
+            
+            // Agent management
+            const agentModal = document.getElementById('agentModal');
+            const manageAgentBtn = document.getElementById('manageAgentBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const cancelModalBtn = document.getElementById('cancelModalBtn');
+            
+            manageAgentBtn.addEventListener('click', async () => {
+                agentModal.style.display = 'flex';
+                await loadAgents();
+            });
+            
+            closeModalBtn.addEventListener('click', () => {
+                agentModal.style.display = 'none';
+            });
+            
+            cancelModalBtn.addEventListener('click', () => {
+                agentModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            agentModal.addEventListener('click', (e) => {
+                if (e.target === agentModal) {
+                    agentModal.style.display = 'none';
+                }
+            });
+            
+            // Confirmation modal event listeners
+            confirmActionBtn.addEventListener('click', async () => {
+    if (pendingAgentAction) {
+        const { type, agentId } = pendingAgentAction;
+        confirmationModal.style.display = 'none';
+        
+        if (type === 'assign') {
+            await assignAgentToPlayer(agentId);
+        } else if (type === 'remove') {
+            await removeAgentFromPlayer(agentId);
+        } else if (type === 'none') {
+            await removeAgentFromPlayer(agentId);  // Now passes the agentId
+        }
+        
+        pendingAgentAction = null;
+    }
+});
+            
+            // Close confirmation modal when clicking outside
+            confirmationModal.addEventListener('click', (e) => {
+                if (e.target === confirmationModal) {
+                    confirmationModal.style.display = 'none';
+                    pendingAgentAction = null;
+                }
+            });
+        }
+        
+        async function loadAgents() {
+            const modalBody = document.getElementById('agentModalBody');
+            modalBody.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            
+            try {
+                // Get current player data to check if they already have an agent
+                const playerData = currentPlayerData;
+                const currentAgentId = playerData.agentId;
+                
+                // Get all agents
+                const agentsSnapshot = await db.collection("GombeAgents").get();
+                
+                if (agentsSnapshot.empty) {
+                    modalBody.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-user-tie"></i>
+                            <p>No agents available</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                modalBody.innerHTML = `
+                    <div class="agent-list" id="agentList"></div>
+                    <button class="btn btn-secondary no-agent-btn" id="chooseNoneBtn">
+                        <i class="fas fa-user-times"></i> Play Without an Agent
+                    </button>
+                `;
+                
+                const agentList = document.getElementById('agentList');
+                const chooseNoneBtn = document.getElementById('chooseNoneBtn');
+                
+                // Add event listener for "choose none" button
+                chooseNoneBtn.addEventListener('click', () => {
+    if (currentPlayerData.agentId) {
+        showConfirmation(
+            "Play Without an Agent",
+            "Are you sure you want to remove your current agent and play without representation?",
+            'none',
+            currentPlayerData.agentId  // Pass the current agent ID
+        );
+    } else {
+        showStatus("You currently don't have an agent assigned", 'info');
+    }
+});
+                
+                agentsSnapshot.forEach(doc => {
+                    const agent = doc.data();
+                    const agentItem = document.createElement('div');
+                    agentItem.className = 'agent-item';
+                    
+                    const isCurrentAgent = doc.id === currentAgentId;
+                    
+                    agentItem.innerHTML = `
+                        <div class="agent-info">
+                            <span class="agent-name">${agent.name}</span>
+                            <span>${agent.specialization || 'No specialization'}</span>
+                            ${isCurrentAgent ? '<span style="color: var(--success); font-weight: 600;">(Current Agent)</span>' : ''}
+                        </div>
+                        <div class="agent-actions">
+                            ${isCurrentAgent ? `
+                                <button class="btn btn-danger btn-sm sack-agent-btn" data-agent-id="${doc.id}">
+                                    <i class="fas fa-user-minus"></i> Sack
+                                </button>
+                            ` : `
+                                <button class="btn btn-primary btn-sm choose-agent-btn" data-agent-id="${doc.id}">
+                                    <i class="fas fa-user-plus"></i> Choose
+                                </button>
+                            `}
+                        </div>
+                    `;
+                    
+                    agentList.appendChild(agentItem);
+                });
+                
+                // Set up event listeners for agent buttons
+                document.querySelectorAll('.choose-agent-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const agentId = e.target.closest('button').dataset.agentId;
+                        const agentName = e.target.closest('.agent-item').querySelector('.agent-name').textContent;
+                        
+                        showConfirmation(
+                            "Assign Agent",
+                            `Are you sure you want to assign ${agentName} as your agent?`,
+                            'assign',
+                            agentId
+                        );
+                    });
+                });
+                
+                document.querySelectorAll('.sack-agent-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const agentId = e.target.closest('button').dataset.agentId;
+                        const agentName = e.target.closest('.agent-item').querySelector('.agent-name').textContent;
+                        
+                        showConfirmation(
+                            "Sack Agent",
+                            `Are you sure you want to sack ${agentName} as your agent?`,
+                            'remove',
+                            agentId
+                        );
+                    });
+                });
+                
+            } catch (error) {
+                console.error("Error loading agents:", error);
+                modalBody.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error loading agents: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function showConfirmation(title, message, type, agentId) {
+            confirmationTitle.textContent = title;
+            confirmationMessage.textContent = message;
+            pendingAgentAction = { type, agentId };
+            confirmationModal.style.display = 'flex';
+        }
+        
+      async function assignAgentToPlayer(agentId) {
+    try {
+        // First remove from any existing agent (if any)
+        if (currentPlayerData.agentId) {
+            await db.collection("GombeAgents").doc(currentPlayerData.agentId).update({
+                playerIds: firebase.firestore.FieldValue.arrayRemove(currentPlayerId)
+            });
+        }
+        
+        // Assign agent to player
+        await db.collection("playerRegistry").doc(currentPlayerId).update({
+            agentId: agentId
+        });
+        
+        // Add player to agent's list
+        await db.collection("GombeAgents").doc(agentId).update({
+            playerIds: firebase.firestore.FieldValue.arrayUnion(currentPlayerId)
+        });
+        
+        // Update UI
+        await loadAgentInfo(agentId);
+        document.getElementById('agentModal').style.display = 'none';
+        showStatus("Agent assigned successfully", 'success');
+        
+    } catch (error) {
+        console.error("Error assigning agent:", error);
+        showStatus(`Failed to assign agent: ${error.message}`, 'error');
+    }
+}
+        async function removeAgentFromPlayer(agentId) {
+    try {
+        // Remove agent from player document
+        await db.collection("playerRegistry").doc(currentPlayerId).update({
+            agentId: firebase.firestore.FieldValue.delete()
+        });
+        
+        // Remove player from agent's player list (if agentId exists)
+        if (agentId) {
+            await db.collection("GombeAgents").doc(agentId).update({
+                playerIds: firebase.firestore.FieldValue.arrayRemove(currentPlayerId)
+            });
+        }
+        
+        // Update UI
+        agentInfoSection.style.display = 'none';
+        document.getElementById('agentModal').style.display = 'none';
+        showStatus("Agent removed successfully", 'success');
+        
+    } catch (error) {
+        console.error("Error removing agent:", error);
+        showStatus(`Failed to remove agent: ${error.message}`, 'error');
+    }
+}
+        
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message ${type}`;
+            statusMessage.style.display = 'flex';
+        }
+        
+        function hideStatus() {
+            statusMessage.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
