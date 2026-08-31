@@ -233,6 +233,12 @@
             opacity: 0.7;
         }
 
+        .form-hint {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
         /* Info Box */
         .info-box {
             background: #e3f2fd;
@@ -268,6 +274,69 @@
             position: absolute;
             left: 0;
             font-weight: bold;
+        }
+
+        /* Duplicate Warning */
+        .duplicate-warning {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .duplicate-warning.show {
+            display: block;
+        }
+
+        .duplicate-warning h4 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+
+        .duplicate-warning ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .duplicate-warning li {
+            margin: 5px 0;
+            color: #721c24;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 6px;
+            border: 1px solid #c3e6cb;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .success-message.show {
+            display: block;
         }
 
         /* Signature Section */
@@ -401,41 +470,37 @@
             transform: translateY(-2px);
         }
 
+        .btn-check {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-check:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none !important;
         }
 
-        /* Success Message */
-        .success-message {
-            display: none;
-            background: #d4edda;
-            color: #155724;
-            padding: 15px 20px;
-            border-radius: 6px;
-            border: 1px solid #c3e6cb;
-            margin-top: 20px;
-            text-align: center;
+        /* Check button container */
+        .check-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
-        .success-message.show {
-            display: block;
+        .check-container .btn {
+            width: auto;
+            padding: 10px 20px;
+            white-space: nowrap;
         }
 
-        /* Official Use Only - Disabled for public */
-        .official-use-only {
-            opacity: 0.6;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        .official-use-only .form-control {
-            background: #f8f9fa;
-        }
-
-        .official-use-only .section-title {
-            background: #95a5a6;
+        .check-container .form-control {
+            flex: 1;
         }
 
         /* Responsive */
@@ -466,6 +531,14 @@
             .action-buttons {
                 flex-direction: column;
                 align-items: stretch;
+            }
+
+            .check-container {
+                flex-direction: column;
+            }
+
+            .check-container .btn {
+                width: 100%;
             }
         }
 
@@ -554,13 +627,30 @@
         <div class="info-box">
             <h4><i class="fas fa-info-circle"></i> Digital Team Management System</h4>
             <ul>
-                <li>Teams are allowed a maximum of <strong>33 players</strong>, minimum <strong>22 players</strong> of  in the system</li>
+                <li>Teams are allowed a maximum of <strong>33 players</strong>, minimum <strong>22 players</strong> in the system</li>
                 <li>No player can be registered for the same team twice</li>
-				<li>No one player can be registered for two or more teams</li>
+                <li>No one player can be registered for two or more teams</li>
                 <li>Each player must have a <strong>unique jersey number</strong> within the team</li>
-                <li>No two teams can have the same Coach/Manager at the same time</li>
+                <li><strong style="color: #c0392b;">No two teams can have the same Manager/Coach phone number</strong></li>
                 <li>This system will digitalise your team management</li>
             </ul>
+        </div>
+
+        <!-- Duplicate Warning -->
+        <div class="duplicate-warning" id="duplicateWarning">
+            <h4><i class="fas fa-exclamation-triangle"></i> ⚠️ DUPLICATE MANAGER DETECTED!</h4>
+            <p><strong>The phone number <span id="dupPhoneDisplay"></span> is already associated with these teams:</strong></p>
+            <ul id="dupTeamList"></ul>
+            <p style="color: #721c24; font-weight: bold; margin-top: 10px;">
+                ❌ You cannot register a new team with this phone number. 
+                Each manager phone number can only be associated with ONE team.
+            </p>
+            <p style="color: #666; margin-top: 5px;">
+                If you believe this is an error, please contact the administrator.
+            </p>
+            <button class="btn btn-secondary" onclick="clearDuplicateWarning()" style="margin-top: 10px; background: #6c757d; color: white; padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                <i class="fas fa-times"></i> Dismiss
+            </button>
         </div>
 
         <!-- Section 1: Team Information -->
@@ -675,7 +765,7 @@
             </div>
         </div>
 
-        <!-- Section 3: Team Management - Only Manager Phone -->
+        <!-- Section 3: Team Management -->
         <div class="form-section">
             <div class="section-title">
                 <i class="fas fa-phone"></i> SECTION C: CONTACT INFORMATION
@@ -684,8 +774,14 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Manager / Coach Phone Number <span class="required">*</span></label>
-                    <input type="text" class="form-control" id="managerPhone" placeholder="e.g., 080XXXXXXXX">
+                    <div class="check-container">
+                        <input type="text" class="form-control" id="managerPhone" placeholder="e.g., 080XXXXXXXX">
+                        <button type="button" class="btn btn-check" onclick="checkDuplicateManager()">
+                            <i class="fas fa-search"></i> Check
+                        </button>
+                    </div>
                     <div class="form-hint">This number will be used for official communication and WhatsApp notifications</div>
+                    <div id="phoneCheckResult" style="margin-top: 8px; font-weight: 600;"></div>
                 </div>
             </div>
         </div>
@@ -767,7 +863,7 @@
         <div class="print-footer">
             <div class="footer-section">
                 <strong>Gombe Football Ecosystem</strong><br>
-               Private Youth & Sports Development<br>
+                Private Youth & Sports Development<br>
                 Gombe, Nigeria
             </div>
             <div class="footer-section">
@@ -786,7 +882,7 @@
     <!-- Action Buttons -->
     <div class="action-buttons no-print">
         <button class="btn btn-save" id="saveBtn" onclick="saveForm()">
-            <i class="fas fa-save"></i> Save Draft
+            <i class="fas fa-save"></i> Register Team
         </button>
         <button class="btn btn-print" onclick="window.print()">
             <i class="fas fa-print"></i> Print Form
@@ -797,6 +893,8 @@
     </div>
 
     <script>
+        let duplicateCheckResult = null;
+
         function main() {
             console.log("DOM fully loaded and Firebase ready");
             
@@ -907,14 +1005,145 @@
             // Auto-generate registration number on load
             generateRegNumber();
 
-            // Make save function globally accessible
+            // Make functions globally accessible
             window.saveForm = saveForm;
+            window.checkDuplicateManager = checkDuplicateManager;
+            window.clearDuplicateWarning = clearDuplicateWarning;
         }
 
-        // Save Form Function
+        // ==================== CHECK DUPLICATE MANAGER ====================
+        async function checkDuplicateManager() {
+            const phone = document.getElementById('managerPhone').value.trim();
+            const resultDiv = document.getElementById('phoneCheckResult');
+            const warningDiv = document.getElementById('duplicateWarning');
+            
+            if (!phone) {
+                resultDiv.innerHTML = '<span style="color: #e74c3c;">⚠️ Please enter a phone number first.</span>';
+                return;
+            }
+
+            // Validate phone format
+            if (!phone.match(/^[0-9]{8,15}$/)) {
+                resultDiv.innerHTML = '<span style="color: #e74c3c;">⚠️ Please enter a valid phone number (8-15 digits only).</span>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<span style="color: #17a2b8;">⏳ Checking phone number...</span>';
+            
+            try {
+                // Query all teams with this phone number
+                const q = window.firebase.query(
+                    window.firebase.collection(window.firebase.db, "GombeTeamsAwaitingapproval"),
+                    window.firebase.where("managerPhone", "==", phone)
+                );
+                
+                const querySnapshot = await window.firebase.getDocs(q);
+                
+                // Also check approved teams in GombeTeams
+                const q2 = window.firebase.query(
+                    window.firebase.collection(window.firebase.db, "GombeTeams"),
+                    window.firebase.where("managerPhone", "==", phone)
+                );
+                
+                const querySnapshot2 = await window.firebase.getDocs(q2);
+                
+                // Combine results
+                const allTeams = [];
+                
+                querySnapshot.forEach(doc => {
+                    allTeams.push({
+                        id: doc.id,
+                        ...doc.data(),
+                        status: doc.data().status || 'Pending Approval',
+                        collection: 'GombeTeamsAwaitingapproval'
+                    });
+                });
+                
+                querySnapshot2.forEach(doc => {
+                    allTeams.push({
+                        id: doc.id,
+                        ...doc.data(),
+                        status: 'Approved',
+                        collection: 'GombeTeams'
+                    });
+                });
+                
+                if (allTeams.length > 0) {
+                    // Show duplicate warning
+                    const dupList = document.getElementById('dupTeamList');
+                    const dupPhone = document.getElementById('dupPhoneDisplay');
+                    dupPhone.textContent = phone;
+                    
+                    let listHtml = '';
+                    allTeams.forEach(team => {
+                        const statusBadge = team.status === 'Approved' 
+                            ? '<span class="badge badge-success" style="background:#28a745;color:white;">✅ Approved</span>'
+                            : '<span class="badge badge-warning" style="background:#ffc107;color:#333;">⏳ Pending</span>';
+                        listHtml += `
+                            <li>
+                                <strong>${team.teamName || 'Unknown Team'}</strong> 
+                                (ID: ${team.id})
+                                - ${statusBadge}
+                                ${team.lga ? `- LGA: ${team.lga}` : ''}
+                            </li>
+                        `;
+                    });
+                    
+                    dupList.innerHTML = listHtml;
+                    warningDiv.classList.add('show');
+                    
+                    resultDiv.innerHTML = `
+                        <span style="color: #dc3545; font-weight: bold;">
+                            ❌ DUPLICATE DETECTED! This phone number is already registered to ${allTeams.length} team(s).
+                        </span>
+                    `;
+                    
+                    duplicateCheckResult = {
+                        isDuplicate: true,
+                        teams: allTeams
+                    };
+                    
+                } else {
+                    warningDiv.classList.remove('show');
+                    resultDiv.innerHTML = `
+                        <span style="color: #27ae60; font-weight: bold;">
+                            ✅ Phone number is available! You can register your team.
+                        </span>
+                    `;
+                    
+                    duplicateCheckResult = {
+                        isDuplicate: false,
+                        teams: []
+                    };
+                }
+                
+            } catch (error) {
+                console.error("Duplicate check error:", error);
+                resultDiv.innerHTML = `<span style="color: #e74c3c;">❌ Error checking: ${error.message}</span>`;
+            }
+        }
+
+        // ==================== CLEAR DUPLICATE WARNING ====================
+        function clearDuplicateWarning() {
+            document.getElementById('duplicateWarning').classList.remove('show');
+        }
+
+        // ==================== SAVE FORM ====================
         async function saveForm() {
             const saveBtn = document.getElementById('saveBtn');
             const successMsg = document.getElementById('successMessage');
+            const phone = document.getElementById('managerPhone').value.trim();
+            
+            // Check duplicate first
+            if (duplicateCheckResult === null || duplicateCheckResult.isDuplicate) {
+                // Run duplicate check
+                await checkDuplicateManager();
+                
+                if (duplicateCheckResult && duplicateCheckResult.isDuplicate) {
+                    alert('⚠️ Cannot register: This phone number is already registered to another team. Please use a different phone number.');
+                    return;
+                }
+            }
             
             // Disable button during save
             saveBtn.disabled = true;
@@ -932,7 +1161,7 @@
                 const ward = document.getElementById('teamWard').value;
                 const teamLocation = document.getElementById('teamLocation').value.trim();
                 const zone = document.getElementById('teamZone').value;
-                const managerPhone = document.getElementById('managerPhone').value.trim();
+                const managerPhone = phone;
                 const declarantName = document.getElementById('declarantName').value.trim();
                 const declarantDate = document.getElementById('declarantDate').value;
 
@@ -953,11 +1182,11 @@
                 if (!isValid) {
                     alert('Please fill all required fields marked with *');
                     saveBtn.disabled = false;
-                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
+                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Register Team';
                     return;
                 }
 
-                // Create team data (without Team ID - will be assigned by admin)
+                // Create team data
                 const teamData = {
                     teamName: teamName,
                     teamNickname: teamNickname || null,
@@ -991,7 +1220,7 @@
                     <i class="fas fa-check-circle" style="font-size: 1.5rem; color: #155724;"></i>
                     <h4 style="margin-top: 8px;">Registration Submitted Successfully!</h4>
                     <p>Your team registration has been saved and is pending approval.</p>
-                    <!-- <p style="font-size: 0.9rem; margin-top: 5px;"><strong>Reference ID:</strong> ${docRef.id}</p> -->
+                    <p style="font-size: 0.9rem; margin-top: 5px;"><strong>Reference ID:</strong> ${docRef.id}</p>
                 `;
 
                 // Reset form
@@ -1010,6 +1239,9 @@
                     document.getElementById('managerPhone').value = '';
                     document.getElementById('declarantName').value = '';
                     document.getElementById('declarantDate').value = '';
+                    document.getElementById('phoneCheckResult').innerHTML = '';
+                    document.getElementById('duplicateWarning').classList.remove('show');
+                    duplicateCheckResult = null;
                     
                     // Reset validation classes
                     document.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
@@ -1022,11 +1254,11 @@
                 alert(`Failed to save: ${error.message}`);
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Draft';
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Register Team';
             }
         }
 
-        // Download as PDF function
+        // ==================== DOWNLOAD PDF ====================
         function downloadPDF() {
             const printContent = document.getElementById('printArea').innerHTML;
             const styles = document.querySelector('style').innerHTML;
@@ -1082,12 +1314,14 @@
                         .official-use-only {
                             display: none !important;
                         }
+                        .duplicate-warning {
+                            display: none !important;
+                        }
                     </style>
                 </head>
                 <body>
                     ${printContent}
                     <script>
-                        // Auto-print when loaded
                         window.onload = function() {
                             setTimeout(function() {
                                 window.print();
@@ -1102,6 +1336,21 @@
             `);
             printWindow.document.close();
         }
+
+        // Auto-check phone number when user finishes typing
+        let phoneCheckTimeout;
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.getElementById('managerPhone');
+            phoneInput.addEventListener('input', function() {
+                clearTimeout(phoneCheckTimeout);
+                // Auto-check after 1 second of no typing
+                phoneCheckTimeout = setTimeout(() => {
+                    if (this.value.trim().length >= 8) {
+                        checkDuplicateManager();
+                    }
+                }, 1000);
+            });
+        });
     </script>
 </body>
 </html>

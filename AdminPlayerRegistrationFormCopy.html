@@ -5,111 +5,637 @@
   <title>Gombe Football Team Player Registration</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f4f7;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background: #0a0a0a;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Background Slideshow */
+    .slideshow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+      animation: slideFade 20s infinite;
+    }
+
+    .slide:nth-child(1) { animation-delay: 0s; background-image: url('Goalkeeper.png'); }
+    .slide:nth-child(2) { animation-delay: 5s; background-image: url('Midfielder.png'); }
+    .slide:nth-child(3) { animation-delay: 10s; background-image: url('Referee.png'); }
+    .slide:nth-child(4) { animation-delay: 15s; background-image: url('Striker.png'); }
+
+    @keyframes slideFade {
+      0%, 20% { opacity: 1; }
+      25%, 95% { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1;
+    }
+
+    /* Header */
     header {
-      background: #014421;
-      color: white;
-      padding: 20px;
+      position: relative;
+      z-index: 2;
+      background: linear-gradient(135deg, rgba(1, 68, 33, 0.95), rgba(2, 116, 58, 0.9));
+      padding: 25px 20px;
       text-align: center;
-      font-size: 1.8em;
-      font-weight: bold;
+      font-size: 2em;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border-bottom: 3px solid #ffd700;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
     }
+
+    header span {
+      color: #ffd700;
+    }
+
     .container {
-      max-width: 700px;
+      position: relative;
+      z-index: 2;
+      max-width: 750px;
       margin: 30px auto;
-      padding: 0 20px;
+      padding: 0 20px 40px;
     }
+
+    /* Cards */
     .card {
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(1, 68, 33, 0.2);
+      margin-bottom: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 60px rgba(1, 68, 33, 0.3);
+    }
+
     .verification-section {
-      background: #f8f9fa;
-      border-left: 4px solid #014421;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(248, 249, 250, 0.97));
+      border-left: 6px solid #ffd700;
     }
+
+    .verification-section h2 {
+      color: #014421;
+      font-size: 1.8em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .verification-section p {
+      color: #555;
+      margin-bottom: 20px;
+      font-size: 1.05em;
+    }
+
+    /* Form Elements */
     form label {
-      font-weight: bold;
-      margin-top: 15px;
+      font-weight: 700;
+      margin-top: 18px;
       display: block;
+      color: #1a1a1a;
+      font-size: 0.95em;
+      letter-spacing: 0.5px;
     }
+
+    form label::after {
+      content: ' *';
+      color: #dc3545;
+    }
+
+    form label:has(+ input[type="file"])::after {
+      content: '';
+    }
+
     form input,
     form select {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
+      padding: 12px 16px;
+      margin-top: 6px;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      border: 2px solid #e0e0e0;
+      background: #f8f9fa;
       box-sizing: border-box;
-    }
-    button {
-      background-color: #014421;
-      color: white;
-      padding: 12px 18px;
       font-size: 1em;
+      transition: all 0.3s ease;
+      color: #1a1a1a;
+    }
+
+    form input:focus,
+    form select:focus {
+      border-color: #014421;
+      outline: none;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(1, 68, 33, 0.1);
+    }
+
+    form input::placeholder {
+      color: #aaa;
+    }
+
+    /* Buttons */
+    button {
+      background: linear-gradient(135deg, #014421, #02743a);
+      color: white;
+      padding: 14px 20px;
+      font-size: 1.1em;
+      font-weight: 700;
       border: none;
-      border-radius: 5px;
+      border-radius: 12px;
       cursor: pointer;
       width: 100%;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(1, 68, 33, 0.3);
     }
+
     button:hover {
-      background-color: #02743a;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(1, 68, 33, 0.5);
+      background: linear-gradient(135deg, #02743a, #03a050);
     }
+
+    button:active {
+      transform: translateY(0);
+    }
+
     button:disabled {
-      background-color: #ccc;
+      background: #ccc;
       cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
     }
+
+    /* Team Info */
     .team-info {
-      background: #e8f5e9;
-      padding: 15px;
-      border-radius: 5px;
-      margin: 15px 0;
-      border-left: 4px solid #2e7d32;
+      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+      padding: 20px 25px;
+      border-radius: 15px;
+      margin: 20px 0 25px;
+      border-left: 6px solid #2e7d32;
+      box-shadow: 0 4px 15px rgba(46, 125, 50, 0.15);
     }
+
     .team-info h3 {
       margin-top: 0;
       color: #014421;
+      font-size: 1.3em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+
     .team-info p {
       margin: 8px 0;
+      color: #1a3a1a;
+      font-size: 0.95em;
     }
+
+    .team-info p strong {
+      color: #014421;
+      min-width: 120px;
+      display: inline-block;
+    }
+
+    .team-info p span {
+      color: #1a3a1a;
+      font-weight: 500;
+    }
+
     .hidden {
-      display: none;
+      display: none !important;
     }
+
+    /* Verification Status */
     .verification-status {
-      padding: 10px;
-      border-radius: 4px;
-      margin-bottom: 15px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 0.95em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
+
     .status-success {
       background: #d4edda;
       color: #155724;
-      border: 1px solid #c3e6cb;
+      border: 2px solid #c3e6cb;
     }
+
     .status-error {
       background: #f8d7da;
       color: #721c24;
-      border: 1px solid #f5c6cb;
+      border: 2px solid #f5c6cb;
     }
+
     .status-loading {
       background: #d1ecf1;
       color: #0c5460;
-      border: 1px solid #bee5eb;
+      border: 2px solid #bee5eb;
+    }
+
+    .verification-status.hidden {
+      display: none !important;
+    }
+
+    /* Registered Team Display */
+    .team-reference {
+      background: linear-gradient(135deg, #f0f0f0, #e8e8e8);
+      padding: 14px 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 2px solid #014421;
+      color: #1a1a1a;
+      font-weight: 600;
+      font-size: 1em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .team-reference span {
+      color: #014421;
+      font-weight: 700;
+    }
+
+    /* Registration Section Header */
+    #registrationSection h2 {
+      color: #014421;
+      font-size: 1.8em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Player Count Badge */
+    .player-count {
+      background: #014421;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.7em;
+      margin-left: 10px;
+    }
+
+    /* Success Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      animation: modalSlideIn 0.4s ease;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal .success-icon {
+      font-size: 4em;
+      text-align: center;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .modal h2 {
+      color: #014421;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+    }
+
+    .modal .details {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 15px 0;
+    }
+
+    .modal .details p {
+      margin: 8px 0;
+      color: #1a1a1a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .modal .details p:last-child {
+      border-bottom: none;
+    }
+
+    .modal .details .label {
+      font-weight: 600;
+      color: #555;
+    }
+
+    .modal .details .value {
+      font-weight: 700;
+      color: #014421;
+    }
+
+    .modal .psn-box {
+      background: #014421;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: 800;
+      letter-spacing: 2px;
+      margin: 15px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .modal .psn-box:hover {
+      background: #02743a;
+      transform: scale(1.02);
+    }
+
+    .modal .psn-box .copy-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 8px;
+      font-size: 0.5em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: auto;
+      text-transform: none;
+      box-shadow: none;
+    }
+
+    .modal .psn-box .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+      box-shadow: none;
+    }
+
+    .modal .copy-feedback {
+      text-align: center;
+      font-size: 0.9em;
+      color: #28a745;
+      font-weight: 600;
+      margin-top: 5px;
+      min-height: 25px;
+    }
+
+    .modal .btn-close {
+      background: linear-gradient(135deg, #014421, #02743a);
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .modal .btn-close:hover {
+      background: linear-gradient(135deg, #02743a, #03a050);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(1, 68, 33, 0.3);
+    }
+
+    .modal .warning {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      padding: 12px;
+      border-radius: 10px;
+      color: #856404;
+      font-size: 0.9em;
+      margin: 10px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      header {
+        font-size: 1.4em;
+        padding: 18px 15px;
+      }
+
+      .card {
+        padding: 25px 20px;
+      }
+
+      .verification-section h2,
+      #registrationSection h2 {
+        font-size: 1.4em;
+      }
+
+      .team-info p strong {
+        min-width: 80px;
+      }
+
+      .modal {
+        padding: 25px 20px;
+      }
+
+      .modal .psn-box {
+        font-size: 1.2em;
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+
+    /* Loading Spinner for verification */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Glow effect for header */
+    @keyframes glow {
+      0%, 100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+      50% { text-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
+    }
+
+    header .glow {
+      animation: glow 3s ease-in-out infinite;
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #014421;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-weight: 600;
+      z-index: 1000;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.5s ease;
+      display: none;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateX(-50%) translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .toast.show {
+      display: block;
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <header>Gombe Football Team Player Registration</header>
+  <!-- Background Slideshow -->
+  <div class="slideshow">
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+    <div class="slide"></div>
+  </div>
+  <div class="overlay"></div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="modal-overlay">
+    <div class="modal">
+      <span class="success-icon">✅</span>
+      <h2>Registration Successful!</h2>
+      
+      <div class="details">
+        <p><span class="label">Player Name</span> <span class="value" id="modalPlayerName"></span></p>
+        <p><span class="label">Team</span> <span class="value" id="modalTeamName"></span></p>
+        <p><span class="label">Jersey Number</span> <span class="value" id="modalJerseyNumber"></span></p>
+        <p><span class="label">Position</span> <span class="value" id="modalPosition"></span></p>
+      </div>
+
+      <div class="warning">
+        ⚠️ Please save this PSN number. You'll need it for future reference!
+      </div>
+
+      <div class="psn-box" id="psnBox">
+        <span id="modalPSN">000000</span>
+        <button class="copy-btn" id="copyPSNBtn">📋 Copy</button>
+      </div>
+      <div id="copyFeedback" class="copy-feedback"></div>
+
+      <button class="btn-close" id="closeModalBtn">Continue Registering</button>
+    </div>
+  </div>
+
+  <header>
+    ⚽ Gombe Football <span class="glow">Team Registration</span>
+  </header>
 
   <div class="container">
     <!-- Team Verification Section -->
@@ -122,26 +648,32 @@
       <label for="teamCollectionId">Team Collection ID</label>
       <input type="text" id="teamCollectionId" placeholder="e.g., GT-team-a-010" required />
       
-      <button type="button" id="verifyTeamBtn">Verify Team</button>
+      <button type="button" id="verifyTeamBtn">
+        <span id="verifyBtnText">🔍 Verify Team</span>
+      </button>
     </div>
 
     <!-- Player Registration Form (initially hidden) -->
     <div id="registrationSection" class="card hidden">
-      <h2>📝 Register Players</h2>
+      <h2>
+        📝 Register Players
+        <span id="playerCountBadge" class="player-count">0/33</span>
+      </h2>
       
       <!-- Team Information Display -->
       <div id="teamInfoDisplay" class="team-info hidden">
-        <h3>✅ Verified Team Information</h3>
+        <h3>✅ Verified Team</h3>
         <p><strong>Team Name:</strong> <span id="displayTeamName"></span></p>
         <p><strong>LGA:</strong> <span id="displayLGA"></span></p>
         <p><strong>Ward:</strong> <span id="displayWard"></span></p>
         <p><strong>Location:</strong> <span id="displayLocation"></span></p>
         <p><strong>Collection ID:</strong> <span id="displayCollectionId"></span></p>
+        <p><strong>Registered Players:</strong> <span id="displayPlayerCount">0</span> / 33</p>
       </div>
 
       <form id="playerForm">
         <label for="name">Player Name</label>
-        <input type="text" id="name" required />
+        <input type="text" id="name" placeholder="Enter full name" required />
 
         <label for="LGAs">Local Government Area</label>
         <select id="LGAs" required>
@@ -170,8 +702,8 @@
         <input type="hidden" id="teamName" />
         
         <!-- Display team name for reference -->
-        <div style="background: #f0f0f0; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
-          <strong>Registering for:</strong> <span id="registeredTeamDisplay">Not verified</span>
+        <div class="team-reference">
+          📋 Registering for: <span id="registeredTeamDisplay">Not verified</span>
         </div>
 
         <label for="jerseyNumber">Jersey Number</label>
@@ -182,7 +714,7 @@
         <label for="imageFile">Player Image (future-ready)</label>
         <input type="file" id="imageFile" accept="image/*" />
 
-        <button type="submit" id="registerBtn" disabled>Register Player</button>
+        <button type="submit" id="registerBtn" disabled>✅ Register Player</button>
       </form>
     </div>
   </div>
@@ -201,6 +733,7 @@
     // DOM elements
     const teamCollectionIdInput = document.getElementById('teamCollectionId');
     const verifyTeamBtn = document.getElementById('verifyTeamBtn');
+    const verifyBtnText = document.getElementById('verifyBtnText');
     const verificationStatus = document.getElementById('verificationStatus');
     const registrationSection = document.getElementById('registrationSection');
     const teamInfoDisplay = document.getElementById('teamInfoDisplay');
@@ -208,6 +741,20 @@
     const jerseyDropdown = document.getElementById('jerseyNumber');
     const registerBtn = document.getElementById('registerBtn');
     const playerForm = document.getElementById('playerForm');
+    const playerCountBadge = document.getElementById('playerCountBadge');
+    const displayPlayerCount = document.getElementById('displayPlayerCount');
+
+    // Modal elements
+    const successModal = document.getElementById('successModal');
+    const modalPlayerName = document.getElementById('modalPlayerName');
+    const modalTeamName = document.getElementById('modalTeamName');
+    const modalJerseyNumber = document.getElementById('modalJerseyNumber');
+    const modalPosition = document.getElementById('modalPosition');
+    const modalPSN = document.getElementById('modalPSN');
+    const copyPSNBtn = document.getElementById('copyPSNBtn');
+    const copyFeedback = document.getElementById('copyFeedback');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const toast = document.getElementById('toast');
 
     // Display elements for team info
     const displayTeamName = document.getElementById('displayTeamName');
@@ -217,6 +764,17 @@
     const displayCollectionId = document.getElementById('displayCollectionId');
 
     let currentTeamData = null;
+    let currentPlayerCount = 0;
+
+    // Toast notification
+    function showToast(message, isError = false) {
+      toast.textContent = message;
+      toast.style.background = isError ? '#dc3545' : '#014421';
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
 
     // Set verification status
     function setVerificationStatus(message, type) {
@@ -228,6 +786,35 @@
     // Clear verification status
     function clearVerificationStatus() {
       verificationStatus.classList.add('hidden');
+    }
+
+    // Helper function to get location value regardless of case
+    function getLocationValue(teamData) {
+      if (teamData.location !== undefined && teamData.location !== null && teamData.location !== '') {
+        return teamData.location;
+      }
+      if (teamData.Location !== undefined && teamData.Location !== null && teamData.Location !== '') {
+        return teamData.Location;
+      }
+      if (teamData.loc !== undefined && teamData.loc !== null && teamData.loc !== '') {
+        return teamData.loc;
+      }
+      return 'Not specified';
+    }
+
+    // Update player count
+    async function updatePlayerCount(teamName) {
+      try {
+        const snap = await db.collection("playerRegistry")
+          .where("teamName", "==", teamName).get();
+        currentPlayerCount = snap.size;
+        playerCountBadge.textContent = `${currentPlayerCount}/33`;
+        displayPlayerCount.textContent = currentPlayerCount;
+        return currentPlayerCount;
+      } catch (error) {
+        console.error('Error updating player count:', error);
+        return 0;
+      }
     }
 
     // Verify team button click handler
@@ -242,43 +829,51 @@
       // Show loading
       setVerificationStatus('⏳ Verifying team...', 'loading');
       verifyTeamBtn.disabled = true;
+      verifyBtnText.innerHTML = '<span class="spinner"></span> Verifying...';
 
       try {
-        // Query the GombeTeams collection for the document with this ID
         const teamDoc = await db.collection('GombeTeams').doc(teamId).get();
         
         if (!teamDoc.exists) {
           setVerificationStatus(`❌ Team with ID "${teamId}" not found. Please check and try again.`, 'error');
           verifyTeamBtn.disabled = false;
+          verifyBtnText.textContent = '🔍 Verify Team';
           registrationSection.classList.add('hidden');
           return;
         }
 
-        // Get team data
         const teamData = teamDoc.data();
         
         // Check if the document has the expected fields
-        const requiredFields = ['name', 'lga', 'ward', 'location'];
-        const missingFields = requiredFields.filter(field => !teamData[field]);
+        const requiredFields = ['name', 'lga', 'ward'];
+        const missingFields = requiredFields.filter(field => {
+          const value = teamData[field];
+          return value === undefined || value === null || value === '';
+        });
         
         if (missingFields.length > 0) {
           setVerificationStatus(`⚠️ Team data incomplete. Missing fields: ${missingFields.join(', ')}`, 'error');
           verifyTeamBtn.disabled = false;
+          verifyBtnText.textContent = '🔍 Verify Team';
           registrationSection.classList.add('hidden');
           return;
         }
 
+        // Get location value
+        const locationValue = getLocationValue(teamData);
+
         // Store team data
         currentTeamData = {
           ...teamData,
-          collectionId: teamId
+          collectionId: teamId,
+          location: locationValue
         };
 
         // Display team information
         displayTeamName.textContent = teamData.name;
         displayLGA.textContent = teamData.lga;
         displayWard.textContent = teamData.ward || 'N/A';
-        displayLocation.textContent = teamData.Location || 'N/A';
+        displayLocation.textContent = locationValue;
         displayCollectionId.textContent = teamId;
 
         // Show registration section and team info
@@ -295,6 +890,9 @@
         // Load jersey numbers for this team
         await loadJerseyNumbers(teamData.name);
 
+        // Update player count
+        await updatePlayerCount(teamData.name);
+
         // Set verification success
         setVerificationStatus(`✅ Team "${teamData.name}" verified successfully! You can now register players.`, 'success');
 
@@ -304,39 +902,49 @@
         registrationSection.classList.add('hidden');
       } finally {
         verifyTeamBtn.disabled = false;
+        verifyBtnText.textContent = '🔍 Verify Team';
       }
     });
 
-    // Load jersey numbers for a team
+    // Load jersey numbers for a team - ONLY SHOWS AVAILABLE NUMBERS
     async function loadJerseyNumbers(teamName) {
       try {
         jerseyDropdown.innerHTML = '<option>Loading...</option>';
         const taken = new Set();
 
+        // Get all players in this team
         const snap = await db.collection("playerRegistry")
           .where("teamName", "==", teamName).get();
         
+        // Collect all used jersey numbers
         snap.forEach(doc => {
           const jersey = doc.data().jerseyNumber;
           if (typeof jersey === "number") taken.add(jersey);
         });
 
+        // Build dropdown with ONLY available numbers
         jerseyDropdown.innerHTML = '<option value="">-- Select Jersey Number --</option>';
+        let availableCount = 0;
         for (let i = 1; i <= 99; i++) {
           if (!taken.has(i)) {
             const opt = document.createElement("option");
             opt.value = i;
             opt.textContent = i;
             jerseyDropdown.appendChild(opt);
+            availableCount++;
           }
         }
 
-        if (taken.size >= 99) {
-          jerseyDropdown.innerHTML = '<option value="">All jersey numbers taken</option>';
+        // If no numbers available
+        if (availableCount === 0) {
+          jerseyDropdown.innerHTML = '<option value="">⚠️ All jersey numbers taken (1-99)</option>';
         }
+
+        return availableCount;
       } catch (error) {
         console.error('Error loading jersey numbers:', error);
-        jerseyDropdown.innerHTML = '<option value="">Error loading jersey numbers</option>';
+        jerseyDropdown.innerHTML = '<option value="">❌ Error loading jersey numbers</option>';
+        return 0;
       }
     }
 
@@ -349,7 +957,7 @@
         return;
       }
 
-      const name = document.getElementById("name").value;
+      const name = document.getElementById("name").value.trim();
       const LGAs = document.getElementById("LGAs").value;
       const position = document.getElementById("position").value;
       const DOB = document.getElementById("DOB").value;
@@ -357,18 +965,60 @@
       const jerseyNumber = parseInt(document.getElementById("jerseyNumber").value);
       const imageFile = document.getElementById("imageFile").files[0];
 
-      if (!jerseyNumber) {
+      // Validate all fields
+      if (!name) {
+        alert('⚠️ Please enter the player\'s name.');
+        return;
+      }
+
+      if (!LGAs) {
+        alert('⚠️ Please select a Local Government Area.');
+        return;
+      }
+
+      if (!position) {
+        alert('⚠️ Please select a position.');
+        return;
+      }
+
+      if (!DOB) {
+        alert('⚠️ Please select the date of birth.');
+        return;
+      }
+
+      if (!jerseyNumber || isNaN(jerseyNumber)) {
         alert('⚠️ Please select a jersey number.');
         return;
       }
 
-      // Enforce 33-player limit
+      // Disable submit button during processing
+      registerBtn.disabled = true;
+      registerBtn.textContent = '⏳ Registering...';
+
       try {
+        // Check if team already has 33 players (MAXIMUM LIMIT)
         const teamPlayers = await db.collection("playerRegistry")
           .where("teamName", "==", teamName).get();
         
         if (teamPlayers.size >= 33) {
           alert(`❌ Team "${teamName}" already has 33 registered players. Cannot add more.`);
+          registerBtn.disabled = false;
+          registerBtn.textContent = '✅ Register Player';
+          await updatePlayerCount(teamName);
+          return;
+        }
+
+        // Check if jersey number is already taken (double-check)
+        const jerseyCheck = await db.collection("playerRegistry")
+          .where("teamName", "==", teamName)
+          .where("jerseyNumber", "==", jerseyNumber)
+          .get();
+        
+        if (!jerseyCheck.empty) {
+          alert(`❌ Jersey number ${jerseyNumber} is already taken. Please select a different number.`);
+          registerBtn.disabled = false;
+          registerBtn.textContent = '✅ Register Player';
+          await loadJerseyNumbers(teamName);
           return;
         }
 
@@ -395,12 +1045,22 @@
             registrationDate: new Date().toISOString()
           };
 
-          // 📸 Future imageFile upload goes here
-
           tx.set(db.collection("playerRegistry").doc(psn), playerData);
           tx.set(counterRef, { latestPSN: next }, { merge: true });
 
-          alert(`✅ Player "${name}" registered successfully!\nPSN: ${psn}\nTeam: ${teamName}`);
+          // Show success modal with details
+          modalPlayerName.textContent = name;
+          modalTeamName.textContent = teamName;
+          modalJerseyNumber.textContent = jerseyNumber;
+          modalPosition.textContent = position;
+          modalPSN.textContent = psn;
+          copyFeedback.textContent = '';
+
+          // Show modal
+          successModal.classList.add('active');
+
+          // Update player count
+          await updatePlayerCount(teamName);
           
           // Reset form but keep team verification
           document.getElementById("name").value = '';
@@ -409,13 +1069,54 @@
           document.getElementById("DOB").value = '';
           document.getElementById("imageFile").value = '';
           
-          // Reload jersey numbers
+          // Reload jersey numbers to remove the newly used number
           await loadJerseyNumbers(teamName);
         });
 
       } catch (err) {
         console.error("❌ Registration error:", err);
         alert(`❌ Registration failed: ${err.message}`);
+      } finally {
+        registerBtn.disabled = false;
+        registerBtn.textContent = '✅ Register Player';
+      }
+    });
+
+    // Copy PSN to clipboard
+    copyPSNBtn.addEventListener('click', async function() {
+      const psn = modalPSN.textContent;
+      try {
+        await navigator.clipboard.writeText(psn);
+        copyFeedback.textContent = '✅ PSN copied to clipboard!';
+        copyFeedback.style.color = '#28a745';
+        setTimeout(() => {
+          copyFeedback.textContent = '';
+        }, 3000);
+      } catch (err) {
+        // Fallback
+        const textArea = document.createElement('textarea');
+        textArea.value = psn;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        copyFeedback.textContent = '✅ PSN copied to clipboard!';
+        copyFeedback.style.color = '#28a745';
+        setTimeout(() => {
+          copyFeedback.textContent = '';
+        }, 3000);
+      }
+    });
+
+    // Close modal
+    closeModalBtn.addEventListener('click', function() {
+      successModal.classList.remove('active');
+    });
+
+    // Close modal on overlay click
+    successModal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        successModal.classList.remove('active');
       }
     });
 
@@ -427,8 +1128,10 @@
     });
 
     // Initial state
-    console.log('Gombe Football Team Registration System loaded');
-    console.log('Enter your team collection ID (e.g., GT-team-a-010) to verify and register players');
+    console.log('✅ Gombe Football Team Registration System loaded');
+    console.log('📋 Enter your team collection ID to verify and register players');
+    console.log('👥 Maximum 33 players per team');
+    console.log('🔢 Unique jersey numbers per team (1-99)');
   </script>
 </body>
 </html>
