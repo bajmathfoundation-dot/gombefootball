@@ -176,6 +176,121 @@
       color: #aaa;
     }
 
+    /* File Upload Styling */
+    .file-upload-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .file-upload-wrapper input[type="file"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .file-upload-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #f8f9fa;
+      border: 2px dashed #e0e0e0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .file-upload-label:hover {
+      border-color: #014421;
+      background: #f0f4f0;
+    }
+
+    .file-upload-label i {
+      font-size: 1.5rem;
+      color: #014421;
+    }
+
+    .file-upload-label .file-name {
+      color: #1a1a1a;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .image-preview {
+      margin-top: 10px;
+      display: none;
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 200px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .image-preview img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .image-preview .remove-image {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(220, 53, 69, 0.9);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      padding: 0;
+    }
+
+    .image-preview .remove-image:hover {
+      transform: scale(1.1);
+      background: #dc3545;
+    }
+
+    .image-preview.show {
+      display: block;
+    }
+
+    /* Upload Progress */
+    .upload-progress {
+      display: none;
+      margin-top: 10px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 6px;
+    }
+
+    .upload-progress.active {
+      display: block;
+    }
+
+    .upload-progress .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #014421, #02743a);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 10px;
+    }
+
     /* Buttons */
     button {
       background: linear-gradient(135deg, #014421, #02743a);
@@ -553,12 +668,6 @@
       animation: glow 3s ease-in-out infinite;
     }
 
-    /* Tooltip */
-    .tooltip {
-      position: relative;
-      display: inline-block;
-    }
-
     .toast {
       position: fixed;
       bottom: 30px;
@@ -617,6 +726,7 @@
         <p><span class="label">Team</span> <span class="value" id="modalTeamName"></span></p>
         <p><span class="label">Jersey Number</span> <span class="value" id="modalJerseyNumber"></span></p>
         <p><span class="label">Position</span> <span class="value" id="modalPosition"></span></p>
+        <p><span class="label">Image</span> <span class="value" id="modalImageStatus">✅ Uploaded</span></p>
       </div>
 
       <div class="warning">
@@ -711,8 +821,23 @@
           <option value="">-- Select a team first --</option>
         </select>
 
-        <label for="imageFile">Player Image (future-ready)</label>
-        <input type="file" id="imageFile" accept="image/*" />
+        <!-- File Upload with Preview -->
+        <label for="imageFile">Player Picture</label>
+        <div class="file-upload-wrapper">
+          <input type="file" id="imageFile" accept="image/*" />
+          <div class="file-upload-label">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span class="file-name">Choose a photo...</span>
+            <span style="font-size:0.8rem; color:#999;">(JPG, PNG, GIF)</span>
+          </div>
+        </div>
+        <div class="image-preview" id="imagePreview">
+          <img id="previewImg" src="#" alt="Player preview" />
+          <button type="button" class="remove-image" id="removeImageBtn">✕</button>
+        </div>
+        <div class="upload-progress" id="uploadProgress">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
 
         <button type="submit" id="registerBtn" disabled>✅ Register Player</button>
       </form>
@@ -720,6 +845,30 @@
   </div>
 
   <script>
+    // ============================================
+    // 🔧 GITHUB CONFIGURATION - UPDATE WITH YOUR TOKEN
+    // ============================================
+    const GITHUB_CONFIG = {
+      // Your GitHub username
+      username: 'bajmathfoundation-dot',
+      
+      // Your repository name
+      repo: 'player-images',
+      
+      // ⚠️ IMPORTANT: Replace with your actual token
+      // Generate at: https://github.com/settings/tokens
+      token: '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',  // <-- PASTE YOUR TOKEN HERE
+      
+      // Branch name
+      branch: 'main',
+      
+      // Base URL for accessing images
+      getImageUrl: function(filename) {
+        return `https://raw.githubusercontent.com/${this.username}/${this.repo}/${this.branch}/${filename}`;
+      }
+    };
+    // ============================================
+
     const firebaseConfig = {
       apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
       authDomain: "gombefootball.firebaseapp.com",
@@ -744,12 +893,22 @@
     const playerCountBadge = document.getElementById('playerCountBadge');
     const displayPlayerCount = document.getElementById('displayPlayerCount');
 
+    // File upload elements
+    const imageFileInput = document.getElementById('imageFile');
+    const fileUploadLabel = document.querySelector('.file-upload-label .file-name');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const removeImageBtn = document.getElementById('removeImageBtn');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressBar = document.getElementById('progressBar');
+
     // Modal elements
     const successModal = document.getElementById('successModal');
     const modalPlayerName = document.getElementById('modalPlayerName');
     const modalTeamName = document.getElementById('modalTeamName');
     const modalJerseyNumber = document.getElementById('modalJerseyNumber');
     const modalPosition = document.getElementById('modalPosition');
+    const modalImageStatus = document.getElementById('modalImageStatus');
     const modalPSN = document.getElementById('modalPSN');
     const copyPSNBtn = document.getElementById('copyPSNBtn');
     const copyFeedback = document.getElementById('copyFeedback');
@@ -765,6 +924,8 @@
 
     let currentTeamData = null;
     let currentPlayerCount = 0;
+    let uploadedImageUrl = null;
+    let isUploading = false;
 
     // Toast notification
     function showToast(message, isError = false) {
@@ -781,11 +942,6 @@
       verificationStatus.classList.remove('hidden', 'status-success', 'status-error', 'status-loading');
       verificationStatus.textContent = message;
       verificationStatus.classList.add(`status-${type}`);
-    }
-
-    // Clear verification status
-    function clearVerificationStatus() {
-      verificationStatus.classList.add('hidden');
     }
 
     // Helper function to get location value regardless of case
@@ -817,6 +973,114 @@
       }
     }
 
+    // ============================================
+    // 📸 GITHUB IMAGE UPLOAD FUNCTION
+    // ============================================
+    async function uploadImageToGitHub(file, playerName) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+          try {
+            const base64Data = event.target.result.split(',')[1];
+            
+            const timestamp = Date.now();
+            const sanitizedName = playerName.replace(/\s+/g, '_').toLowerCase();
+            const teamName = currentTeamData.name.replace(/\s+/g, '_').toLowerCase();
+            const fileExtension = file.name.split('.').pop();
+            const filename = `${teamName}_${sanitizedName}_${timestamp}.${fileExtension}`;
+            
+            const url = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${filename}`;
+            
+            uploadProgress.classList.add('active');
+            progressBar.style.width = '30%';
+            
+            const response = await fetch(url, {
+              method: 'PUT',
+              headers: {
+                'Authorization': `token ${GITHUB_CONFIG.token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/vnd.github.v3+json'
+              },
+              body: JSON.stringify({
+                message: `Upload player image: ${playerName}`,
+                content: base64Data,
+                branch: GITHUB_CONFIG.branch
+              })
+            });
+            
+            progressBar.style.width = '70%';
+            
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.message || 'Upload failed');
+            }
+            
+            progressBar.style.width = '100%';
+            
+            const imageUrl = GITHUB_CONFIG.getImageUrl(filename);
+            
+            setTimeout(() => {
+              uploadProgress.classList.remove('active');
+              progressBar.style.width = '0%';
+            }, 500);
+            
+            resolve(imageUrl);
+            
+          } catch (error) {
+            console.error('GitHub upload error:', error);
+            uploadProgress.classList.remove('active');
+            progressBar.style.width = '0%';
+            reject(error);
+          }
+        };
+        
+        reader.onerror = function(error) {
+          reject(error);
+        };
+        
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ============================================
+    // 🖼️ FILE INPUT HANDLING
+    // ============================================
+    imageFileInput.addEventListener('change', function(e) {
+      const file = this.files[0];
+      if (!file) return;
+      
+      const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+      if (!validTypes.includes(file.type)) {
+        showToast('❌ Please select a valid image file (JPG, PNG, GIF, WEBP)', true);
+        this.value = '';
+        return;
+      }
+      
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('❌ Image size must be less than 2MB', true);
+        this.value = '';
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        previewImg.src = e.target.result;
+        imagePreview.classList.add('show');
+      };
+      reader.readAsDataURL(file);
+      
+      fileUploadLabel.textContent = file.name;
+      uploadedImageUrl = null;
+    });
+    
+    removeImageBtn.addEventListener('click', function() {
+      imageFileInput.value = '';
+      fileUploadLabel.textContent = 'Choose a photo...';
+      imagePreview.classList.remove('show');
+      previewImg.src = '#';
+      uploadedImageUrl = null;
+    });
+
     // Verify team button click handler
     verifyTeamBtn.addEventListener('click', async function() {
       const teamId = teamCollectionIdInput.value.trim();
@@ -826,7 +1090,6 @@
         return;
       }
 
-      // Show loading
       setVerificationStatus('⏳ Verifying team...', 'loading');
       verifyTeamBtn.disabled = true;
       verifyBtnText.innerHTML = '<span class="spinner"></span> Verifying...';
@@ -844,7 +1107,6 @@
 
         const teamData = teamDoc.data();
         
-        // Check if the document has the expected fields
         const requiredFields = ['name', 'lga', 'ward'];
         const missingFields = requiredFields.filter(field => {
           const value = teamData[field];
@@ -859,41 +1121,31 @@
           return;
         }
 
-        // Get location value
         const locationValue = getLocationValue(teamData);
 
-        // Store team data
         currentTeamData = {
           ...teamData,
           collectionId: teamId,
           location: locationValue
         };
 
-        // Display team information
         displayTeamName.textContent = teamData.name;
         displayLGA.textContent = teamData.lga;
         displayWard.textContent = teamData.ward || 'N/A';
         displayLocation.textContent = locationValue;
         displayCollectionId.textContent = teamId;
 
-        // Show registration section and team info
         registrationSection.classList.remove('hidden');
         teamInfoDisplay.classList.remove('hidden');
         
-        // Set team name in form
         document.getElementById('teamName').value = teamData.name;
         registeredTeamDisplay.textContent = teamData.name;
         
-        // Enable register button
         registerBtn.disabled = false;
 
-        // Load jersey numbers for this team
         await loadJerseyNumbers(teamData.name);
-
-        // Update player count
         await updatePlayerCount(teamData.name);
 
-        // Set verification success
         setVerificationStatus(`✅ Team "${teamData.name}" verified successfully! You can now register players.`, 'success');
 
       } catch (error) {
@@ -906,23 +1158,20 @@
       }
     });
 
-    // Load jersey numbers for a team - ONLY SHOWS AVAILABLE NUMBERS
+    // Load jersey numbers for a team
     async function loadJerseyNumbers(teamName) {
       try {
         jerseyDropdown.innerHTML = '<option>Loading...</option>';
         const taken = new Set();
 
-        // Get all players in this team
         const snap = await db.collection("playerRegistry")
           .where("teamName", "==", teamName).get();
         
-        // Collect all used jersey numbers
         snap.forEach(doc => {
           const jersey = doc.data().jerseyNumber;
           if (typeof jersey === "number") taken.add(jersey);
         });
 
-        // Build dropdown with ONLY available numbers
         jerseyDropdown.innerHTML = '<option value="">-- Select Jersey Number --</option>';
         let availableCount = 0;
         for (let i = 1; i <= 99; i++) {
@@ -935,7 +1184,6 @@
           }
         }
 
-        // If no numbers available
         if (availableCount === 0) {
           jerseyDropdown.innerHTML = '<option value="">⚠️ All jersey numbers taken (1-99)</option>';
         }
@@ -963,9 +1211,8 @@
       const DOB = document.getElementById("DOB").value;
       const teamName = currentTeamData.name;
       const jerseyNumber = parseInt(document.getElementById("jerseyNumber").value);
-      const imageFile = document.getElementById("imageFile").files[0];
+      const imageFile = imageFileInput.files[0];
 
-      // Validate all fields
       if (!name) {
         alert('⚠️ Please enter the player\'s name.');
         return;
@@ -991,12 +1238,10 @@
         return;
       }
 
-      // Disable submit button during processing
       registerBtn.disabled = true;
-      registerBtn.textContent = '⏳ Registering...';
+      registerBtn.textContent = '⏳ Processing...';
 
       try {
-        // Check if team already has 33 players (MAXIMUM LIMIT)
         const teamPlayers = await db.collection("playerRegistry")
           .where("teamName", "==", teamName).get();
         
@@ -1008,7 +1253,6 @@
           return;
         }
 
-        // Check if jersey number is already taken (double-check)
         const jerseyCheck = await db.collection("playerRegistry")
           .where("teamName", "==", teamName)
           .where("jerseyNumber", "==", jerseyNumber)
@@ -1022,7 +1266,23 @@
           return;
         }
 
+        let imageUrl = "https://via.placeholder.com/150?text=No+Image";
+        if (imageFile) {
+          registerBtn.textContent = '⏳ Uploading Image...';
+          try {
+            imageUrl = await uploadImageToGitHub(imageFile, name);
+            uploadedImageUrl = imageUrl;
+            showToast('✅ Image uploaded successfully!');
+          } catch (error) {
+            console.error('Image upload error:', error);
+            alert(`⚠️ Image upload failed: ${error.message}\nPlayer will be registered without an image.`);
+            imageUrl = "https://via.placeholder.com/150?text=No+Image";
+          }
+        }
+
         const counterRef = db.collection("counters").doc("playerPSN");
+
+        registerBtn.textContent = '⏳ Saving Player...';
 
         await db.runTransaction(async tx => {
           const doc = await tx.get(counterRef);
@@ -1040,7 +1300,7 @@
             jerseyNumber,
             teamID,
             teamCollectionId: currentTeamData.collectionId,
-            imageUrl: "https://via.placeholder.com/150?text=Player",
+            imageUrl: imageUrl,
             registeredBy: currentTeamData.managerPhone || 'Unknown',
             registrationDate: new Date().toISOString()
           };
@@ -1048,28 +1308,28 @@
           tx.set(db.collection("playerRegistry").doc(psn), playerData);
           tx.set(counterRef, { latestPSN: next }, { merge: true });
 
-          // Show success modal with details
           modalPlayerName.textContent = name;
           modalTeamName.textContent = teamName;
           modalJerseyNumber.textContent = jerseyNumber;
           modalPosition.textContent = position;
+          modalImageStatus.textContent = imageFile ? '✅ Uploaded' : '⏭️ Skipped';
           modalPSN.textContent = psn;
           copyFeedback.textContent = '';
 
-          // Show modal
           successModal.classList.add('active');
 
-          // Update player count
           await updatePlayerCount(teamName);
           
-          // Reset form but keep team verification
           document.getElementById("name").value = '';
           document.getElementById("LGAs").value = '';
           document.getElementById("position").value = '';
           document.getElementById("DOB").value = '';
-          document.getElementById("imageFile").value = '';
+          imageFileInput.value = '';
+          fileUploadLabel.textContent = 'Choose a photo...';
+          imagePreview.classList.remove('show');
+          previewImg.src = '#';
+          uploadedImageUrl = null;
           
-          // Reload jersey numbers to remove the newly used number
           await loadJerseyNumbers(teamName);
         });
 
@@ -1093,7 +1353,6 @@
           copyFeedback.textContent = '';
         }, 3000);
       } catch (err) {
-        // Fallback
         const textArea = document.createElement('textarea');
         textArea.value = psn;
         document.body.appendChild(textArea);
@@ -1132,6 +1391,12 @@
     console.log('📋 Enter your team collection ID to verify and register players');
     console.log('👥 Maximum 33 players per team');
     console.log('🔢 Unique jersey numbers per team (1-99)');
+    console.log('📸 Images will be stored on GitHub: https://github.com/bajmathfoundation-dot/player-images');
+    
+    if (GITHUB_CONFIG.token === 'YOUR_GITHUB_TOKEN_HERE') {
+      console.warn('⚠️ Please configure your GitHub token in the GITHUB_CONFIG section');
+      console.warn('📝 Generate a token at: https://github.com/settings/tokens');
+    }
   </script>
 </body>
 </html>
