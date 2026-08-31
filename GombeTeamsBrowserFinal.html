@@ -7,12 +7,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary: #1a2a6c;
-      --secondary: #b21f1f;
-      --accent: #ffcc00;
-      --light: #f8f9fa;
-      --dark: #212529;
+      --primary: #014421;
+      --primary-dark: #002d16;
+      --secondary: #ffd700;
+      --accent: #ff6b35;
+      --gradient1: #014421;
+      --gradient2: #02743a;
+      --gradient3: #ffd700;
+      --light: #f0f4f0;
+      --dark: #1a1a1a;
       --gray: #6c757d;
+      --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+      --card-hover-shadow: 0 20px 60px rgba(1, 68, 33, 0.25);
     }
     
     * {
@@ -23,30 +29,57 @@
     }
     
     body {
-      background: linear-gradient(135deg, #f0f2f5, #e6e9ef);
+      background: linear-gradient(135deg, #f0f7f0, #e0ebe0, #d5e5d5);
       color: var(--dark);
       line-height: 1.6;
       min-height: 100vh;
     }
     
-    .header-banner {
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      color: white;
-      padding: 1.5em 0;
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-    }
-    
-    .header-banner::before {
-      content: "";
-      position: absolute;
+    /* Animated Background */
+    body::before {
+      content: '';
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,100 L0,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
-      background-size: cover;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(1, 68, 33, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 50% 80%, rgba(1, 68, 33, 0.05) 0%, transparent 50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    .header-banner {
+      background: linear-gradient(135deg, #014421 0%, #02743a 50%, #014421 100%);
+      color: white;
+      padding: 2em 0;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      border-bottom: 4px solid var(--secondary);
+      box-shadow: 0 4px 30px rgba(1, 68, 33, 0.3);
+    }
+    
+    .header-banner::before {
+      content: "⚽";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      font-size: 200px;
+      opacity: 0.05;
+      transform: rotate(-15deg);
+    }
+    
+    .header-banner::after {
+      content: "🏆";
+      position: absolute;
+      bottom: -30px;
+      left: -30px;
+      font-size: 150px;
+      opacity: 0.05;
+      transform: rotate(10deg);
     }
     
     .container {
@@ -58,30 +91,43 @@
     }
     
     .logo {
-      display: inline-block;
-      background: white;
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      width: 100px;
+      height: 100px;
+      background: white;
+      border-radius: 50%;
       margin-bottom: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      border: 3px solid var(--accent);
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+      border: 4px solid var(--secondary);
+      position: relative;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
     }
     
     .logo i {
-      font-size: 3rem;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
+      font-size: 3.5rem;
+      background: linear-gradient(135deg, #014421, #ffd700);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     
     .header-banner h1 {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       margin-bottom: 10px;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    
+    .header-banner h1 span {
+      color: var(--secondary);
     }
     
     .header-banner p {
@@ -89,155 +135,395 @@
       max-width: 700px;
       margin: 0 auto;
       opacity: 0.9;
+      font-weight: 300;
+    }
+    
+    .header-banner .badge {
+      display: inline-block;
+      background: var(--secondary);
+      color: var(--primary);
+      padding: 5px 20px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 15px;
     }
     
     .search-container {
       max-width: 700px;
-      margin: 40px auto;
+      margin: 40px auto 50px;
       background: white;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      padding: 20px 25px;
+      border-radius: 60px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      border: 2px solid rgba(1, 68, 33, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .search-container:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 10px 50px rgba(1, 68, 33, 0.15);
+      transform: translateY(-2px);
     }
     
     .search-box {
       display: flex;
       align-items: center;
-      background: var(--light);
-      border-radius: 50px;
-      padding: 5px 20px;
+      background: transparent;
     }
     
     .search-box i {
-      color: var(--gray);
-      font-size: 1.2rem;
+      color: var(--primary);
+      font-size: 1.3rem;
+      margin-right: 15px;
     }
     
     .search-box input {
       flex: 1;
       border: none;
       outline: none;
-      padding: 15px;
+      padding: 12px 0;
       font-size: 1.1rem;
       background: transparent;
+      color: var(--dark);
+    }
+    
+    .search-box input::placeholder {
+      color: var(--gray);
+      opacity: 0.7;
     }
     
     .teams-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 25px;
-      margin-bottom: 40px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+      position: relative;
+      z-index: 2;
     }
     
     .team-card {
       background: white;
-      border-radius: 15px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: var(--card-shadow);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       cursor: pointer;
+      position: relative;
+      border: 2px solid transparent;
     }
     
     .team-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: var(--card-hover-shadow);
+      border-color: var(--secondary);
     }
     
-    .team-header {
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      color: white;
-      padding: 20px;
+    .team-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+      background-size: 300% 100%;
+      animation: gradientMove 4s linear infinite;
+    }
+    
+    @keyframes gradientMove {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 300% 0%; }
+    }
+    
+    /* Team Logo/Image Style */
+    .team-logo-wrapper {
+      background: linear-gradient(135deg, #f8faf8, #e8f0e8);
+      padding: 30px 20px 20px;
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
     
-    .team-header i {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      color: var(--accent);
+    .team-logo-wrapper::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(to top, rgba(255,255,255,0.9), transparent);
+      pointer-events: none;
     }
     
-    .team-header h3 {
-      font-size: 1.4rem;
-      margin-bottom: 5px;
+    .team-logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--gradient2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      box-shadow: 0 8px 30px rgba(1, 68, 33, 0.3);
+      border: 4px solid var(--secondary);
+      position: relative;
+      transition: all 0.4s ease;
+      z-index: 1;
+    }
+    
+    .team-card:hover .team-logo {
+      transform: scale(1.08) rotate(-5deg);
+      box-shadow: 0 12px 40px rgba(1, 68, 33, 0.4);
+    }
+    
+    .team-logo i {
+      font-size: 3.5rem;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .team-logo .team-initial {
+      position: absolute;
+      bottom: -5px;
+      right: -5px;
+      background: var(--secondary);
+      color: var(--primary);
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+      border: 2px solid white;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .team-name-display {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .team-name-display small {
+      display: block;
+      font-weight: 400;
+      color: var(--gray);
+      font-size: 0.85rem;
+      margin-top: 3px;
     }
     
     .team-body {
-      padding: 20px;
+      padding: 20px 25px 25px;
+      background: white;
     }
     
-    .team-info {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #eee;
+    .team-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
     }
     
-    .info-label {
-      font-weight: 600;
+    .team-info-item {
+      background: var(--light);
+      padding: 10px 12px;
+      border-radius: 12px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .team-info-item:hover {
+      background: #e0ebe0;
+      transform: scale(1.03);
+    }
+    
+    .team-info-item .info-label {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
       color: var(--gray);
+      font-weight: 600;
+      margin-bottom: 3px;
     }
     
-    .info-value {
+    .team-info-item .info-value {
+      font-size: 0.95rem;
+      font-weight: 600;
       color: var(--dark);
-      font-weight: 500;
     }
     
     .btn-view {
-      display: block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       width: 100%;
-      padding: 12px;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--gradient2));
       color: white;
       text-align: center;
       text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.95rem;
       transition: all 0.3s ease;
-      margin-top: 15px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.5px;
     }
     
     .btn-view:hover {
       transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(26, 42, 108, 0.3);
+      box-shadow: 0 8px 25px rgba(1, 68, 33, 0.35);
+      background: linear-gradient(135deg, var(--gradient2), var(--primary));
+    }
+    
+    .btn-view i {
+      transition: transform 0.3s ease;
+    }
+    
+    .btn-view:hover i {
+      transform: translateX(5px);
+    }
+    
+    .team-card .card-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--secondary);
+      color: var(--primary);
+      padding: 4px 14px;
+      border-radius: 30px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      z-index: 2;
+      box-shadow: 0 3px 15px rgba(255, 215, 0, 0.3);
     }
     
     footer {
       text-align: center;
-      padding: 20px;
+      padding: 30px 20px;
       color: var(--dark);
-      font-size: 1.1rem;
+      font-size: 1rem;
       margin-top: 30px;
+      border-top: 1px solid rgba(1, 68, 33, 0.1);
+      position: relative;
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(10px);
+    }
+    
+    footer i.fa-heart {
+      color: #dc3545;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
     }
     
     .loading {
       text-align: center;
-      padding: 40px;
+      padding: 60px 20px;
       color: var(--gray);
+      grid-column: 1 / -1;
     }
     
     .loading i {
-      font-size: 2rem;
-      margin-bottom: 15px;
-      color: var(--primary);
+      font-size: 3rem;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .loading p {
+      font-size: 1.1rem;
+      color: var(--gray);
     }
     
     .error {
       background: #ffebee;
       color: #c62828;
-      padding: 20px;
-      border-radius: 8px;
+      padding: 25px;
+      border-radius: 15px;
       margin: 20px 0;
       text-align: center;
+      grid-column: 1 / -1;
+      border-left: 5px solid #c62828;
+    }
+    
+    .error i {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 10px;
     }
     
     @media (max-width: 768px) {
       .teams-container {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
       }
       
       .header-banner h1 {
         font-size: 2rem;
+      }
+      
+      .header-banner p {
+        font-size: 1rem;
+      }
+      
+      .team-logo {
+        width: 100px;
+        height: 100px;
+      }
+      
+      .team-logo i {
+        font-size: 2.8rem;
+      }
+      
+      .team-info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      
+      .search-container {
+        margin: 20px auto 30px;
+        padding: 15px 20px;
+        border-radius: 40px;
+      }
+      
+      .logo {
+        width: 80px;
+        height: 80px;
+      }
+      
+      .logo i {
+        font-size: 2.8rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .team-info-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .header-banner h1 {
+        font-size: 1.6rem;
       }
     }
   </style>
@@ -248,8 +534,9 @@
       <div class="logo">
         <i class="fas fa-futbol"></i>
       </div>
-      <h1>Gombe Football Teams Directory</h1>
+      <h1>Gombe Football <span>Teams</span> Directory</h1>
       <p>Browse all registered teams in Gombe State Football Association</p>
+      <span class="badge"><i class="fas fa-trophy"></i> Official Directory</span>
     </div>
   </div>
   
@@ -270,7 +557,7 @@
   </div>
   
   <footer>
-    <p> BAJMATH solutions &copy; 2025 Gombe State Football Association | Developed with <i class="fas fa-heart" style="color:var(--secondary)"></i> for Gombe State Football</p>
+    <p>⚽ BAJMATH Solutions &copy; 2025 Gombe State Football Association | Developed with <i class="fas fa-heart"></i> for Gombe State Football</p>
   </footer>
   
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
@@ -291,7 +578,15 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    let allTeams = []; // Will store {id, name, ...} objects
+    let allTeams = [];
+
+    // Helper function to get team initials
+    function getInitials(teamName) {
+      if (!teamName) return 'T';
+      const words = teamName.split(' ');
+      if (words.length === 1) return words[0].substring(0, 2).toUpperCase();
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
 
     async function loadTeams() {
       try {
@@ -302,7 +597,7 @@
         allTeams = [];
         
         if (snapshot.empty) {
-          teamsContainer.innerHTML = '<div class="error">No teams found</div>';
+          teamsContainer.innerHTML = '<div class="error"><i class="fas fa-exclamation-circle"></i>No teams found</div>';
           return;
         }
 
@@ -320,23 +615,30 @@
           
           const teamCard = document.createElement('div');
           teamCard.className = 'team-card';
+          teamCard.setAttribute('data-team-name', team.name.toLowerCase());
+          
           teamCard.innerHTML = `
-            <div class="team-header">
-              <i class="fas fa-users"></i>
-              <h3>${team.name}</h3>
+            <div class="card-badge"><i class="fas fa-flag"></i> ${team.lga}</div>
+            <div class="team-logo-wrapper">
+              <div class="team-logo">
+                <i class="fas fa-shield-alt"></i>
+                <span class="team-initial">${getInitials(team.name)}</span>
+              </div>
+              <div class="team-name-display">
+                ${team.name}
+                <small>${team.lga} LGA</small>
+              </div>
             </div>
             <div class="team-body">
-              <div class="team-info">
-                <span class="info-label">LGA:</span>
-                <span class="info-value">${team.lga}</span>
-              </div>
-              <div class="team-info">
-                <span class="info-label">Tier:</span>
-                <span class="info-value">${team.tier}</span>
-              </div>
-              <div class="team-info">
-                <span class="info-label">Founded:</span>
-                <span class="info-value">${team.year}</span>
+              <div class="team-info-grid">
+                <div class="team-info-item">
+                  <span class="info-label">Tier</span>
+                  <span class="info-value">${team.tier}</span>
+                </div>
+                <div class="team-info-item">
+                  <span class="info-label">Founded</span>
+                  <span class="info-value">${team.year}</span>
+                </div>
               </div>
               <a href="GombeTeamsProfileFinal.html?teamId=${team.id}" class="btn-view">
                 View Team Profile <i class="fas fa-arrow-right"></i>
@@ -349,28 +651,45 @@
       } catch (error) {
         console.error("Error loading teams:", error);
         document.getElementById('teamsContainer').innerHTML = 
-          '<div class="error">Error loading teams. Please try again later.</div>';
+          '<div class="error"><i class="fas fa-exclamation-triangle"></i>Error loading teams. Please try again later.</div>';
       }
     }
 
     function filterTeams() {
-      const query = document.getElementById('filterInput').value.toLowerCase();
+      const query = document.getElementById('filterInput').value.toLowerCase().trim();
       const teamCards = document.querySelectorAll('.team-card');
       
       if (!query) {
-        teamCards.forEach(card => card.style.display = 'block');
+        teamCards.forEach(card => {
+          card.style.display = 'block';
+          card.style.animation = 'fadeIn 0.3s ease';
+        });
         return;
       }
       
       teamCards.forEach(card => {
-        const teamName = card.querySelector('h3').textContent.toLowerCase();
+        const teamName = card.getAttribute('data-team-name') || '';
         if (teamName.includes(query)) {
           card.style.display = 'block';
+          card.style.animation = 'fadeIn 0.3s ease';
         } else {
           card.style.display = 'none';
         }
       });
     }
+
+    // Add fade-in animation
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .team-card {
+        animation: fadeIn 0.5s ease forwards;
+      }
+    `;
+    document.head.appendChild(styleSheet);
 
     // Load teams when page loads
     document.addEventListener('DOMContentLoaded', loadTeams);

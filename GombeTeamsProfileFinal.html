@@ -1,21 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- SEO Meta Tags -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Team Profile - Gombe Football</title>
+  <title id="pageTitle">Gombe Football Team Profile</title>
+  <meta name="description" id="metaDescription" content="View team profile, fixtures, squad, and standings for Gombe State Football teams." />
+  <meta name="keywords" content="Gombe football, team profile, fixtures, squad, standings, Nigerian football" />
+  <meta property="og:title" id="ogTitle" content="Gombe Football Team Profile" />
+  <meta property="og:description" id="ogDescription" content="View team profile, fixtures, squad, and standings for Gombe State Football teams." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gombefootball.web.app/GombeTeamsProfileFinal.html" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://gombefootball.web.app/GombeTeamsProfileFinal.html" />
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary: #1a2a6c;
-      --secondary: #b21f1f;
-      --accent: #ffcc00;
+      --primary: #014421;
+      --primary-light: #02743a;
+      --secondary: #ffd700;
+      --accent: #ff6b35;
       --light: #f8f9fa;
-      --dark: #212529;
+      --dark: #1a1a1a;
       --gray: #6c757d;
       --win: #27ae60;
       --draw: #f39c12;
       --loss: #e74c3c;
+      --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      --card-hover-shadow: 0 20px 60px rgba(1, 68, 33, 0.15);
     }
     
     * {
@@ -26,28 +40,38 @@
     }
     
     body {
-      background: linear-gradient(to bottom, #f1f5f9, #e2e8f0);
+      background: linear-gradient(135deg, #f0f7f0, #e0ebe0);
       color: var(--dark);
       line-height: 1.6;
+      min-height: 100vh;
     }
     
+    /* Header Banner with Team Colors */
     .header-banner {
-      background: linear-gradient(to right, var(--primary), var(--secondary));
       color: white;
-      padding: 1.5em 0;
+      padding: 0;
       position: relative;
       overflow: hidden;
+      border-bottom: 4px solid var(--secondary);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
     }
     
     .header-banner::before {
-      content: "";
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,100 L0,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,100 L0,100 Z" fill="rgba(255,255,255,0.05)"/></svg>');
       background-size: cover;
+      z-index: 0;
+    }
+    
+    .header-banner .header-content {
+      position: relative;
+      z-index: 1;
+      padding: 30px 0 25px;
     }
     
     .container {
@@ -58,64 +82,107 @@
       z-index: 1;
     }
     
-    header {
+    /* Team Header */
+    .team-header-wrapper {
       display: flex;
       align-items: center;
-      gap: 20px;
-      padding: 20px 0;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    
+    .team-logo-container {
+      position: relative;
+      flex-shrink: 0;
     }
     
     .team-logo {
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       background: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      border: 3px solid var(--accent);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      border: 4px solid var(--secondary);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    
+    .team-logo:hover {
+      transform: scale(1.05) rotate(-3deg);
     }
     
     .team-logo img {
-      max-width: 80%;
-      max-height: 80%;
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+    }
+    
+    .team-logo .logo-placeholder {
+      font-size: 3.5rem;
+      color: var(--primary);
     }
     
     .team-info {
       flex: 1;
+      min-width: 200px;
     }
     
     .team-info h1 {
-      font-size: 2.5rem;
-      margin-bottom: 5px;
-      color: white;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+      font-size: 2.8rem;
+      font-weight: 800;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    
+    .team-info .team-tagline {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      font-weight: 300;
+      margin-bottom: 15px;
     }
     
     .team-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 15px;
-      margin-top: 10px;
+      gap: 12px;
     }
     
     .meta-item {
-      background: rgba(255,255,255,0.2);
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 0.9rem;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
     }
     
+    .meta-item:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .meta-item i {
+      font-size: 0.9rem;
+    }
+    
+    /* Kit Strip */
     .kit-strip {
       display: flex;
       justify-content: center;
       gap: 30px;
-      padding: 20px 0;
-      background: rgba(0,0,0,0.1);
+      padding: 15px 0;
+      background: rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(5px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      z-index: 1;
     }
     
     .kit {
@@ -123,57 +190,76 @@
     }
     
     .kit-box {
-      width: 60px;
-      height: 80px;
-      border-radius: 8px;
-      margin: 0 auto 10px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      width: 70px;
+      height: 90px;
+      border-radius: 10px;
+      margin: 0 auto 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       position: relative;
       overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    
+    .kit-box:hover {
+      transform: scale(1.08);
+    }
+    
+    .kit-box::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
     }
     
     .kit-label {
       font-weight: 600;
       color: white;
+      font-size: 0.8rem;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
     }
     
     /* Navigation Tabs */
     .nav-tabs {
       display: flex;
       justify-content: center;
-      margin: 20px 0;
-      border-bottom: 2px solid #ddd;
+      gap: 10px;
+      margin: 25px 0 20px;
+      flex-wrap: wrap;
+      background: white;
+      padding: 8px;
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
     }
     
     .tab-button {
-      padding: 12px 24px;
-      background: none;
+      padding: 12px 28px;
+      background: transparent;
       border: none;
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 600;
       color: var(--gray);
       cursor: pointer;
       transition: all 0.3s ease;
+      border-radius: 12px;
       position: relative;
     }
     
     .tab-button:hover {
       color: var(--primary);
+      background: rgba(1, 68, 33, 0.05);
     }
     
     .tab-button.active {
-      color: var(--primary);
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      box-shadow: 0 4px 15px rgba(1, 68, 33, 0.3);
     }
     
-    .tab-button.active::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: var(--primary);
-      border-radius: 2px 2px 0 0;
+    .tab-button i {
+      margin-right: 8px;
     }
     
     /* Content Sections */
@@ -188,16 +274,17 @@
     }
     
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
     .section-title {
       position: relative;
       margin-bottom: 25px;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
       font-size: 1.8rem;
       color: var(--primary);
+      font-weight: 700;
     }
     
     .section-title::after {
@@ -207,138 +294,83 @@
       left: 0;
       width: 60px;
       height: 4px;
-      background: var(--secondary);
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
       border-radius: 2px;
     }
     
-    .squad-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 20px;
-    }
-    
-    .player-card {
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      position: relative;
-    }
-    
-    .player-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    }
-    
-    .player-photo {
-      height: 200px;
-      background: #e9ecef;
+    /* Season Selector */
+    .season-selector {
+      margin-bottom: 25px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      background: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
     }
     
-    .player-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .player-details {
-      padding: 15px;
-    }
-    
-    .player-name {
+    .season-selector label {
       font-weight: 600;
-      margin-bottom: 5px;
       color: var(--dark);
     }
     
-    .player-position {
-      color: var(--secondary);
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-    
-    .jersey-number {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      background: var(--primary);
-      color: white;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-    
-    .season-selector {
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
     .season-selector select {
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: 2px solid #e0e0e0;
       background: white;
       font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 150px;
     }
     
+    .season-selector select:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(1, 68, 33, 0.1);
+    }
+    
+    /* Fixtures */
     .fixtures-container {
-      background: white;
-      border-radius: 10px;
-      padding: 25px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
     
-    /* Enhanced Fixture Card Styles */
     .fixture-card {
       background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      margin-bottom: 20px;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: var(--card-shadow);
       transition: all 0.3s ease;
-      border-left: 4px solid var(--primary);
+      border-left: 5px solid var(--primary);
       cursor: pointer;
       position: relative;
       overflow: hidden;
     }
     
     .fixture-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-      border-left-color: var(--accent);
+      transform: translateY(-5px);
+      box-shadow: var(--card-hover-shadow);
     }
     
     .fixture-card.completed {
       border-left-color: var(--gray);
-      opacity: 0.9;
-      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    }
-    
-    .fixture-card.completed:hover {
-      transform: none;
-      cursor: default;
+      opacity: 0.85;
     }
     
     .fixture-card.live {
       border-left-color: var(--win);
-      animation: pulse 2s infinite;
+      animation: pulseGlow 2s infinite;
     }
     
-    @keyframes pulse {
-      0% { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-      50% { box-shadow: 0 4px 20px rgba(39, 174, 96, 0.3); }
-      100% { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: var(--card-shadow); }
+      50% { box-shadow: 0 4px 30px rgba(39, 174, 96, 0.25); }
     }
     
     .fixture-header {
@@ -346,8 +378,8 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #eee;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     
     .match-date {
@@ -355,23 +387,26 @@
       color: var(--primary);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     
     .competition-badge {
       background: var(--primary);
       color: white;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
+      padding: 4px 14px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
     
     .match-status {
-      padding: 4px 12px;
-      border-radius: 20px;
+      padding: 4px 16px;
+      border-radius: 30px;
       font-size: 0.8rem;
-      font-weight: 600;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     
     .match-status.upcoming {
@@ -391,93 +426,87 @@
     }
     
     @keyframes blink {
-      0% { opacity: 1; }
-      50% { opacity: 0.7; }
-      100% { opacity: 1; }
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
     }
     
     .fixture-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      gap: 20px;
+      flex-wrap: wrap;
     }
     
     .team-container {
       flex: 1;
       text-align: center;
-      padding: 0 15px;
+      min-width: 120px;
+      padding: 10px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+    
+    .team-container:hover {
+      background: rgba(1, 68, 33, 0.05);
     }
     
     .team-name {
-      font-weight: 600;
-      margin-bottom: 8px;
+      font-weight: 700;
+      font-size: 1.1rem;
       color: var(--dark);
+      cursor: pointer;
       transition: color 0.2s;
     }
     
     .team-name:hover {
-      color: var(--secondary);
-    }
-    
-    .fixture-card.completed .team-name {
-      color: var(--gray);
-    }
-    
-    .fixture-card.completed .team-name:hover {
-      color: var(--gray);
-      text-decoration: none;
-      cursor: default;
+      color: var(--primary);
+      text-decoration: underline;
     }
     
     .team-meta {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--gray);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
+      margin-top: 5px;
     }
     
     .vs-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 0 20px;
+      min-width: 100px;
     }
     
     .match-score {
-      font-size: 1.5rem;
-      font-weight: 700;
-      padding: 8px 16px;
-      border-radius: 8px;
+      font-size: 1.8rem;
+      font-weight: 800;
+      padding: 8px 20px;
+      border-radius: 12px;
       background: #f8f9fa;
-      margin-bottom: 8px;
       min-width: 80px;
       text-align: center;
+      transition: all 0.3s ease;
     }
     
     .match-score.win {
       background: var(--win);
       color: white;
-      font-weight: bold;
     }
     
     .match-score.draw {
       background: var(--draw);
       color: white;
-      font-weight: bold;
     }
     
     .match-score.loss {
       background: var(--loss);
       color: white;
-      font-weight: bold;
     }
     
     .vs-text {
       color: var(--gray);
-      font-size: 0.9rem;
+      font-size: 0.8rem;
+      margin-top: 5px;
     }
     
     .fixture-footer {
@@ -485,40 +514,43 @@
       justify-content: space-between;
       align-items: center;
       padding-top: 15px;
+      margin-top: 15px;
       border-top: 1px solid #eee;
-      font-size: 0.9rem;
-      color: var(--gray);
+      flex-wrap: wrap;
+      gap: 10px;
     }
     
     .match-info {
       display: flex;
-      align-items: center;
-      gap: 15px;
+      gap: 20px;
+      flex-wrap: wrap;
     }
     
     .info-item {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
+      color: var(--gray);
+      font-size: 0.85rem;
     }
     
     .tracker-btn {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
       color: white;
       border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
     
     .tracker-btn:hover {
-      background: var(--secondary);
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(1, 68, 33, 0.3);
     }
     
     .tracker-btn:disabled {
@@ -528,151 +560,132 @@
       opacity: 0.6;
     }
     
-    .tracker-btn:disabled:hover {
-      background: var(--gray);
-      transform: none;
+    /* Squad Grid */
+    .squad-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 25px;
     }
     
-    .no-fixtures {
-      text-align: center;
-      padding: 40px;
-      color: var(--gray);
+    .player-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s ease;
+      position: relative;
+      cursor: pointer;
+      border: 2px solid transparent;
     }
     
-    .no-fixtures i {
-      font-size: 3rem;
-      margin-bottom: 15px;
-      color: #ddd;
+    .player-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--card-hover-shadow);
+      border-color: var(--secondary);
     }
     
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--gray);
+    .player-photo {
+      height: 200px;
+      background: linear-gradient(135deg, #e9ecef, #dee2e6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
     }
     
-    .loading i {
-      font-size: 2rem;
-      margin-bottom: 15px;
+    .player-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .player-photo .player-icon {
+      font-size: 4rem;
+      color: #adb5bd;
+    }
+    
+    .jersey-number {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: var(--primary);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+      border: 2px solid var(--secondary);
+    }
+    
+    .player-details {
+      padding: 15px 18px;
+    }
+    
+    .player-name {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--dark);
+      margin-bottom: 3px;
+    }
+    
+    .player-position {
       color: var(--primary);
-      animation: spin 1.5s infinite linear;
+      font-size: 0.85rem;
+      font-weight: 600;
     }
     
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
-    .error {
-      background: #ffebee;
-      color: #c62828;
-      padding: 20px;
-      border-radius: 8px;
-      margin: 20px 0;
-      text-align: center;
-    }
-    
-    /* Standings Styles */
+    /* Standings */
     .standings-container {
       background: white;
-      border-radius: 10px;
+      border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-      margin-bottom: 30px;
-      animation: fadeIn 0.5s ease;
+      box-shadow: var(--card-shadow);
     }
     
     .zone-header {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
       color: white;
-      padding: 15px 20px;
+      padding: 18px 25px;
       font-size: 1.3rem;
-      font-weight: 600;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
     
-    .league-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    .league-table th {
-      background: #f8f9fa;
-      padding: 15px;
-      text-align: left;
-      font-weight: 600;
-      border-bottom: 2px solid #e9ecef;
-    }
-    
-    .league-table td {
-      padding: 12px 15px;
-      border-bottom: 1px solid #e9ecef;
-    }
-    
-    .league-table tr:last-child td {
-      border-bottom: none;
-    }
-    
-    .league-table tr:hover {
-      background: #f8f9fa;
-    }
-    
-    .champions-league {
-      background: rgba(0, 255, 0, 0.1);
-      border-left: 4px solid #27ae60;
-    }
-    
-    .warriors-cup {
-      background: rgba(255, 165, 0, 0.1);
-      border-left: 4px solid #f39c12;
-    }
-    
-    .relegated {
-      background: rgba(255, 0, 0, 0.1);
-      border-left: 4px solid #e74c3c;
-    }
-    
-    .position {
-      font-weight: bold;
-      text-align: center;
-      width: 50px;
-    }
-    
-    .team-name {
-      font-weight: 600;
-      cursor: pointer;
-      color: #3498db;
-      transition: color 0.2s;
-    }
-    
-    .team-name:hover {
-      color: #e74c3c;
-      text-decoration: underline;
-    }
-    
-    .stats {
-      text-align: center;
-      width: 60px;
+    .zone-header i {
+      font-size: 1.5rem;
     }
     
     .qualification-legend {
       display: flex;
       justify-content: center;
-      gap: 20px;
-      margin: 20px 0;
+      gap: 25px;
+      padding: 20px;
       flex-wrap: wrap;
+      background: #f8f9fa;
+      border-bottom: 1px solid #eee;
     }
     
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       cursor: pointer;
-      padding: 8px 12px;
-      border-radius: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
       transition: all 0.3s ease;
+      font-weight: 500;
     }
     
     .legend-item:hover {
-      background: rgba(255, 255, 255, 0.5);
+      background: rgba(1, 68, 33, 0.05);
       transform: translateY(-2px);
     }
     
@@ -682,69 +695,185 @@
       border-radius: 4px;
     }
     
-    .champions-color {
-      background: #27ae60;
+    .champions-color { background: #27ae60; }
+    .warriors-color { background: #f39c12; }
+    .relegated-color { background: #e74c3c; }
+    
+    .table-container {
+      overflow-x: auto;
+      padding: 0 5px;
     }
     
-    .warriors-color {
-      background: #f39c12;
+    .league-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
     }
     
-    .relegated-color {
-      background: #e74c3c;
+    .league-table th {
+      background: #f8f9fa;
+      padding: 15px;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 2px solid #e9ecef;
+      color: var(--dark);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     
-    .current-team {
-      background: rgba(52, 152, 219, 0.1) !important;
-      border-left: 4px solid #3498db !important;
+    .league-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #f0f0f0;
+      transition: all 0.2s ease;
+    }
+    
+    .league-table tr:hover td {
+      background: rgba(1, 68, 33, 0.03);
+    }
+    
+    .league-table .champions-league {
+      background: rgba(39, 174, 96, 0.08);
+      border-left: 4px solid #27ae60;
+    }
+    
+    .league-table .warriors-cup {
+      background: rgba(243, 156, 18, 0.08);
+      border-left: 4px solid #f39c12;
+    }
+    
+    .league-table .relegated {
+      background: rgba(231, 76, 60, 0.08);
+      border-left: 4px solid #e74c3c;
+    }
+    
+    .league-table .current-team {
+      background: rgba(1, 68, 33, 0.1) !important;
+      border-left: 4px solid var(--primary) !important;
+      font-weight: 700;
+    }
+    
+    .league-table .current-team td {
+      color: var(--primary);
+    }
+    
+    .position {
+      font-weight: 700;
+      text-align: center;
+      width: 50px;
+    }
+    
+    .stats {
+      text-align: center;
+      width: 45px;
       font-weight: 600;
     }
     
+    /* Loading & Error States */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray);
+      grid-column: 1 / -1;
+    }
+    
+    .loading i {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .error {
+      background: #ffebee;
+      color: #c62828;
+      padding: 25px;
+      border-radius: 15px;
+      margin: 20px 0;
+      text-align: center;
+      border-left: 5px solid #c62828;
+    }
+    
+    .no-fixtures {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray);
+    }
+    
+    .no-fixtures i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #ddd;
+    }
+    
+    /* Responsive */
     @media (max-width: 768px) {
-      header {
+      .team-header-wrapper {
         flex-direction: column;
         text-align: center;
+      }
+      
+      .team-info h1 {
+        font-size: 2rem;
       }
       
       .team-meta {
         justify-content: center;
       }
       
+      .kit-strip {
+        gap: 15px;
+      }
+      
+      .kit-box {
+        width: 50px;
+        height: 70px;
+      }
+      
       .nav-tabs {
-        flex-wrap: wrap;
+        gap: 5px;
+        padding: 5px;
+        border-radius: 12px;
       }
       
       .tab-button {
-        padding: 10px 15px;
-        font-size: 1rem;
-      }
-      
-      .squad-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        border-radius: 8px;
       }
       
       .fixture-content {
         flex-direction: column;
-        gap: 20px;
+        gap: 15px;
       }
       
       .vs-container {
-        margin: 10px 0;
+        min-width: unset;
+      }
+      
+      .match-score {
+        font-size: 1.4rem;
+        padding: 6px 16px;
+      }
+      
+      .fixture-header {
+        flex-direction: column;
+        align-items: flex-start;
       }
       
       .fixture-footer {
         flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
+        align-items: stretch;
       }
       
       .match-info {
-        flex-wrap: wrap;
+        justify-content: center;
       }
       
-      .tracker-btn {
-        width: 100%;
-        justify-content: center;
+      .squad-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       }
       
       .qualification-legend {
@@ -754,30 +883,75 @@
       }
       
       .league-table {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
       }
       
-      .league-table th, 
+      .league-table th,
       .league-table td {
-        padding: 10px 8px;
+        padding: 8px 6px;
+      }
+      
+      .section-title {
+        font-size: 1.4rem;
+      }
+      
+      .zone-header {
+        font-size: 1.1rem;
+        padding: 15px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .team-info h1 {
+        font-size: 1.6rem;
+      }
+      
+      .team-logo {
+        width: 90px;
+        height: 90px;
+      }
+      
+      .squad-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+      
+      .player-photo {
+        height: 150px;
+      }
+      
+      .tab-button {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+      }
+      
+      .tab-button i {
+        margin-right: 4px;
       }
     }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <div class="header-banner">
+  <div class="header-banner" id="headerBanner">
     <div class="container">
-      <header>
-        <div class="team-logo">
-          <img id="teamLogo" src="" alt="Team Logo">
-        </div>
-        <div class="team-info">
-          <h1 id="teamName">Team Name</h1>
-          <div class="team-meta" id="teamMeta">
-            <!-- Dynamic content -->
+      <div class="header-content">
+        <div class="team-header-wrapper">
+          <div class="team-logo-container">
+            <div class="team-logo" id="teamLogoContainer">
+              <img id="teamLogo" src="" alt="Team Logo" style="display:none;">
+              <i class="fas fa-shield-alt logo-placeholder" id="logoPlaceholder"></i>
+            </div>
+          </div>
+          <div class="team-info">
+            <h1 id="teamName">Team Name</h1>
+            <div class="team-tagline" id="teamTagline">Gombe State Football Association</div>
+            <div class="team-meta" id="teamMeta">
+              <!-- Dynamic content -->
+            </div>
           </div>
         </div>
-      </header>
+      </div>
     </div>
     
     <div class="kit-strip">
@@ -799,19 +973,22 @@
   <div class="container">
     <!-- Navigation Tabs -->
     <div class="nav-tabs">
-      <button class="tab-button active" data-tab="fixtures">Fixtures & Results</button>
-      <button class="tab-button" data-tab="standings">League Table</button>
-      <button class="tab-button" data-tab="squad">Team Squad</button>
+      <button class="tab-button active" data-tab="fixtures"><i class="fas fa-calendar-alt"></i> Fixtures</button>
+      <button class="tab-button" data-tab="standings"><i class="fas fa-table"></i> Standings</button>
+      <button class="tab-button" data-tab="squad"><i class="fas fa-users"></i> Squad</button>
     </div>
     
     <!-- Fixtures Section -->
     <section id="fixturesSection" class="content-section active">
-      <h2 class="section-title">Fixtures & Results</h2>
+      <h2 class="section-title"><i class="fas fa-calendar-check"></i> Fixtures & Results</h2>
       <div class="season-selector">
-        <label for="seasonSelect">Select Season:</label>
+        <label for="seasonSelect"><i class="fas fa-clock"></i> Season:</label>
         <select id="seasonSelect">
           <!-- Options will be populated dynamically -->
         </select>
+        <span style="margin-left: auto; font-size:0.9rem; color: var(--gray);">
+          <i class="fas fa-info-circle"></i> Click a fixture for details
+        </span>
       </div>
       <div class="fixtures-container" id="fixturesList">
         <div class="loading">
@@ -823,16 +1000,16 @@
     
     <!-- Standings Section -->
     <section id="standingsSection" class="content-section">
-      <h2 class="section-title">League Standings</h2>
+      <h2 class="section-title"><i class="fas fa-trophy"></i> League Standings</h2>
       <div class="standings-container">
         <div class="qualification-legend">
           <div class="legend-item" id="champions-league-btn">
             <div class="legend-color champions-color"></div>
-            <span>Champions League Qualification</span>
+            <span>Champions League</span>
           </div>
           <div class="legend-item" id="warriors-cup-btn">
             <div class="legend-color warriors-color"></div>
-            <span>Warriors Cup Qualification</span>
+            <span>Warriors Cup</span>
           </div>
           <div class="legend-item" id="relegation-btn">
             <div class="legend-color relegated-color"></div>
@@ -841,17 +1018,19 @@
         </div>
         
         <div class="table-container">
-          <div class="zone-header" id="standingsZoneHeader">Loading...</div>
+          <div class="zone-header" id="standingsZoneHeader">
+            <i class="fas fa-list-ol"></i> Loading...
+          </div>
           <table class="league-table">
             <thead>
               <tr>
-                <th class="position">Pos</th>
-                <th class="team-name">Team</th>
+                <th class="position">#</th>
+                <th>Team</th>
                 <th class="stats">P</th>
                 <th class="stats">W</th>
                 <th class="stats">D</th>
                 <th class="stats">L</th>
-                <th class="stats">GS</th>
+                <th class="stats">GF</th>
                 <th class="stats">GA</th>
                 <th class="stats">GD</th>
                 <th class="stats">Pts</th>
@@ -872,7 +1051,7 @@
     
     <!-- Squad Section -->
     <section id="squadSection" class="content-section">
-      <h2 class="section-title">Team Squad</h2>
+      <h2 class="section-title"><i class="fas fa-user-friends"></i> Team Squad</h2>
       <div class="squad-grid" id="squadGrid">
         <div class="loading">
           <i class="fas fa-spinner fa-spin"></i>
@@ -881,9 +1060,6 @@
       </div>
     </section>
   </div>
-  
-   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
   
   <script>
     // Firebase Configuration
@@ -913,6 +1089,11 @@
     let currentSeason = '';
     let currentTeamTier = '';
     let currentTeamZone = '';
+    let teamColors = {
+      home: '#014421',
+      away: '#ffffff',
+      third: '#ffd700'
+    };
     
     // Tab navigation functionality
     function setupTabNavigation() {
@@ -923,18 +1104,15 @@
         button.addEventListener('click', () => {
           const tabId = button.getAttribute('data-tab');
           
-          // Update active button
           tabButtons.forEach(btn => btn.classList.remove('active'));
           button.classList.add('active');
           
-          // Show corresponding section
           contentSections.forEach(section => {
             section.classList.remove('active');
           });
           
           document.getElementById(tabId + 'Section').classList.add('active');
           
-          // If standings tab is clicked, reload standings
           if (tabId === 'standings') {
             loadStandings();
           }
@@ -942,7 +1120,7 @@
       });
     }
     
-    // Function to initialize page
+    // Initialize page
     async function initPage() {
       if (!teamId) {
         showError("No team specified in URL");
@@ -955,16 +1133,15 @@
         await loadTeamInfo();
         await populateSeasonSelector();
         await Promise.all([loadSquad(), loadFixtures()]);
+        updateSEO();
         
-        // Add event listeners for qualification zone buttons
+        // Event listeners for qualification zone buttons
         document.getElementById('champions-league-btn').addEventListener('click', () => {
           highlightQualificationZone('champions-league');
         });
-        
         document.getElementById('warriors-cup-btn').addEventListener('click', () => {
           highlightQualificationZone('warriors-cup');
         });
-        
         document.getElementById('relegation-btn').addEventListener('click', () => {
           highlightQualificationZone('relegated');
         });
@@ -978,12 +1155,9 @@
     async function loadAllTeams() {
       try {
         const teamsSnapshot = await db.collection("GombeTeams").get();
-        
         teamsSnapshot.forEach(doc => {
           const teamData = doc.data();
           const teamName = teamData.name;
-          
-          // Cache both ID-to-name and name-to-ID mappings
           teamNameCache[doc.id] = teamName;
           teamIdCache[teamName] = doc.id;
         });
@@ -1003,34 +1177,60 @@
         }
         
         const team = teamDoc.data();
+        currentTeamName = team.name || 'Unknown FC';
+        teamNameCache[teamId] = currentTeamName;
         
-        // Use logoUrl field for team logo
-        document.getElementById('teamLogo').src = team.logoUrl || 'https://via.placeholder.com/150';
-        document.getElementById('teamName').textContent = team.name || 'Unknown FC';
+        // Store colors
+        teamColors.home = team.kitColorHome || '#014421';
+        teamColors.away = team.kitColorAway || '#ffffff';
+        teamColors.third = team.kitColorThird || '#ffd700';
         
-        // Cache team name for fixtures resolution
-        teamNameCache[teamId] = team.name;
-        currentTeamName = team.name;
+        // Update header background with team colors
+        const headerBanner = document.getElementById('headerBanner');
+        headerBanner.style.background = `linear-gradient(135deg, ${teamColors.home}, ${adjustColor(teamColors.home, -30)})`;
         
-        // Store tier and zone for standings filtering
-        currentTeamTier = team.tier || '';
-        currentTeamZone = team.zone || '';
+        // Team Logo
+        const logoImg = document.getElementById('teamLogo');
+        const logoPlaceholder = document.getElementById('logoPlaceholder');
+        if (team.logoUrl) {
+          logoImg.src = team.logoUrl;
+          logoImg.style.display = 'block';
+          logoPlaceholder.style.display = 'none';
+        } else {
+          logoImg.style.display = 'none';
+          logoPlaceholder.style.display = 'block';
+          logoPlaceholder.style.color = teamColors.home;
+        }
+        
+        // Team Name
+        document.getElementById('teamName').textContent = currentTeamName;
+        document.getElementById('teamTagline').textContent = team.tagline || 'Gombe State Football Association';
         
         // Build metadata
         const metaItems = [];
-        if (team.zone) metaItems.push(`<div class="meta-item"><i class="fas fa-map-marker-alt"></i> ${team.zone}</div>`);
+        if (team.zone) metaItems.push(`<div class="meta-item"><i class="fas fa-map-pin"></i> ${team.zone}</div>`);
         if (team.lga) metaItems.push(`<div class="meta-item"><i class="fas fa-map-marker-alt"></i> ${team.lga}</div>`);
         if (team.ward) metaItems.push(`<div class="meta-item"><i class="fas fa-location-dot"></i> ${team.ward}</div>`);
-        if (team.tier) metaItems.push(`<div class="meta-item"><i class="fas fa-layer-group"></i>  ${team.tier}</div>`);
+        if (team.tier) {
+          const tierLabel = team.tier === 'championship' ? '🏆 Championship' : '📊 League';
+          metaItems.push(`<div class="meta-item"><i class="fas fa-layer-group"></i> ${tierLabel}</div>`);
+          currentTeamTier = team.tier;
+        }
         if (team.founded) metaItems.push(`<div class="meta-item"><i class="fas fa-calendar"></i> Founded ${team.founded}</div>`);
-        if (team.StateWideCompetition) metaItems.push(`<div class="meta-item"><i class="fas fa-layer-group"></i>  ${team.StateWideCompetition}</div>`);
+        if (team.StateWideCompetition) metaItems.push(`<div class="meta-item"><i class="fas fa-trophy"></i> ${team.StateWideCompetition}</div>`);
+        if (team.stadium) metaItems.push(`<div class="meta-item"><i class="fas fa-stadium"></i> ${team.stadium}</div>`);
+        
         document.getElementById('teamMeta').innerHTML = metaItems.join('');
         
-        // Jersey Colors with correct field names
-        document.getElementById('homeKit').style.background = team.kitColorHome || '#1a2a6c';
-        document.getElementById('awayKit').style.background = team.kitColorAway || '#ffffff';
-        document.getElementById('awayKit').style.border = team.kitColorAway ? 'none' : '1px solid #ccc';
-        document.getElementById('thirdKit').style.background = team.kitColorThird || '#ffcc00';
+        // Kit Colors
+        document.getElementById('homeKit').style.background = teamColors.home;
+        document.getElementById('awayKit').style.background = teamColors.away;
+        document.getElementById('awayKit').style.border = teamColors.away === '#ffffff' ? '1px solid #ddd' : 'none';
+        document.getElementById('thirdKit').style.background = teamColors.third;
+        
+        // Update CSS variables for team colors
+        document.documentElement.style.setProperty('--primary', teamColors.home);
+        document.documentElement.style.setProperty('--primary-light', adjustColor(teamColors.home, 40));
         
       } catch (error) {
         console.error("Error loading team info:", error);
@@ -1038,31 +1238,33 @@
       }
     }
     
-    // Populate season selector with available seasons
+    // Helper: Adjust color brightness
+    function adjustColor(hex, percent) {
+      const num = parseInt(hex.replace('#', ''), 16);
+      const amt = Math.round(2.55 * percent);
+      const R = Math.min(255, Math.max(0, (num >> 16) + amt));
+      const G = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amt));
+      const B = Math.min(255, Math.max(0, (num & 0x0000FF) + amt));
+      return `#${(1 << 24 | R << 16 | G << 8 | B).toString(16).slice(1)}`;
+    }
+    
+    // Populate season selector
     async function populateSeasonSelector() {
       try {
         const seasonSelect = document.getElementById('seasonSelect');
-        
-        // Get current year and set default season
         const currentYear = new Date().getFullYear();
         const nextYear = (currentYear + 1).toString().slice(-2);
         currentSeason = `Season${currentYear}-${nextYear}`;
         
-        // Add event listener for season change
         seasonSelect.addEventListener('change', function() {
           currentSeason = this.value;
           loadFixtures();
         });
         
-        // Try to get available seasons from the team's document
         const teamDoc = await db.collection("GombeTeams").doc(teamId).get();
         if (teamDoc.exists) {
           const teamData = teamDoc.data();
-          
-          // Add the current season as default
           seasonSelect.innerHTML = `<option value="${currentSeason}" selected>${currentSeason}</option>`;
-          
-          // Add previous seasons if available
           if (teamData.seasons && Array.isArray(teamData.seasons)) {
             teamData.seasons.forEach(season => {
               if (season !== currentSeason) {
@@ -1085,12 +1287,11 @@
         const allPlayersSnapshot = await db.collection("playerRegistry").get();
         
         if (allPlayersSnapshot.empty) {
-          squadGrid.innerHTML = '<div class="error">No players found in registry</div>';
+          squadGrid.innerHTML = '<div class="error"><i class="fas fa-exclamation-circle"></i> No players found</div>';
           return;
         }
 
         const teamPlayers = [];
-        
         allPlayersSnapshot.forEach(doc => {
           const player = doc.data();
           if ((player.teamId && player.teamId === currentTeamName) || 
@@ -1100,19 +1301,35 @@
         });
 
         if (teamPlayers.length === 0) {
-          squadGrid.innerHTML = '<div class="error">No squad information available for this team</div>';
+          squadGrid.innerHTML = '<div class="error"><i class="fas fa-user-slash"></i> No squad information available</div>';
           return;
         }
 
-        teamPlayers.sort((a, b) => {
-          const numA = a.jerseyNumber || 999;
-          const numB = b.jerseyNumber || 999;
-          return numA - numB;
-        });
+        teamPlayers.sort((a, b) => (a.jerseyNumber || 999) - (b.jerseyNumber || 999));
 
         squadGrid.innerHTML = '';
         teamPlayers.forEach(player => {
-          createPlayerCard(player, player.id);
+          const playerCard = document.createElement('div');
+          playerCard.className = 'player-card';
+          
+          const hasImage = player.imageUrl && player.imageUrl !== 'https://via.placeholder.com/150?text=Player';
+          
+          playerCard.innerHTML = `
+            <div class="player-photo" style="background: linear-gradient(135deg, ${teamColors.home}22, ${teamColors.home}11)">
+              ${hasImage ? `<img src="${player.imageUrl}" alt="${player.name}">` : `<i class="fas fa-user player-icon"></i>`}
+              <div class="jersey-number" style="background: ${teamColors.home}; border-color: ${teamColors.third}">${player.jerseyNumber || '?'}</div>
+            </div>
+            <div class="player-details">
+              <div class="player-name">${player.name || 'Unknown'}</div>
+              <div class="player-position">${player.position || 'N/A'}</div>
+            </div>
+          `;
+          
+          playerCard.addEventListener('click', () => {
+            alert(`👤 Player: ${player.name || 'Unknown'}\n📋 Position: ${player.position || 'N/A'}\n🔢 Jersey: ${player.jerseyNumber || 'N/A'}\n📍 LGA: ${player.LGAs || 'N/A'}`);
+          });
+          
+          squadGrid.appendChild(playerCard);
         });
 
       } catch (error) {
@@ -1121,42 +1338,12 @@
       }
     }
     
-    // Create player card
-    function createPlayerCard(player, playerId) {
-      const playerCard = document.createElement('div');
-      playerCard.className = 'player-card';
-      playerCard.setAttribute('data-player-id', playerId);
-      
-      playerCard.innerHTML = `
-        <div class="player-photo">
-          ${player.imageUrl ? `<img src="${player.imageUrl}" alt="${player.name}">` : `<i class="fas fa-user fa-3x" style="color: #6c757d;"></i>`}
-        </div>
-        <div class="player-details">
-          <div class="player-name">${player.name || "Unknown Player"}</div>
-          <div class="player-position">${player.position || "Position not specified"}</div>
-        </div>
-        <div class="jersey-number">${player.jerseyNumber || "?"}</div>
-      `;
-      
-      playerCard.addEventListener('click', () => {
-        showPlayerModal(player, playerId);
-      });
-      
-      document.getElementById('squadGrid').appendChild(playerCard);
-    }
-    
-    // Show player modal
-    function showPlayerModal(player, playerId) {
-      alert(`Player: ${player.name || "Unknown"}\nPosition: ${player.position || "N/A"}\nJersey: ${player.jerseyNumber || "N/A"}`);
-    }
-    
-    // Load Fixtures for the selected season
+    // Load Fixtures
     async function loadFixtures() {
       try {
         const fixturesList = document.getElementById('fixturesList');
         fixturesList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading fixtures...</p></div>';
         
-        // Get all competitions where this team might have fixtures
         const competitions = [
           "GombeSeason", 
           "GombeChampionsCupMatches", 
@@ -1166,7 +1353,6 @@
         
         const allFixtures = [];
         
-        // Fetch fixtures from each competition
         for (const competition of competitions) {
           try {
             const competitionRef = db.collection(competition).doc(currentTeamName);
@@ -1174,70 +1360,38 @@
             const snapshot = await seasonRef.get();
             
             snapshot.forEach(doc => {
-              const fixture = doc.data();
               if (!doc.id.startsWith("_")) {
+                const fixture = doc.data();
                 fixture.competition = competition;
                 fixture.id = doc.id;
                 fixture.docPath = doc.ref.path;
-                fixture.teamPerspective = currentTeamName; // Track which team's perspective this is
                 allFixtures.push(fixture);
               }
             });
           } catch (error) {
-            console.log(`No fixtures found in ${competition} for ${currentSeason}`);
+            // Skip if no fixtures
           }
         }
         
         if (allFixtures.length === 0) {
-          fixturesList.innerHTML = '<div class="no-fixtures"><i class="fas fa-calendar-times"></i><p>No fixtures found for ' + currentSeason + '</p></div>';
+          fixturesList.innerHTML = `
+            <div class="no-fixtures">
+              <i class="fas fa-calendar-times"></i>
+              <p>No fixtures found for ${currentSeason}</p>
+              <p style="font-size:0.9rem; margin-top:10px;">Try selecting a different season</p>
+            </div>`;
           return;
         }
         
-        // Enhanced: Load opponent's perspective for each fixture to get complete score data
-        const enhancedFixtures = await Promise.all(
-          allFixtures.map(async (fixture) => {
-            try {
-              const opponent = fixture.opponent;
-              if (!opponent) return fixture;
-              
-              // Try to get the same match from opponent's perspective
-              for (const comp of competitions) {
-                try {
-                  const opponentRef = db.collection(comp).doc(opponent);
-                  const opponentSeasonRef = opponentRef.collection(currentSeason);
-                  const opponentDoc = await opponentSeasonRef.doc(fixture.id).get();
-                  
-                  if (opponentDoc.exists) {
-                    const opponentData = opponentDoc.data();
-                    // Merge the data to get complete score information
-                    return {
-                      ...fixture,
-                      opponentData: opponentData, // Store opponent's perspective
-                      hasCompleteData: true
-                    };
-                  }
-                } catch (error) {
-                  // Continue to next competition
-                }
-              }
-              return fixture;
-            } catch (error) {
-              console.error(`Error loading opponent data for ${fixture.id}:`, error);
-              return fixture;
-            }
-          })
-        );
-        
-        // Sort fixtures by date
-        enhancedFixtures.sort((a, b) => {
+        // Sort by date
+        allFixtures.sort((a, b) => {
           const dateA = a.date ? new Date(a.date) : new Date(0);
           const dateB = b.date ? new Date(b.date) : new Date(0);
           return dateA - dateB;
         });
         
-        // Display the fixtures
         fixturesList.innerHTML = '';
-        enhancedFixtures.forEach(fixture => {
+        allFixtures.forEach(fixture => {
           createFixtureCard(fixture);
         });
         
@@ -1247,83 +1401,54 @@
       }
     }
     
-    // Create enhanced fixture card with proper score display
+    // Create fixture card
     function createFixtureCard(fixture) {
-      console.log("Creating card for fixture:", fixture);
-      
       const isHomeGame = fixture.venue === 'home';
-      const opponent = fixture.opponent;
+      const opponent = fixture.opponent || 'Unknown';
       const homeTeam = isHomeGame ? currentTeamName : opponent;
       const awayTeam = isHomeGame ? opponent : currentTeamName;
       
       const fixtureDate = fixture.date ? new Date(fixture.date) : null;
-      const formattedDate = fixtureDate ? fixtureDate.toLocaleDateString() : 'TBD';
+      const formattedDate = fixtureDate ? fixtureDate.toLocaleDateString('en-NG', { 
+        weekday: 'short', 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric' 
+      }) : 'TBD';
       const formattedTime = fixtureDate ? fixtureDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'TBD';
       
-      // Determine match status
       const isCompleted = fixture.matchCompleted === true;
       const isLive = fixture.status === 'live';
       const status = isLive ? 'live' : isCompleted ? 'completed' : 'upcoming';
-      const statusText = isLive ? 'Live' : isCompleted ? 'Completed' : 'Upcoming';
+      const statusText = isLive ? '🔴 Live' : isCompleted ? '✅ Completed' : '📅 Upcoming';
       
-      // Get team IDs for clickable links
       const homeTeamId = teamIdCache[homeTeam] || null;
       const awayTeamId = teamIdCache[awayTeam] || null;
       
-      // Determine score and result class - FIXED LOGIC
+      // Determine score
       let score = 'VS';
       let scoreClass = '';
       let homeScore = 0;
       let awayScore = 0;
       
       if (isCompleted) {
-        // Get scores from both perspectives to ensure accuracy
-        if (fixture.hasCompleteData && fixture.opponentData) {
-          // We have data from both teams - use the most reliable source
-          const homeTeamData = isHomeGame ? fixture : fixture.opponentData;
-          const awayTeamData = isHomeGame ? fixture.opponentData : fixture;
-          
-          homeScore = homeTeamData.goalScored !== undefined ? homeTeamData.goalScored : 
-                     (homeTeamData.homeScore !== undefined ? homeTeamData.homeScore : 0);
-          awayScore = awayTeamData.goalScored !== undefined ? awayTeamData.goalScored : 
-                     (awayTeamData.homeScore !== undefined ? awayTeamData.homeScore : 0);
+        if (isHomeGame) {
+          homeScore = fixture.goalScored !== undefined ? fixture.goalScored : 0;
+          awayScore = fixture.goalConceded !== undefined ? fixture.goalConceded : 0;
         } else {
-          // Fallback: Use current team's perspective and infer opponent's score
-          if (isHomeGame) {
-            homeScore = fixture.goalScored !== undefined ? fixture.goalScored : 
-                       (fixture.homeScore !== undefined ? fixture.homeScore : 0);
-            awayScore = fixture.goalConceded !== undefined ? fixture.goalConceded : 
-                       (fixture.awayScore !== undefined ? fixture.awayScore : 0);
-          } else {
-            // Away game - our goalScored is actually away goals
-            awayScore = fixture.goalScored !== undefined ? fixture.goalScored : 
-                       (fixture.awayScore !== undefined ? fixture.awayScore : 0);
-            homeScore = fixture.goalConceded !== undefined ? fixture.goalConceded : 
-                       (fixture.homeScore !== undefined ? fixture.homeScore : 0);
-          }
+          awayScore = fixture.goalScored !== undefined ? fixture.goalScored : 0;
+          homeScore = fixture.goalConceded !== undefined ? fixture.goalConceded : 0;
         }
-        
         score = `${homeScore} - ${awayScore}`;
         
-        // Determine result class for styling from current team's perspective
         if (homeTeam === currentTeamName) {
-          if (homeScore > awayScore) scoreClass = 'win';
-          else if (homeScore < awayScore) scoreClass = 'loss';
-          else scoreClass = 'draw';
+          scoreClass = homeScore > awayScore ? 'win' : homeScore < awayScore ? 'loss' : 'draw';
         } else {
-          if (awayScore > homeScore) scoreClass = 'win';
-          else if (awayScore < homeScore) scoreClass = 'loss';
-          else scoreClass = 'draw';
+          scoreClass = awayScore > homeScore ? 'win' : awayScore < homeScore ? 'loss' : 'draw';
         }
-        
-        console.log("Final score calculation:", {
-          homeTeam, awayTeam, homeScore, awayScore, scoreClass,
-          isHomeGame, currentTeamName
-        });
       }
       
-      // Get competition name
-      const competitionName = fixture.competition.replace('Gombe', '').replace(/Matches?/g, '').trim();
+      const competitionName = fixture.competition.replace('Gombe', '').replace(/Matches?/g, '').trim() || 'League';
       
       const fixtureCard = document.createElement('div');
       fixtureCard.className = `fixture-card ${status}`;
@@ -1342,25 +1467,25 @@
           <div class="team-container">
             <div class="team-name" onclick="event.stopPropagation(); viewTeamProfile('${homeTeamId || ''}', '${homeTeam}')">
               ${homeTeam}
+              ${homeTeam === currentTeamName ? ' ⭐' : ''}
             </div>
             <div class="team-meta">
-              <i class="fas fa-home"></i>
-              ${isHomeGame ? 'Home' : 'Away'}
+              <i class="fas fa-home"></i> ${isHomeGame ? 'Home' : 'Away'}
             </div>
           </div>
           
           <div class="vs-container">
             <div class="match-score ${scoreClass}">${score}</div>
-            <div class="vs-text">Kick-off: ${formattedTime}</div>
+            <div class="vs-text"><i class="far fa-clock"></i> ${formattedTime}</div>
           </div>
           
           <div class="team-container">
             <div class="team-name" onclick="event.stopPropagation(); viewTeamProfile('${awayTeamId || ''}', '${awayTeam}')">
               ${awayTeam}
+              ${awayTeam === currentTeamName ? ' ⭐' : ''}
             </div>
             <div class="team-meta">
-              <i class="fas fa-route"></i>
-              ${isHomeGame ? 'Away' : 'Home'}
+              <i class="fas fa-route"></i> ${isHomeGame ? 'Away' : 'Home'}
             </div>
           </div>
         </div>
@@ -1379,64 +1504,38 @@
           
           <button class="tracker-btn" ${isCompleted ? 'disabled' : ''} 
             onclick="event.stopPropagation(); ${isCompleted ? '' : `openMatchTracker('${fixture.id}', '${homeTeam}', '${awayTeam}', '${fixture.competition}', '${fixture.docPath}')`}">
-            <i class="fas fa-running"></i>
-            ${isCompleted ? 'Match Ended' : isLive ? 'Live Tracker' : 'Open Tracker'}
+            <i class="fas ${isCompleted ? 'fa-check-circle' : isLive ? 'fa-running' : 'fa-play-circle'}"></i>
+            ${isCompleted ? 'Completed' : isLive ? 'Live Tracker' : 'Open Tracker'}
           </button>
         </div>
       `;
       
-      // Make the whole card clickable to view match details
+      // Make card clickable
       fixtureCard.addEventListener('click', () => {
         if (isCompleted) {
-          // Show match summary instead of details for completed matches
-          showMatchSummary(fixture, homeTeam, awayTeam, score, homeScore, awayScore);
+          const resultText = scoreClass === 'win' ? '🏆 Win' : scoreClass === 'loss' ? '❌ Loss' : '⚖️ Draw';
+          alert(`📋 Match Summary\n\n${homeTeam} ${score} ${awayTeam}\n\n📊 Result: ${resultText}\n🏟️ Competition: ${competitionName}\n📅 Date: ${formattedDate}\n📍 Venue: ${fixture.venue || 'TBD'}\n👨‍⚖️ Referee: ${fixture.referee || 'TBD'}`);
         } else {
-          viewMatchDetails(fixture);
+          alert(`📋 Match Details\n\n${homeTeam} vs ${awayTeam}\n\n🏟️ Competition: ${competitionName}\n📅 Date: ${formattedDate}\n⏰ Time: ${formattedTime}\n📍 Venue: ${fixture.venue || 'TBD'}\n👨‍⚖️ Referee: ${fixture.referee || 'TBD'}`);
         }
       });
       
       document.getElementById('fixturesList').appendChild(fixtureCard);
     }
     
-    // Show match summary for completed matches
-    function showMatchSummary(fixture, homeTeam, awayTeam, score, homeScore, awayScore) {
-      let resultText = '';
-      if (homeTeam === currentTeamName) {
-        if (homeScore > awayScore) resultText = 'Win';
-        else if (homeScore < awayScore) resultText = 'Loss';
-        else resultText = 'Draw';
-      } else {
-        if (awayScore > homeScore) resultText = 'Win';
-        else if (awayScore < homeScore) resultText = 'Loss';
-        else resultText = 'Draw';
-      }
-      
-      const summary = `
-Match Summary:
-${homeTeam} ${score} ${awayTeam}
-Result: ${resultText}
-Competition: ${fixture.competition.replace('Gombe', '')}
-Date: ${fixture.date ? new Date(fixture.date).toLocaleDateString() : 'TBD'}
-Venue: ${fixture.venue ? fixture.venue.charAt(0).toUpperCase() + fixture.venue.slice(1) : 'TBD'}
-Referee: ${fixture.referee || 'TBD'}
-      `;
-      alert(summary);
-    }
-    
-    // Function to view team profile
+    // View team profile
     function viewTeamProfile(teamId, teamName) {
       if (teamId) {
         window.location.href = `GombeTeamsProfileFinal.html?teamId=${teamId}`;
       } else if (teamName && teamIdCache[teamName]) {
         window.location.href = `GombeTeamsProfileFinal.html?teamId=${teamIdCache[teamName]}`;
       } else {
-        alert(`Team profile for ${teamName} is not available. The team may not exist in the database.`);
+        alert(`Team profile for ${teamName} is not available.`);
       }
     }
     
-    // Function to open match tracker
+    // Open match tracker
     function openMatchTracker(matchId, homeTeam, awayTeam, competition, docPath) {
-      // Store match information in localStorage for the tracker page
       localStorage.setItem('matchTrackerData', JSON.stringify({
         matchId: matchId,
         homeTeam: homeTeam,
@@ -1445,14 +1544,7 @@ Referee: ${fixture.referee || 'TBD'}
         docPath: docPath,
         timestamp: new Date().toISOString()
       }));
-      
-      // Redirect to the match tracker page
       window.open('MatchTracker.html', '_blank');
-    }
-    
-    // Function to view match details
-    function viewMatchDetails(fixture) {
-      alert(`Match Details:\n${fixture.competition.replace('Gombe', '')}\n${currentTeamName} vs ${fixture.opponent}\nDate: ${fixture.date ? new Date(fixture.date).toLocaleDateString() : 'TBD'}`);
     }
     
     // Load Standings
@@ -1469,31 +1561,29 @@ Referee: ${fixture.referee || 'TBD'}
         } else if (currentTeamTier === "league_phase") {
           collectionName = "league_division";
         } else {
-          standingsTableBody.innerHTML = '<tr><td colspan="10">Unknown team tier: ' + currentTeamTier + '</td></tr>';
+          standingsTableBody.innerHTML = '<tr><td colspan="10"><div class="error">Unknown team tier: ' + currentTeamTier + '</div></td></tr>';
           return;
         }
         
         const divisionDoc = await db.collection(collectionName).doc(currentTeamZone).get();
         
         if (!divisionDoc.exists) {
-          standingsTableBody.innerHTML = '<tr><td colspan="10">No standings data available for ' + currentTeamZone + ' division</td></tr>';
+          standingsTableBody.innerHTML = '<tr><td colspan="10"><div class="error">No standings data available</div></td></tr>';
           return;
         }
         
         const divisionData = divisionDoc.data();
         
         if (!divisionData.teams || !Array.isArray(divisionData.teams) || divisionData.teams.length === 0) {
-          standingsTableBody.innerHTML = '<tr><td colspan="10">No teams found in this division</td></tr>';
+          standingsTableBody.innerHTML = '<tr><td colspan="10"><div class="error">No teams found in this division</div></td></tr>';
           return;
         }
         
-        // Update zone header
-        standingsZoneHeader.textContent = `${currentTeamZone} - ${currentTeamTier === "championship" ? "Championship" : "League"} Table`;
+        const tierLabel = currentTeamTier === "championship" ? "🏆 Championship" : "📊 League";
+        standingsZoneHeader.innerHTML = `<i class="fas fa-list-ol"></i> ${currentTeamZone} - ${tierLabel} Table`;
         
         const sortedTeams = [...divisionData.teams].sort((a, b) => {
-          if (b.points !== a.points) {
-            return b.points - a.points;
-          }
+          if (b.points !== a.points) return b.points - a.points;
           return b.GD - a.GD;
         });
         
@@ -1503,21 +1593,12 @@ Referee: ${fixture.referee || 'TBD'}
           const position = index + 1;
           let rowClass = '';
           
-          // Determine qualification/relegation status
-          if (position <= 8) {
-            rowClass = 'champions-league';
-          } else if (position <= 16) {
-            rowClass = 'warriors-cup';
-          } else if (position > sortedTeams.length - 3) {
-            rowClass = 'relegated';
-          }
+          if (position <= 8) rowClass = 'champions-league';
+          else if (position <= 16) rowClass = 'warriors-cup';
+          else if (position > sortedTeams.length - 3) rowClass = 'relegated';
           
-          // Highlight current team
-          if (team.name === currentTeamName) {
-            rowClass += ' current-team';
-          }
+          if (team.name === currentTeamName) rowClass += ' current-team';
           
-          // Get team ID for linking to profile
           const teamId = teamIdCache[team.name] || '';
           
           const row = document.createElement('tr');
@@ -1540,39 +1621,54 @@ Referee: ${fixture.referee || 'TBD'}
         
       } catch (error) {
         console.error("Error loading standings:", error);
-        const standingsTableBody = document.getElementById('standingsTableBody');
-        standingsTableBody.innerHTML = '<tr><td colspan="10" class="error">Failed to load standings</td></tr>';
+        document.getElementById('standingsTableBody').innerHTML = '<tr><td colspan="10" class="error">Failed to load standings</td></tr>';
       }
     }
     
-    // Highlight a specific qualification zone
+    // Highlight qualification zone
     function highlightQualificationZone(zoneClass) {
       const rows = document.querySelectorAll('#standingsTableBody tr');
-      
-      // Remove any existing highlights
       rows.forEach(row => {
         row.style.opacity = '1';
         row.style.transform = 'scale(1)';
       });
       
-      // Highlight the selected zone
       rows.forEach(row => {
         if (row.classList.contains(zoneClass)) {
           row.style.opacity = '1';
-          row.style.transform = 'scale(1.02)';
+          row.style.transform = 'scale(1.03)';
           row.style.transition = 'all 0.3s ease';
+          row.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
         } else {
-          row.style.opacity = '0.6';
+          row.style.opacity = '0.5';
         }
       });
       
-      // Reset after 3 seconds
       setTimeout(() => {
         rows.forEach(row => {
           row.style.opacity = '1';
           row.style.transform = 'scale(1)';
+          row.style.boxShadow = 'none';
         });
       }, 3000);
+    }
+    
+    // Update SEO meta tags
+    function updateSEO() {
+      const teamName = document.getElementById('teamName').textContent;
+      const title = `${teamName} - Gombe State Football Team Profile`;
+      const description = `View ${teamName}'s complete profile including fixtures, squad, and league standings. ${teamName} is a football team from Gombe State, Nigeria.`;
+      
+      document.title = title;
+      document.getElementById('metaDescription').content = description;
+      document.getElementById('ogTitle').content = title;
+      document.getElementById('ogDescription').content = description;
+      
+      // Update canonical URL with team ID
+      const canonical = document.querySelector('link[rel="canonical"]');
+      if (canonical) {
+        canonical.href = `https://gombefootball.web.app/GombeTeamsProfileFinal.html?teamId=${teamId}`;
+      }
     }
     
     // Show error message
@@ -1584,7 +1680,7 @@ Referee: ${fixture.referee || 'TBD'}
       container.prepend(errorDiv);
     }
     
-    // Initialize the page when DOM is loaded
+    // Initialize
     document.addEventListener('DOMContentLoaded', initPage);
   </script>
 </body>
