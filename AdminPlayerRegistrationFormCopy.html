@@ -846,13 +846,23 @@
 
   <script>
     // ============================================
-    // 🔧 GITHUB CONFIGURATION
+    // 🔧 GITHUB CONFIGURATION - UPDATE WITH YOUR TOKEN
     // ============================================
     const GITHUB_CONFIG = {
+      // Your GitHub username
       username: 'bajmathfoundation-dot',
+      
+      // Your repository name
       repo: 'player-images',
-      token: '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',
+      
+      // ⚠️ IMPORTANT: Replace with your actual token
+      // Generate at: https://github.com/settings/tokens
+      token: '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',  // <-- PASTE YOUR TOKEN HERE
+      
+      // Branch name
       branch: 'main',
+      
+      // Base URL for accessing images
       getImageUrl: function(filename) {
         return `https://raw.githubusercontent.com/${this.username}/${this.repo}/${this.branch}/${filename}`;
       }
@@ -915,6 +925,7 @@
     let currentTeamData = null;
     let currentPlayerCount = 0;
     let uploadedImageUrl = null;
+    let isUploading = false;
 
     // Toast notification
     function showToast(message, isError = false) {
@@ -923,7 +934,7 @@
       toast.classList.add('show');
       setTimeout(() => {
         toast.classList.remove('show');
-      }, 4000);
+      }, 3000);
     }
 
     // Set verification status
@@ -963,37 +974,25 @@
     }
 
     // ============================================
-    // 📸 GITHUB IMAGE UPLOAD FUNCTION - FIXED
+    // 📸 GITHUB IMAGE UPLOAD FUNCTION
     // ============================================
     async function uploadImageToGitHub(file, playerName) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = async function(event) {
           try {
-            // Remove the data URL prefix
             const base64Data = event.target.result.split(',')[1];
             
-            // Generate filename
             const timestamp = Date.now();
-            const sanitizedName = playerName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-            const teamName = currentTeamData.name.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+            const sanitizedName = playerName.replace(/\s+/g, '_').toLowerCase();
+            const teamName = currentTeamData.name.replace(/\s+/g, '_').toLowerCase();
             const fileExtension = file.name.split('.').pop();
             const filename = `${teamName}_${sanitizedName}_${timestamp}.${fileExtension}`;
             
             const url = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${filename}`;
             
-            // Show progress
             uploadProgress.classList.add('active');
-            progressBar.style.width = '20%';
-            
-            // Prepare the content
-            const content = {
-              message: `Add player image: ${playerName}`,
-              content: base64Data,
-              branch: GITHUB_CONFIG.branch
-            };
-            
-            progressBar.style.width = '50%';
+            progressBar.style.width = '30%';
             
             const response = await fetch(url, {
               method: 'PUT',
@@ -1002,34 +1001,33 @@
                 'Content-Type': 'application/json',
                 'Accept': 'application/vnd.github.v3+json'
               },
-              body: JSON.stringify(content)
+              body: JSON.stringify({
+                message: `Upload player image: ${playerName}`,
+                content: base64Data,
+                branch: GITHUB_CONFIG.branch
+              })
             });
             
-            progressBar.style.width = '80%';
-            
-            const responseData = await response.json();
+            progressBar.style.width = '70%';
             
             if (!response.ok) {
-              console.error('GitHub API Error:', responseData);
-              throw new Error(responseData.message || 'Upload failed');
+              const errorData = await response.json();
+              throw new Error(errorData.message || 'Upload failed');
             }
             
             progressBar.style.width = '100%';
             
-            // Get the image URL
             const imageUrl = GITHUB_CONFIG.getImageUrl(filename);
             
-            // Hide progress after a moment
             setTimeout(() => {
               uploadProgress.classList.remove('active');
               progressBar.style.width = '0%';
-            }, 600);
+            }, 500);
             
-            console.log('✅ Image uploaded successfully:', imageUrl);
             resolve(imageUrl);
             
           } catch (error) {
-            console.error('❌ GitHub upload error:', error);
+            console.error('GitHub upload error:', error);
             uploadProgress.classList.remove('active');
             progressBar.style.width = '0%';
             reject(error);
@@ -1045,7 +1043,8 @@
     }
 
     // ============================================
-    // 🖼️ FILE INPUT HANDLING    // ============================================
+    // 🖼️ FILE INPUT HANDLING
+    // ============================================
     imageFileInput.addEventListener('change', function(e) {
       const file = this.files[0];
       if (!file) return;
@@ -1243,7 +1242,6 @@
       registerBtn.textContent = '⏳ Processing...';
 
       try {
-        // Check team player limit
         const teamPlayers = await db.collection("playerRegistry")
           .where("teamName", "==", teamName).get();
         
@@ -1255,7 +1253,6 @@
           return;
         }
 
-        // Check jersey number uniqueness
         const jerseyCheck = await db.collection("playerRegistry")
           .where("teamName", "==", teamName)
           .where("jerseyNumber", "==", jerseyNumber)
@@ -1271,26 +1268,21 @@
 
         let imageUrl = "https://via.placeholder.com/150?text=No+Image";
         if (imageFile) {
-          registerBtn.textContent = '⏳ Uploading Image to GitHub...';
+          registerBtn.textContent = '⏳ Uploading Image...';
           try {
             imageUrl = await uploadImageToGitHub(imageFile, name);
             uploadedImageUrl = imageUrl;
-            showToast('✅ Image uploaded to GitHub successfully!');
+            showToast('✅ Image uploaded successfully!');
           } catch (error) {
             console.error('Image upload error:', error);
-            // Continue with registration even if image upload fails
-            if (error.message.includes('already exists')) {
-              showToast('⚠️ Image with same name exists, using existing image', true);
-            } else {
-              showToast(`⚠️ Image upload failed: ${error.message}`, true);
-            }
+            alert(`⚠️ Image upload failed: ${error.message}\nPlayer will be registered without an image.`);
             imageUrl = "https://via.placeholder.com/150?text=No+Image";
           }
         }
 
         const counterRef = db.collection("counters").doc("playerPSN");
 
-        registerBtn.textContent = '⏳ Saving Player to Database...';
+        registerBtn.textContent = '⏳ Saving Player...';
 
         await db.runTransaction(async tx => {
           const doc = await tx.get(counterRef);
@@ -1320,7 +1312,7 @@
           modalTeamName.textContent = teamName;
           modalJerseyNumber.textContent = jerseyNumber;
           modalPosition.textContent = position;
-          modalImageStatus.textContent = imageFile ? '✅ Uploaded to GitHub' : '⏭️ Skipped';
+          modalImageStatus.textContent = imageFile ? '✅ Uploaded' : '⏭️ Skipped';
           modalPSN.textContent = psn;
           copyFeedback.textContent = '';
 
@@ -1328,7 +1320,6 @@
 
           await updatePlayerCount(teamName);
           
-          // Reset form
           document.getElementById("name").value = '';
           document.getElementById("LGAs").value = '';
           document.getElementById("position").value = '';
@@ -1340,8 +1331,6 @@
           uploadedImageUrl = null;
           
           await loadJerseyNumbers(teamName);
-          
-          showToast(`✅ Player "${name}" registered successfully! PSN: ${psn}`);
         });
 
       } catch (err) {
@@ -1404,33 +1393,9 @@
     console.log('🔢 Unique jersey numbers per team (1-99)');
     console.log('📸 Images will be stored on GitHub: https://github.com/bajmathfoundation-dot/player-images');
     
-    // Check if token is configured
-    if (GITHUB_CONFIG.token === 'YOUR_GITHUB_TOKEN_HERE') {
+    if (GITHUB_CONFIG.token === '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') {
       console.warn('⚠️ Please configure your GitHub token in the GITHUB_CONFIG section');
       console.warn('📝 Generate a token at: https://github.com/settings/tokens');
-    } else {
-      console.log('✅ GitHub token configured successfully');
-      
-      // Test GitHub connection
-      async function testGitHubConnection() {
-        try {
-          const testUrl = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}`;
-          const response = await fetch(testUrl, {
-            headers: {
-              'Authorization': `token ${GITHUB_CONFIG.token}`,
-              'Accept': 'application/vnd.github.v3+json'
-            }
-          });
-          if (response.ok) {
-            console.log('✅ GitHub connection successful!');
-          } else {
-            console.warn('⚠️ GitHub connection test failed. Check your token and repository.');
-          }
-        } catch (error) {
-          console.warn('⚠️ Unable to test GitHub connection:', error.message);
-        }
-      }
-      testGitHubConnection();
     }
   </script>
 </body>
