@@ -846,29 +846,8 @@
 
   <script>
     // ============================================
-    // 🔧 GITHUB CONFIGURATION - UPDATE WITH YOUR TOKEN
+    // FIREBASE CONFIGURATION
     // ============================================
-    const GITHUB_CONFIG = {
-      // Your GitHub username
-      username: 'bajmathfoundation-dot',
-      
-      // Your repository name
-      repo: 'player-images',
-      
-      // ⚠️ IMPORTANT: Replace with your actual token
-      // Generate at: https://github.com/settings/tokens
-      token: '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',  // <-- PASTE YOUR TOKEN HERE
-      
-      // Branch name
-      branch: 'main',
-      
-      // Base URL for accessing images
-      getImageUrl: function(filename) {
-        return `https://raw.githubusercontent.com/${this.username}/${this.repo}/${this.branch}/${filename}`;
-      }
-    };
-    // ============================================
-
     const firebaseConfig = {
       apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
       authDomain: "gombefootball.firebaseapp.com",
@@ -879,7 +858,9 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // DOM elements
+    // ============================================
+    // DOM ELEMENTS
+    // ============================================
     const teamCollectionIdInput = document.getElementById('teamCollectionId');
     const verifyTeamBtn = document.getElementById('verifyTeamBtn');
     const verifyBtnText = document.getElementById('verifyBtnText');
@@ -927,7 +908,9 @@
     let uploadedImageUrl = null;
     let isUploading = false;
 
-    // Toast notification
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
     function showToast(message, isError = false) {
       toast.textContent = message;
       toast.style.background = isError ? '#dc3545' : '#014421';
@@ -937,14 +920,12 @@
       }, 3000);
     }
 
-    // Set verification status
     function setVerificationStatus(message, type) {
       verificationStatus.classList.remove('hidden', 'status-success', 'status-error', 'status-loading');
       verificationStatus.textContent = message;
       verificationStatus.classList.add(`status-${type}`);
     }
 
-    // Helper function to get location value regardless of case
     function getLocationValue(teamData) {
       if (teamData.location !== undefined && teamData.location !== null && teamData.location !== '') {
         return teamData.location;
@@ -958,7 +939,6 @@
       return 'Not specified';
     }
 
-    // Update player count
     async function updatePlayerCount(teamName) {
       try {
         const snap = await db.collection("playerRegistry")
@@ -974,7 +954,7 @@
     }
 
     // ============================================
-    // 📸 GITHUB IMAGE UPLOAD FUNCTION
+    // 📸 SECURE IMAGE UPLOAD VIA VERCEL API
     // ============================================
     async function uploadImageToGitHub(file, playerName) {
       return new Promise((resolve, reject) => {
@@ -983,28 +963,19 @@
           try {
             const base64Data = event.target.result.split(',')[1];
             
-            const timestamp = Date.now();
-            const sanitizedName = playerName.replace(/\s+/g, '_').toLowerCase();
-            const teamName = currentTeamData.name.replace(/\s+/g, '_').toLowerCase();
-            const fileExtension = file.name.split('.').pop();
-            const filename = `${teamName}_${sanitizedName}_${timestamp}.${fileExtension}`;
-            
-            const url = `https://api.github.com/repos/${GITHUB_CONFIG.username}/${GITHUB_CONFIG.repo}/contents/${filename}`;
-            
             uploadProgress.classList.add('active');
             progressBar.style.width = '30%';
             
-            const response = await fetch(url, {
-              method: 'PUT',
+            const response = await fetch('/api/upload-image', {
+              method: 'POST',
               headers: {
-                'Authorization': `token ${GITHUB_CONFIG.token}`,
                 'Content-Type': 'application/json',
-                'Accept': 'application/vnd.github.v3+json'
               },
               body: JSON.stringify({
-                message: `Upload player image: ${playerName}`,
-                content: base64Data,
-                branch: GITHUB_CONFIG.branch
+                imageData: base64Data,
+                fileName: file.name,
+                playerName: playerName,
+                teamName: currentTeamData.name
               })
             });
             
@@ -1012,22 +983,21 @@
             
             if (!response.ok) {
               const errorData = await response.json();
-              throw new Error(errorData.message || 'Upload failed');
+              throw new Error(errorData.error || 'Upload failed');
             }
             
+            const data = await response.json();
             progressBar.style.width = '100%';
-            
-            const imageUrl = GITHUB_CONFIG.getImageUrl(filename);
             
             setTimeout(() => {
               uploadProgress.classList.remove('active');
               progressBar.style.width = '0%';
             }, 500);
             
-            resolve(imageUrl);
+            resolve(data.imageUrl);
             
           } catch (error) {
-            console.error('GitHub upload error:', error);
+            console.error('Upload error:', error);
             uploadProgress.classList.remove('active');
             progressBar.style.width = '0%';
             reject(error);
@@ -1081,7 +1051,9 @@
       uploadedImageUrl = null;
     });
 
-    // Verify team button click handler
+    // ============================================
+    // 🔍 TEAM VERIFICATION
+    // ============================================
     verifyTeamBtn.addEventListener('click', async function() {
       const teamId = teamCollectionIdInput.value.trim();
       
@@ -1158,7 +1130,9 @@
       }
     });
 
-    // Load jersey numbers for a team
+    // ============================================
+    // 📋 LOAD JERSEY NUMBERS
+    // ============================================
     async function loadJerseyNumbers(teamName) {
       try {
         jerseyDropdown.innerHTML = '<option>Loading...</option>';
@@ -1196,7 +1170,9 @@
       }
     }
 
-    // Handle form submit
+    // ============================================
+    // 📝 PLAYER REGISTRATION
+    // ============================================
     playerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -1342,7 +1318,9 @@
       }
     });
 
-    // Copy PSN to clipboard
+    // ============================================
+    // 📋 COPY PSN TO CLIPBOARD
+    // ============================================
     copyPSNBtn.addEventListener('click', async function() {
       const psn = modalPSN.textContent;
       try {
@@ -1367,36 +1345,37 @@
       }
     });
 
-    // Close modal
+    // ============================================
+    // 🔄 MODAL CONTROLS
+    // ============================================
     closeModalBtn.addEventListener('click', function() {
       successModal.classList.remove('active');
     });
 
-    // Close modal on overlay click
     successModal.addEventListener('click', function(e) {
       if (e.target === this) {
         successModal.classList.remove('active');
       }
     });
 
-    // Enter key support for verification
+    // ============================================
+    // ⌨️ ENTER KEY SUPPORT
+    // ============================================
     teamCollectionIdInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         verifyTeamBtn.click();
       }
     });
 
-    // Initial state
+    // ============================================
+    // 📌 INITIAL STATE
+    // ============================================
     console.log('✅ Gombe Football Team Registration System loaded');
     console.log('📋 Enter your team collection ID to verify and register players');
     console.log('👥 Maximum 33 players per team');
     console.log('🔢 Unique jersey numbers per team (1-99)');
-    console.log('📸 Images will be stored on GitHub: https://github.com/bajmathfoundation-dot/player-images');
-    
-    if (GITHUB_CONFIG.token === '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') {
-      console.warn('⚠️ Please configure your GitHub token in the GITHUB_CONFIG section');
-      console.warn('📝 Generate a token at: https://github.com/settings/tokens');
-    }
+    console.log('📸 Images are uploaded securely via Vercel API');
+    console.log('🔒 GitHub token is securely stored in Vercel environment variables');
   </script>
 </body>
 </html>
