@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gombe · Competition Builder</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Roboto,system-ui,sans-serif; }
+    body {
+      background: linear-gradient(145deg, #edf3ed 0%, #dce8dc 100%);
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+    .wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(6px);
+      border-radius: 48px;
+      padding: 2rem 2.2rem 2.5rem;
+      box-shadow: 0 25px 50px rgba(0,30,10,0.2);
+      border:1px solid rgba(255,255,255,0.4);
+    }
+    h1 {
+      font-weight:700; font-size:2.2rem; color:#014421;
+      display:flex; align-items:center; gap:14px;
+      border-bottom:3px solid #ffd700; padding-bottom:16px; margin-bottom:28px;
+    }
+    h1 i { color:#ffd700; }
+    .subhead {
+      display:flex; flex-wrap:wrap; gap:12px 20px;
+      background:#e9f3e9; padding:1.2rem 1.8rem; border-radius:60px;
+      margin-bottom:28px; align-items:center; border:1px solid #bcd0bc;
+    }
+    .subhead .badge-count {
+      background:#014421; color:white; padding:4px 20px; border-radius:40px;
+      font-weight:600; font-size:0.9rem;
+    }
+    .controls-grid {
+      display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:20px 25px;
+      background:white; padding:1.8rem 2rem; border-radius:40px;
+      margin-bottom:20px; box-shadow:0 6px 18px rgba(0,0,0,0.04);
+      border:1px solid #cfe0cf; align-items:end;
+    }
+    .ctrl-group {
+      display:flex; flex-direction:column; gap:4px;
+    }
+    .ctrl-group label {
+      font-weight:600; font-size:0.75rem; text-transform:uppercase;
+      letter-spacing:0.6px; color:#1f4a1f; display:flex; align-items:center; gap:6px;
+    }
+    .ctrl-group input, .ctrl-group select {
+      background:#f5faf5; border:1px solid #b8d0b8; border-radius:60px;
+      padding:12px 18px; font-size:1rem; font-weight:500;
+      color:#0a2a0a; outline:none; transition:0.15s; width:100%;
+    }
+    .ctrl-group input:focus, .ctrl-group select:focus {
+      border-color:#014421; box-shadow:0 0 0 3px rgba(1,68,33,0.2);
+    }
+    .team-select-wrapper {
+      position:relative; grid-column: span 2;
+    }
+    .team-select-wrapper input[type="text"] {
+      width:100%; padding:12px 18px; border-radius:60px;
+      border:1px solid #b8d0b8; background:#f5faf5;
+      font-size:1rem; outline:none;
+    }
+    .team-dropdown {
+      position:absolute; top:100%; left:0; right:0;
+      background:white; border:1px solid #b8d0b8; border-radius:20px;
+      max-height:200px; overflow-y:auto; z-index:100;
+      box-shadow:0 10px 30px rgba(0,0,0,0.1);
+      display:none; margin-top:4px;
+    }
+    .team-dropdown.show { display:block; }
+    .team-dropdown .team-option {
+      padding:8px 18px; cursor:pointer; display:flex;
+      justify-content:space-between; align-items:center;
+      border-bottom:1px solid #ecf3ec;
+    }
+    .team-dropdown .team-option:hover { background:#e6f2e6; }
+    .team-dropdown .team-option.selected { background:#d4e8d4; }
+    .selected-teams {
+      display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;
+      align-items:center;
+    }
+    .selected-teams .pill {
+      background:#014421; color:white; padding:4px 14px;
+      border-radius:40px; font-size:0.8rem; display:inline-flex;
+      align-items:center; gap:8px;
+    }
+    .selected-teams .pill i {
+      cursor:pointer; opacity:0.7; font-size:0.7rem;
+    }
+    .selected-teams .pill i:hover { opacity:1; }
+    .selected-teams .count-badge {
+      background:#ffd700; color:#014421; font-weight:700;
+      padding:2px 14px; border-radius:40px; font-size:0.85rem;
+      margin-left:4px;
+    }
+    .action-row {
+      display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+      grid-column: span 2; justify-content:flex-end;
+    }
+    .btn-generate {
+      background:#014421; border:none; border-radius:60px;
+      padding:12px 34px; font-size:1.1rem; font-weight:700;
+      color:white; display:inline-flex; align-items:center;
+      gap:12px; cursor:pointer; transition:0.15s;
+      box-shadow:0 8px 18px rgba(1,68,33,0.25);
+      border:1px solid #ffd700;
+    }
+    .btn-generate:hover { background:#00351a; transform:scale(1.02); }
+    .btn-generate:active { transform:scale(0.97); }
+    .btn-create {
+      background:#ffd700; color:#014421; border:2px solid #014421;
+    }
+    .btn-create:hover { background:#f0c800; }
+    .toast {
+      position:fixed; bottom:30px; right:30px;
+      background:#014421; color:white; padding:16px 28px;
+      border-radius:60px; box-shadow:0 10px 30px rgba(0,0,0,0.2);
+      font-weight:600; z-index:999; border-left:5px solid #ffd700;
+      transform:translateY(100px); opacity:0; transition:0.4s ease;
+    }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast.error { background:#a13030; border-left-color:#ff6b6b; }
+    .info-badge {
+      background:#f0f8f0; border-radius:60px; padding:8px 24px;
+      display:inline-flex; align-items:center; gap:12px;
+      border:1px solid #bcd0bc; color:#014421; font-weight:500;
+    }
+    @media (max-width:700px) {
+      .wrapper { padding:1.2rem; }
+      .controls-grid { grid-template-columns:1fr; gap:12px; }
+      .team-select-wrapper { grid-column:span 1; }
+      .action-row { grid-column:span 1; justify-content:center; }
+      .btn-generate { width:100%; justify-content:center; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <h1><i class="fas fa-futbol"></i> Gombe · Competition Builder</h1>
+  <div class="subhead">
+    <span><i class="fas fa-database"></i> Teams from Firebase</span>
+    <span class="badge-count" id="teamCountBadge">0 teams</span>
+    <span style="margin-left:auto; font-size:0.9rem; opacity:0.7;"><i class="fas fa-sync-alt fa-fw"></i> live</span>
+  </div>
+
+  <!-- Builder Controls -->
+  <div class="controls-grid">
+    <div class="ctrl-group">
+      <label><i class="fas fa-trophy"></i> Competition name</label>
+      <input type="text" id="compName" value="Gombe Premier Cup 2026" placeholder="e.g. Gombe League">
+    </div>
+    <div class="ctrl-group">
+      <label><i class="fas fa-calendar-alt"></i> Season / Year</label>
+      <input type="text" id="seasonYear" value="2026" placeholder="2026">
+    </div>
+    <div class="ctrl-group">
+      <label><i class="fas fa-list-ul"></i> Format</label>
+      <select id="compType">
+        <option value="league">League (Round Robin)</option>
+        <option value="cup" selected>Knockout Cup</option>
+        <option value="group">Group Stage + Knockout</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label><i class="fas fa-clock"></i> Period (weeks)</label>
+      <input type="number" id="periodWeeks" value="8" min="1" placeholder="weeks">
+    </div>
+    <div class="ctrl-group">
+      <label><i class="fas fa-phone"></i> Organizer Phone</label>
+      <input type="text" id="organizerPhone" value="+234 800 000 0000" placeholder="Phone number">
+    </div>
+    <div class="ctrl-group">
+      <label><i class="fas fa-users"></i> Teams</label>
+      <div class="team-select-wrapper">
+        <input type="text" id="teamSearchInput" placeholder="Search teams..." oninput="filterTeamDropdown()" onfocus="document.getElementById('teamDropdown').classList.add('show')" />
+        <div class="team-dropdown" id="teamDropdown"></div>
+        <div class="selected-teams" id="selectedTeamsContainer"></div>
+      </div>
+    </div>
+    <div class="action-row">
+      <button class="btn-generate btn-create" onclick="createCompetition()"><i class="fas fa-save"></i> Create Competition</button>
+    </div>
+  </div>
+
+  <!-- Simple summary -->
+  <div class="info-badge" style="margin-top:8px;">
+    <i class="fas fa-info-circle"></i> Fill in the details and click <strong>Create Competition</strong>.
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // ---------- FIREBASE ----------
+  const firebaseConfig = {
+    apiKey: "AIzaSyD-kTLOzJqhZp_5uzxYSgeX54LvO1DuwVw",
+    authDomain: "gombefootball.firebaseapp.com",
+    databaseURL: "https://gombefootball-default-rtdb.firebaseio.com",
+    projectId: "gombefootball",
+    storageBucket: "gombefootball.firebasestorage.app",
+    messagingSenderId: "120731655706",
+    appId: "1:120731655706:web:9c99d6831aca3df563bba3",
+    measurementId: "G-8SCVPBSKPG"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // ---------- GLOBAL ----------
+  let realTeams = [];
+  let selectedTeamIds = new Set();
+
+  // ---------- LOAD TEAMS ----------
+  async function loadTeamsFromFirebase() {
+    try {
+      const snapshot = await db.collection("GombeTeams").get();
+      realTeams = [];
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        realTeams.push({
+          id: doc.id,
+          name: data.name || 'Unnamed',
+          lga: data.lga || 'Unknown',
+          tier: data.tier || 'N/A',
+          year: data.year || 'N/A'
+        });
+      });
+      document.getElementById('teamCountBadge').textContent = realTeams.length + ' teams';
+      renderTeamDropdown();
+      // auto select first 8 teams
+      if (selectedTeamIds.size === 0 && realTeams.length > 0) {
+        const first8 = realTeams.slice(0, Math.min(8, realTeams.length));
+        first8.forEach(t => selectedTeamIds.add(t.id));
+      }
+      renderSelectedTeams();
+    } catch (e) {
+      console.error('Firebase load error:', e);
+      document.getElementById('teamCountBadge').textContent = '⚠️ error';
+    }
+  }
+
+  // ---------- TEAM DROPDOWN ----------
+  function renderTeamDropdown(filter = '') {
+    const container = document.getElementById('teamDropdown');
+    const q = filter.toLowerCase().trim();
+    let list = realTeams;
+    if (q) list = realTeams.filter(t => t.name.toLowerCase().includes(q));
+    if (list.length === 0) {
+      container.innerHTML = '<div class="team-option" style="opacity:0.5;cursor:default;">No teams found</div>';
+      return;
+    }
+    container.innerHTML = '';
+    list.forEach(t => {
+      const div = document.createElement('div');
+      div.className = 'team-option' + (selectedTeamIds.has(t.id) ? ' selected' : '');
+      div.innerHTML = `<span>${t.name}</span><span style="font-size:0.7rem;opacity:0.6;">${t.lga}</span>`;
+      div.onmousedown = (e) => { e.preventDefault(); toggleTeam(t.id); };
+      container.appendChild(div);
+    });
+  }
+
+  function filterTeamDropdown() {
+    const val = document.getElementById('teamSearchInput').value;
+    renderTeamDropdown(val);
+    document.getElementById('teamDropdown').classList.add('show');
+  }
+
+  function toggleTeam(id) {
+    if (selectedTeamIds.has(id)) selectedTeamIds.delete(id);
+    else selectedTeamIds.add(id);
+    renderSelectedTeams();
+    renderTeamDropdown(document.getElementById('teamSearchInput').value);
+  }
+
+  function renderSelectedTeams() {
+    const container = document.getElementById('selectedTeamsContainer');
+    if (selectedTeamIds.size === 0) {
+      container.innerHTML = '<span style="opacity:0.5;font-size:0.85rem;">No teams selected</span>';
+      return;
+    }
+    let html = '';
+    selectedTeamIds.forEach(id => {
+      const t = realTeams.find(r => r.id === id);
+      if (t) {
+        html += `<span class="pill">${t.name} <i class="fas fa-times" onclick="event.stopPropagation(); toggleTeam('${id}')"></i></span>`;
+      }
+    });
+    // show count badge
+    html += `<span class="count-badge"><i class="fas fa-users"></i> ${selectedTeamIds.size}</span>`;
+    container.innerHTML = html;
+  }
+
+  document.addEventListener('click', function(e) {
+    const wrapper = document.querySelector('.team-select-wrapper');
+    if (wrapper && !wrapper.contains(e.target)) {
+      document.getElementById('teamDropdown').classList.remove('show');
+    }
+  });
+
+  // ---------- HELPERS ----------
+  function getTeamName(id) {
+    const found = realTeams.find(t => t.id === id);
+    return found ? found.name : 'Team ' + id;
+  }
+
+  function getSelectedTeams() {
+    const result = [];
+    selectedTeamIds.forEach(id => {
+      const t = realTeams.find(r => r.id === id);
+      if (t) result.push({ ...t });
+    });
+    return result;
+  }
+
+  function showToast(msg, isError = false) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'toast show' + (isError ? ' error' : '');
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => el.classList.remove('show'), 4000);
+  }
+
+  // ---------- CREATE COMPETITION (Firestore) with duplicate check ----------
+  // IMPORTANT: Does NOT write anything inside /CompetitionsRecords/{compName}/ (subcollections left empty)
+  window.createCompetition = async function() {
+    const compName = document.getElementById('compName').value.trim();
+    const seasonYear = document.getElementById('seasonYear').value.trim() || '2026';
+    const type = document.getElementById('compType').value;
+    const period = parseInt(document.getElementById('periodWeeks').value) || 8;
+    const organizerPhone = document.getElementById('organizerPhone').value.trim();
+    const teams = getSelectedTeams();
+
+    // --- validations ---
+    if (!compName) {
+      showToast('Please enter a Competition name.', true);
+      return;
+    }
+    if (!organizerPhone) {
+      showToast('Please enter Organizer Phone.', true);
+      return;
+    }
+    if (!type) {
+      showToast('Please select a Format.', true);
+      return;
+    }
+    if (teams.length < 2) {
+      showToast('Select at least 2 teams.', true);
+      return;
+    }
+
+    try {
+      // 1. Check if competition name already exists in CompetitionsRecords (doc with ID = compName)
+      const compDocRef = db.collection('CompetitionsRecords').doc(compName);
+      const compDoc = await compDocRef.get();
+      if (compDoc.exists) {
+        showToast(`❌ Competition "${compName}" already exists. Please use a different name.`, true);
+        return;
+      }
+
+      // 2. Also check in OtherCompetitions (doc ID = compName)
+      const otherCompRef = db.collection('OtherCompetitions').doc(compName);
+      const otherDoc = await otherCompRef.get();
+      if (otherDoc.exists) {
+        showToast(`❌ Competition "${compName}" already exists in OtherCompetitions. Choose another name.`, true);
+        return;
+      }
+
+      // --- proceed to create: write ONLY the main document, NO subcollections (fixtures, results, goals, trophies) ---
+      const compData = {
+        name: compName,
+        seasonYear: seasonYear,
+        format: type,
+        periodWeeks: period,
+        organizerPhone: organizerPhone,
+        teams: teams.map(t => ({ id: t.id, name: t.name, lga: t.lga })),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        status: 'active',
+        table: teams.map(t => ({
+          teamId: t.id,
+          teamName: t.name,
+          lga: t.lga,
+          played: 0, wins: 0, draws: 0, losses: 0, points: 0, gd: 0
+        }))
+      };
+
+      // Write to CompetitionsRecords with competition name as ID
+      await compDocRef.set(compData);
+      const compId = compName;
+
+      // 3. Write to OtherCompetitions (doc ID = compName)
+      const otherCompData = {
+        competitionName: compName,
+        seasonYear: seasonYear,
+        format: type,
+        periodWeeks: period,
+        organizerPhone: organizerPhone,
+        teams: teams.map(t => ({ id: t.id, name: t.name, lga: t.lga })),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        status: 'active'
+      };
+      await db.collection('OtherCompetitions').doc(compName).set(otherCompData);
+
+      // 4. Update each selected team: add competition name to OtherCompetitions array
+      for (const t of teams) {
+        const teamRef = db.collection('GombeTeams').doc(t.id);
+        await teamRef.update({
+          OtherCompetitions: firebase.firestore.FieldValue.arrayUnion(compName)
+        });
+      }
+
+      // 5. Explicitly do NOT create any subcollections under /CompetitionsRecords/{compName}/
+      // (fixtures, results, goals, trophies remain empty)
+
+      showToast(`✅ Competition "${compName}" created! ID: ${compId} · ${teams.length} teams · (subcollections left empty for later update)`);
+      console.log('Competition created:', compId, 'teams:', teams.length, 'no subcollections written.');
+
+    } catch (err) {
+      console.error('Error creating competition:', err);
+      showToast('❌ Error: ' + err.message, true);
+    }
+  };
+
+  // ---------- AUTO LOAD ----------
+  document.addEventListener('DOMContentLoaded', () => {
+    loadTeamsFromFirebase();
+  });
+</script>
+</body>
+</html>
