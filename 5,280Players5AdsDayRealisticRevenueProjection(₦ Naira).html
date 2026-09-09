@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📊 5,280 Players - 5 Ads/Day - Realistic Revenue Projection (₦ Naira)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #fff;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        /* ===== LANGUAGE TOGGLE ===== */
+        .lang-toggle {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
+        .lang-toggle button {
+            padding: 6px 16px;
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 8px;
+            background: rgba(255,215,0,0.05);
+            color: #aaa;
+            font-weight: 600;
+            font-size: 0.7em;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 6px;
+        }
+
+        .lang-toggle button.active {
+            background: rgba(255,215,0,0.15);
+            color: #ffd700;
+            border-color: rgba(255,215,0,0.3);
+        }
+
+        .lang-toggle button:hover {
+            background: rgba(255,215,0,0.1);
+        }
+
+        .lang-en, .lang-ha {
+            display: none;
+        }
+
+        .lang-en.active, .lang-ha.active {
+            display: block;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            padding: 20px 0 30px;
+            border-bottom: 1px solid rgba(255,215,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            font-weight: 900;
+            background: linear-gradient(45deg, #f7971e, #ffd200);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .sub {
+            color: #888;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,215,0,0.1);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.7em;
+            color: #ffd700;
+            margin-top: 8px;
+            border: 1px solid rgba(255,215,0,0.1);
+        }
+
+        .header .exchange-rate {
+            display: inline-block;
+            background: rgba(79,195,247,0.05);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.65em;
+            color: #4fc3f7;
+            margin-top: 6px;
+            border: 1px solid rgba(79,195,247,0.1);
+            margin-left: 6px;
+        }
+
+        .header .highlight-badge {
+            display: inline-block;
+            background: rgba(56,239,125,0.1);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.7em;
+            color: #81c784;
+            margin-top: 8px;
+            border: 1px solid rgba(56,239,125,0.15);
+            margin-left: 6px;
+            font-weight: 700;
+        }
+
+        /* ===== METRIC CARDS ===== */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 14px 10px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .metric-card .number {
+            font-size: 1.5em;
+            font-weight: 800;
+        }
+
+        .metric-card .number.gold { color: #ffd700; }
+        .metric-card .number.blue { color: #4fc3f7; }
+        .metric-card .number.green { color: #81c784; }
+        .metric-card .number.purple { color: #a18cd1; }
+        .metric-card .number.red { color: #ff6b6b; }
+        .metric-card .number.cyan { color: #00d4ff; }
+        .metric-card .number.orange { color: #ff9f43; }
+
+        .metric-card .label {
+            font-size: 0.55em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .metric-card .naira-label {
+            font-size: 0.5em;
+            color: #666;
+            margin-top: 2px;
+            display: block;
+        }
+
+        /* ===== SECTION ===== */
+        .section {
+            background: rgba(255,255,255,0.02);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title .emoji { font-size: 1.2em; }
+
+        /* ===== TABLE ===== */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78em;
+        }
+
+        table th {
+            background: rgba(255,215,0,0.05);
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 700;
+            color: #ffd700;
+            border-bottom: 2px solid rgba(255,215,0,0.1);
+        }
+
+        table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: #ccc;
+        }
+
+        table tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        table .total-row td {
+            font-weight: 700;
+            color: #ffd700;
+            border-top: 2px solid rgba(255,215,0,0.15);
+        }
+
+        table .highlight-row td {
+            color: #81c784;
+            font-weight: 600;
+            border-left: 3px solid #81c784;
+        }
+
+        .text-right { text-align: right; }
+        .text-naira { color: #00d4ff; font-weight: 600; }
+        .text-gold { color: #ffd700; font-weight: 600; }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 6px 0;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .fill.gold { background: linear-gradient(90deg, #f7971e, #ffd200); }
+        .fill.green { background: linear-gradient(90deg, #11998e, #38ef7d); }
+        .fill.blue { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+        .fill.purple { background: linear-gradient(90deg, #a18cd1, #fbc2eb); }
+        .fill.cyan { background: linear-gradient(90deg, #00d4ff, #4fc3f7); }
+        .fill.orange { background: linear-gradient(90deg, #ff9f43, #f7971e); }
+
+        /* ===== STAT ROW ===== */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 0.85em;
+        }
+
+        .stat-row .label { color: #888; }
+        .stat-row .value { font-weight: 600; }
+
+        .stat-row .value.gold { color: #ffd700; }
+        .stat-row .value.green { color: #81c784; }
+        .stat-row .value.blue { color: #4fc3f7; }
+        .stat-row .value.purple { color: #a18cd1; }
+        .stat-row .value.red { color: #ff6b6b; }
+        .stat-row .value.cyan { color: #00d4ff; }
+        .stat-row .value.orange { color: #ff9f43; }
+
+        /* ===== DISTRIBUTION VISUAL ===== */
+        .distribution-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .dist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .dist-item .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dist-item .dist-label {
+            flex: 1;
+            font-size: 0.8em;
+        }
+
+        .dist-item .dist-value {
+            font-weight: 700;
+            font-size: 0.85em;
+        }
+
+        .dist-item .dist-pct {
+            font-size: 0.7em;
+            color: #888;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* ===== INSIGHT BOX ===== */
+        .insight-box {
+            background: rgba(255,215,0,0.03);
+            border-left: 3px solid #ffd700;
+            padding: 14px 16px;
+            border-radius: 0 10px 10px 0;
+            margin: 10px 0;
+        }
+
+        .insight-box .title {
+            font-weight: 700;
+            color: #ffd700;
+            font-size: 0.85em;
+        }
+
+        .insight-box .desc {
+            color: #aaa;
+            font-size: 0.8em;
+            margin-top: 4px;
+            line-height: 1.6;
+        }
+
+        .insight-box .desc .highlight-green { color: #81c784; font-weight: 600; }
+
+        /* ===== TOOLTIP ===== */
+        .info-tip {
+            display: inline-block;
+            background: rgba(255,255,255,0.05);
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-size: 0.6em;
+            color: #888;
+            cursor: help;
+            margin-left: 4px;
+        }
+
+        /* ===== CURRENCY CONVERTER NOTE ===== */
+        .currency-note {
+            background: rgba(0, 212, 255, 0.03);
+            border: 1px solid rgba(0, 212, 255, 0.08);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin: 8px 0;
+            font-size: 0.7em;
+            color: #888;
+            text-align: center;
+        }
+
+        .currency-note strong { color: #00d4ff; }
+        .currency-note .highlight { color: #81c784; font-weight: 700; }
+
+        /* ===== COMPARISON BOX ===== */
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 10px 0;
+        }
+
+        .comparison-item {
+            background: rgba(255,255,255,0.02);
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,0.04);
+            text-align: center;
+        }
+
+        .comparison-item .label {
+            font-size: 0.55em;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .comparison-item .value {
+            font-size: 1.2em;
+            font-weight: 800;
+            margin: 4px 0;
+        }
+
+        .comparison-item .value.old { color: #ff6b6b; opacity: 0.6; }
+        .comparison-item .value.new { color: #81c784; }
+
+        .comparison-item .sub {
+            font-size: 0.55em;
+            color: #666;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .metric-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .distribution-grid {
+                grid-template-columns: 1fr;
+            }
+            .comparison-box {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 1.4em;
+            }
+            table {
+                font-size: 0.65em;
+            }
+            table th, table td {
+                padding: 5px 6px;
+            }
+            .stat-row {
+                font-size: 0.7em;
+            }
+            .lang-toggle button {
+                font-size: 0.6em;
+                padding: 4px 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .metric-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .metric-card {
+                padding: 10px 6px;
+            }
+            .metric-card .number {
+                font-size: 1em;
+            }
+            .section {
+                padding: 12px;
+            }
+            .header h1 {
+                font-size: 1.1em;
+            }
+        }
+
+        /* ===== PRINT ===== */
+        @media print {
+            body { background: #fff; color: #111; }
+            .lang-toggle { display: none; }
+            .section { border-color: #ddd; background: #f9f9f9; }
+            .metric-card { border-color: #ddd; background: #f5f5f5; }
+            .metric-card .label { color: #666; }
+            .metric-card .number.gold { color: #d4a017; }
+            .metric-card .number.blue { color: #1a73e8; }
+            .metric-card .number.green { color: #2e7d32; }
+            .metric-card .number.purple { color: #6a1b9a; }
+            .metric-card .number.red { color: #c62828; }
+            .metric-card .number.cyan { color: #00838f; }
+            .metric-card .number.orange { color: #e65100; }
+            table th { background: #e0e0e0; color: #111; border-color: #ccc; }
+            table td { color: #333; border-color: #eee; }
+            table .total-row td { border-color: #ccc; }
+            table .highlight-row td { border-left-color: #2e7d32; color: #2e7d32; }
+            .stat-row .label { color: #666; }
+            .stat-row .value.gold { color: #d4a017; }
+            .stat-row .value.green { color: #2e7d32; }
+            .stat-row .value.blue { color: #1a73e8; }
+            .stat-row .value.purple { color: #6a1b9a; }
+            .stat-row .value.red { color: #c62828; }
+            .stat-row .value.cyan { color: #00838f; }
+            .stat-row .value.orange { color: #e65100; }
+            .dist-item .dist-pct { color: #666; }
+            .insight-box { border-left-color: #d4a017; background: #f5f5f5; }
+            .insight-box .title { color: #d4a017; }
+            .insight-box .desc { color: #555; }
+            .header h1 { -webkit-text-fill-color: #d4a017; }
+            .header .badge { border-color: #d4a017; color: #d4a017; background: #f5f5f5; }
+            .header .sub { color: #666; }
+            .header .highlight-badge { border-color: #2e7d32; color: #2e7d32; background: #f5f5f5; }
+            .progress-bar { background: #e0e0e0; }
+            .fill.gold { background: #d4a017; }
+            .fill.green { background: #2e7d32; }
+            .fill.blue { background: #1a73e8; }
+            .fill.purple { background: #6a1b9a; }
+            .fill.cyan { background: #00838f; }
+            .fill.orange { background: #e65100; }
+            .info-tip { background: #eee; color: #666; }
+            .currency-note { border-color: #ccc; background: #f5f5f5; }
+            .currency-note strong { color: #00838f; }
+            .currency-note .highlight { color: #2e7d32; }
+            .header .exchange-rate { border-color: #ccc; color: #00838f; background: #f5f5f5; }
+            .metric-card .naira-label { color: #888; }
+            .text-naira { color: #00838f; }
+            .text-gold { color: #d4a017; }
+            .comparison-item { border-color: #ddd; background: #f5f5f5; }
+            .comparison-item .value.old { color: #c62828; }
+            .comparison-item .value.new { color: #2e7d32; }
+            .comparison-item .sub { color: #666; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ===== LANGUAGE TOGGLE ===== -->
+    <div class="lang-toggle">
+        <button class="active" onclick="switchLang('en')">🇬🇧 English</button>
+        <button onclick="switchLang('ha')">🇳🇬 Hausa</button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ===== ENGLISH VERSION ===== -->
+    <!-- ============================================================ -->
+    <div class="lang-en active" id="lang-en">
+
+        <!-- HEADER -->
+        <div class="header">
+            <h1>📊 5,280 PLAYERS · 5 ADS/DAY · REALISTIC PROJECTION</h1>
+            <div class="sub">160 Teams × 33 Players — 5 Rewarded Video Ads Per Active Player Per Day</div>
+            <div>
+                <span class="badge">💰 Real Industry Rates · No Exaggeration</span>
+                <span class="exchange-rate">💱 $1 USD = ₦1,600 NGN</span>
+                <span class="highlight-badge">📈 +150% Revenue vs 2 Ads/Day</span>
+            </div>
+        </div>
+
+        <!-- COMPARISON BOX -->
+        <div class="comparison-box">
+            <div class="comparison-item">
+                <div class="label">Previous (2 Ads/Day)</div>
+                <div class="value old">$7,286</div>
+                <div class="sub">₦11,658,240 Annual</div>
+            </div>
+            <div class="comparison-item" style="border-color:rgba(56,239,125,0.15);">
+                <div class="label">Now (5 Ads/Day) 🚀</div>
+                <div class="value new">$18,216</div>
+                <div class="sub" style="color:#81c784;">₦29,145,600 Annual</div>
+            </div>
+        </div>
+
+        <!-- METRIC CARDS -->
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="number gold">5,280</div>
+                <span class="label">Total Players</span>
+            </div>
+            <div class="metric-card">
+                <div class="number blue">160</div>
+                <span class="label">Teams</span>
+            </div>
+            <div class="metric-card">
+                <div class="number green">33</div>
+                <span class="label">Players per Team</span>
+            </div>
+            <div class="metric-card">
+                <div class="number purple">3,168</div>
+                <span class="label">Daily Active Players</span>
+                <span class="naira-label">(60% of total)</span>
+            </div>
+        </div>
+
+        <!-- SECTION 1: AD REVENUE -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">📺</span> Real Ad Revenue Calculation (5 Ads/Day)</div>
+            <div class="insight-box">
+                <div class="title">💡 Industry Standard Rates (Nigeria)</div>
+                <div class="desc">
+                    <strong>eCPM (Effective CPM):</strong> $2.00 - $4.00 for rewarded video ads<br>
+                    <strong>Nigerian eCPM Average:</strong> ₦3,200 - ₦6,400 per 1,000 views<br>
+                    <strong>USD Rate Used:</strong> $2.50 eCPM = ₦4,000 per 1,000 views<br>
+                    <em style="color:#888;">* Based on current exchange rate: $1 USD = ₦1,600</em>
+                    <br><br>
+                    <span class="highlight-green">🚀 5 ads per active player per day — 150% more revenue than 2 ads/day!</span>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th class="text-right">USD</th>
+                            <th class="text-right">₦ Naira</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Daily Active Players (60% of 5,280)</td>
+                            <td class="text-right">3,168</td>
+                            <td class="text-right">3,168</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ad Views per Player per Day</strong></td>
+                            <td class="text-right"><strong style="color:#81c784;">5</strong></td>
+                            <td class="text-right"><strong style="color:#81c784;">5</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Daily Ad Views</strong></td>
+                            <td class="text-right"><strong>15,840</strong></td>
+                            <td class="text-right"><strong>15,840</strong></td>
+                        </tr>
+                        <tr>
+                            <td>eCPM (Rate)</td>
+                            <td class="text-right">$2.50</td>
+                            <td class="text-right">₦4,000</td>
+                        </tr>
+                        <tr>
+                            <td>Revenue per 1,000 Views</td>
+                            <td class="text-right">$2.50</td>
+                            <td class="text-right">₦4,000</td>
+                        </tr>
+                        <tr>
+                            <td>Revenue per Ad View</td>
+                            <td class="text-right">$0.0025</td>
+                            <td class="text-right">₦4.00</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Daily Ad Revenue</strong></td>
+                            <td class="text-right"><strong>$39.60</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦63,360</strong></td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Monthly Ad Revenue</strong></td>
+                            <td class="text-right"><strong>$1,188.00</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦1,900,800</strong></td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Annual Ad Revenue</strong></td>
+                            <td class="text-right"><strong>$14,256.00</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦22,809,600</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="currency-note">
+                📊 <strong>Assumption:</strong> <span class="highlight">5 rewarded video ads</span> per active player per day · eCPM: $2.50 (₦4,000)
+            </div>
+        </div>
+
+        <!-- SECTION 2: TOTAL REVENUE BREAKDOWN -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">💰</span> Total Revenue Breakdown</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+                <div style="background:rgba(255,215,0,0.03);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(255,215,0,0.05);">
+                    <div style="font-size:0.55em;color:#888;text-transform:uppercase;">Ad Revenue</div>
+                    <div style="font-size:1.3em;font-weight:800;color:#ffd700;">$14,256</div>
+                    <div style="font-size:0.9em;font-weight:700;color:#00d4ff;">₦22,809,600</div>
+                    <div style="font-size:0.6em;color:#666;">Annual</div>
+                </div>
+                <div style="background:rgba(79,195,247,0.03);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(79,195,247,0.05);">
+                    <div style="font-size:0.55em;color:#888;text-transform:uppercase;">IAP Revenue</div>
+                    <div style="font-size:1.3em;font-weight:800;color:#4fc3f7;">$3,960</div>
+                    <div style="font-size:0.9em;font-weight:700;color:#00d4ff;">₦6,336,000</div>
+                    <div style="font-size:0.6em;color:#666;">Annual (5% conversion)</div>
+                </div>
+                <div style="background:rgba(161,140,209,0.03);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(161,140,209,0.05);">
+                    <div style="font-size:0.55em;color:#888;text-transform:uppercase;">Total Revenue</div>
+                    <div style="font-size:1.3em;font-weight:800;color:#a18cd1;">$18,216</div>
+                    <div style="font-size:0.9em;font-weight:700;color:#00d4ff;">₦29,145,600</div>
+                    <div style="font-size:0.6em;color:#666;">Annual</div>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Revenue Source</th>
+                            <th class="text-right">Annual USD</th>
+                            <th class="text-right">Annual ₦ Naira</th>
+                            <th class="text-right">%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>📺 Ad Revenue (5 ads/day)</td>
+                            <td class="text-right">$14,256.00</td>
+                            <td class="text-right text-naira">₦22,809,600</td>
+                            <td class="text-right">78.3%</td>
+                        </tr>
+                        <tr>
+                            <td>🛒 IAP (5% × 5,280 @ $15/yr)</td>
+                            <td class="text-right">$3,960.00</td>
+                            <td class="text-right text-naira">₦6,336,000</td>
+                            <td class="text-right">21.7%</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Total Revenue</strong></td>
+                            <td class="text-right"><strong>$18,216.00</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦29,145,600</strong></td>
+                            <td class="text-right"><strong>100%</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="currency-note">
+                📊 <strong>IAP Assumption:</strong> 5% conversion rate (higher engagement from more ads) · Average purchase: $15/year (₦24,000)
+            </div>
+        </div>
+
+        <!-- SECTION 3: DISTRIBUTION -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">📊</span> Revenue Distribution</div>
+
+            <div class="distribution-grid">
+                <div>
+                    <div class="dist-item">
+                        <span class="dot" style="background:#ffd700;"></span>
+                        <span class="dist-label">Team Pool (60%)</span>
+                        <span class="dist-value" style="color:#ffd700;">$10,929.60</span>
+                        <span class="dist-pct">60%</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;border-bottom:none;">
+                        <span style="font-size:0.65em;color:#888;flex:1;">In Naira</span>
+                        <span class="dist-value" style="color:#00d4ff;font-weight:700;">₦17,487,360</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;">
+                        <span style="font-size:0.65em;color:#888;">├── Performance (50%)</span>
+                        <span class="dist-value" style="color:#888;font-size:0.7em;">₦8,743,680</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;">
+                        <span style="font-size:0.65em;color:#888;">├── Fan Engagement (30%)</span>
+                        <span class="dist-value" style="color:#888;font-size:0.7em;">₦5,246,208</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;">
+                        <span style="font-size:0.65em;color:#888;">└── Social Reach (20%)</span>
+                        <span class="dist-value" style="color:#888;font-size:0.7em;">₦3,497,472</span>
+                    </div>
+
+                    <div class="dist-item" style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;">
+                        <span class="dot" style="background:#4fc3f7;"></span>
+                        <span class="dist-label">Fan Rewards (20%)</span>
+                        <span class="dist-value" style="color:#4fc3f7;">$3,643.20</span>
+                        <span class="dist-pct">20%</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;border-bottom:none;">
+                        <span style="font-size:0.65em;color:#888;flex:1;">In Naira</span>
+                        <span class="dist-value" style="color:#00d4ff;font-weight:700;">₦5,829,120</span>
+                    </div>
+
+                    <div class="dist-item" style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;">
+                        <span class="dot" style="background:#81c784;"></span>
+                        <span class="dist-label">Operations (20%)</span>
+                        <span class="dist-value" style="color:#81c784;">$3,643.20</span>
+                        <span class="dist-pct">20%</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;border-bottom:none;">
+                        <span style="font-size:0.65em;color:#888;flex:1;">In Naira</span>
+                        <span class="dist-value" style="color:#00d4ff;font-weight:700;">₦5,829,120</span>
+                    </div>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.02);border-radius:10px;padding:14px;border:1px solid rgba(255,255,255,0.04);">
+                    <div style="font-weight:700;font-size:0.85em;margin-bottom:8px;">Annual Per Team</div>
+                    <div class="stat-row">
+                        <span class="label">Total Team Pool</span>
+                        <span class="value gold">$10,929.60</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">In Naira</span>
+                        <span class="value cyan">₦17,487,360</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Per Team (160 teams)</span>
+                        <span class="value green">$68.31</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Per Team in Naira</span>
+                        <span class="value cyan">₦109,296</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Per Player (33)</span>
+                        <span class="value blue">$2.07</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Per Player in Naira</span>
+                        <span class="value cyan">₦3,312</span>
+                    </div>
+                    <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.04);">
+                        <div class="stat-row">
+                            <span class="label">Monthly Per Team</span>
+                            <span class="value purple">$5.69</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="label">Monthly Per Team (₦)</span>
+                            <span class="value cyan">₦9,108</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="label">Monthly Per Player</span>
+                            <span class="value blue">$0.17</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="label">Monthly Per Player (₦)</span>
+                            <span class="value cyan">₦276</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: PLAYER VALUE -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">👤</span> Player Value & Engagement</div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th class="text-right">Per Player (USD)</th>
+                            <th class="text-right">Per Player (₦)</th>
+                            <th class="text-right">Total (₦)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Annual Revenue Per Active Player</td>
+                            <td class="text-right">$3.45</td>
+                            <td class="text-right text-naira">₦5,520</td>
+                            <td class="text-right text-naira">₦29,145,600</td>
+                        </tr>
+                        <tr>
+                            <td>Annual Ad Views Per Player</td>
+                            <td class="text-right">1,825</td>
+                            <td class="text-right">1,825</td>
+                            <td class="text-right">9,636,000</td>
+                        </tr>
+                        <tr>
+                            <td>Annual Ad Revenue Per Player</td>
+                            <td class="text-right">$2.70</td>
+                            <td class="text-right text-naira">₦4,320</td>
+                            <td class="text-right text-naira">₦22,809,600</td>
+                        </tr>
+                        <tr>
+                            <td>Annual IAP Value Per Player</td>
+                            <td class="text-right">$0.75</td>
+                            <td class="text-right text-naira">₦1,200</td>
+                            <td class="text-right text-naira">₦6,336,000</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Lifetime Value (2 years)</strong></td>
+                            <td class="text-right"><strong>$6.90</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦11,040</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦58,291,200</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="currency-note">
+                ⚽ <strong>Engagement Assumptions:</strong> 60% daily active · <span class="highlight">5 rewarded video ads/day</span> · 5% IAP conversion (higher due to more engagement)
+            </div>
+
+            <div style="margin-top:14px;">
+                <div style="display:flex;justify-content:space-between;font-size:0.65em;color:#888;margin-bottom:4px;">
+                    <span>💰 Revenue Realization (5 Ads/Day)</span>
+                    <span>₦29,145,600 / year</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="fill orange" style="width:100%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: SCALING -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">📈</span> Scaling Projections (5 Ads/Day - ₦ Naira)</div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Players</th>
+                            <th class="text-right">Daily Ad Views</th>
+                            <th class="text-right">Monthly Revenue (₦)</th>
+                            <th class="text-right">Annual Revenue (₦)</th>
+                            <th class="text-right">Team Pool 60% (₦)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>5,280</strong> (Current)</td>
+                            <td class="text-right">15,840</td>
+                            <td class="text-right text-naira">₦2,428,800</td>
+                            <td class="text-right text-naira">₦29,145,600</td>
+                            <td class="text-right text-naira">₦17,487,360</td>
+                        </tr>
+                        <tr>
+                            <td><strong>10,000</strong></td>
+                            <td class="text-right">30,000</td>
+                            <td class="text-right text-naira">₦4,600,000</td>
+                            <td class="text-right text-naira">₦55,200,000</td>
+                            <td class="text-right text-naira">₦33,120,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>25,000</strong></td>
+                            <td class="text-right">75,000</td>
+                            <td class="text-right text-naira">₦11,500,000</td>
+                            <td class="text-right text-naira">₦138,000,000</td>
+                            <td class="text-right text-naira">₦82,800,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>50,000</strong></td>
+                            <td class="text-right">150,000</td>
+                            <td class="text-right text-naira">₦23,000,000</td>
+                            <td class="text-right text-naira">₦276,000,000</td>
+                            <td class="text-right text-naira">₦165,600,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>100,000</strong></td>
+                            <td class="text-right">300,000</td>
+                            <td class="text-right text-naira">₦46,000,000</td>
+                            <td class="text-right text-naira">₦552,000,000</td>
+                            <td class="text-right text-naira">₦331,200,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="currency-note">
+                📈 <strong>Assumption:</strong> 60% daily active · <span class="highlight">5 ads/active user/day</span> · eCPM: ₦4,000 ($2.50)
+            </div>
+        </div>
+
+        <!-- SECTION 6: BREAK-EVEN -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">⚖️</span> Realistic Break-Even Analysis (₦ - 5 Ads/Day)</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div style="background:rgba(255,107,107,0.03);border-radius:10px;padding:14px;border:1px solid rgba(255,107,107,0.05);">
+                    <div style="font-size:0.55em;color:#888;text-transform:uppercase;">Annual Costs</div>
+                    <div class="stat-row"><span class="label">Hosting & Infrastructure</span><span class="value red">$600</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">In Naira</span><span class="value cyan">₦960,000</span></div>
+                    <div class="stat-row"><span class="label">Development & Maintenance</span><span class="value red">$2,400</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">In Naira</span><span class="value cyan">₦3,840,000</span></div>
+                    <div class="stat-row"><span class="label">Marketing & User Acquisition</span><span class="value red">$1,200</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">In Naira</span><span class="value cyan">₦1,920,000</span></div>
+                    <div class="stat-row"><span class="label">Support & Operations</span><span class="value red">$600</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">In Naira</span><span class="value cyan">₦960,000</span></div>
+                    <div class="stat-row"><span class="label">Legal & Admin</span><span class="value red">$300</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">In Naira</span><span class="value cyan">₦480,000</span></div>
+                    <div class="stat-row" style="border-top:2px solid rgba(255,107,107,0.1);padding-top:6px;margin-top:4px;">
+                        <span style="font-weight:700;">Total Costs</span>
+                        <span class="value red" style="font-weight:700;">$5,100</span>
+                    </div>
+                    <div class="stat-row" style="border-bottom:none;">
+                        <span style="font-weight:700;color:#888;font-size:0.8em;">Total Costs (₦)</span>
+                        <span class="value cyan" style="font-weight:700;font-size:1em;">₦8,160,000</span>
+                    </div>
+                </div>
+                <div style="background:rgba(56,239,125,0.03);border-radius:10px;padding:14px;border:1px solid rgba(56,239,125,0.05);">
+                    <div style="font-size:0.55em;color:#888;text-transform:uppercase;">Annual Revenue</div>
+                    <div class="stat-row"><span class="label">Ad Revenue (5 ads/day)</span><span class="value green">$14,256.00</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">In Naira</span><span class="value cyan">₦22,809,600</span></div>
+                    <div class="stat-row"><span class="label">IAP Revenue</span><span class="value green">$3,960.00</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">In Naira</span><span class="value cyan">₦6,336,000</span></div>
+                    <div class="stat-row" style="border-top:2px solid rgba(56,239,125,0.1);padding-top:6px;margin-top:4px;">
+                        <span style="font-weight:700;">Total Revenue</span>
+                        <span class="value green" style="font-weight:700;">$18,216.00</span>
+                    </div>
+                    <div class="stat-row" style="border-bottom:none;">
+                        <span style="font-weight:700;color:#888;font-size:0.8em;">Total Revenue (₦)</span>
+                        <span class="value cyan" style="font-weight:700;font-size:1em;">₦29,145,600</span>
+                    </div>
+                    <div class="stat-row" style="border-top:2px solid rgba(255,215,0,0.1);padding-top:6px;margin-top:4px;">
+                        <span style="font-weight:700;color:#ffd700;">Net Profit</span>
+                        <span class="value gold" style="font-weight:700;font-size:1.1em;">$13,116.00</span>
+                    </div>
+                    <div class="stat-row" style="border-bottom:none;">
+                        <span style="font-weight:700;color:#888;font-size:0.8em;">Net Profit (₦)</span>
+                        <span class="value gold" style="font-weight:700;font-size:1.1em;">₦20,985,600</span>
+                    </div>
+                    <div style="margin-top:4px;font-size:0.6em;color:#888;text-align:center;">
+                        📈 <strong>Profit Margin:</strong> 72% (vs 30% with 2 ads/day)
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:12px;padding:12px;background:rgba(255,215,0,0.03);border-radius:8px;border:1px solid rgba(255,215,0,0.05);text-align:center;">
+                <div style="font-size:0.8em;color:#aaa;">
+                    <strong style="color:#ffd700;">Break-Even Point:</strong> 
+                    Annual Costs <strong style="color:#fff;">₦8,160,000</strong> · 
+                    Revenue exceeds costs by <strong style="color:#81c784;">₦20,985,600</strong> (<strong style="color:#81c784;">72% margin</strong>)
+                </div>
+                <div style="font-size:0.6em;color:#666;margin-top:4px;">
+                    📊 Based on 5,280 players · 60% daily active · <span class="highlight">5 ad views/day</span> · eCPM: ₦4,000
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 7: MOTIVATION -->
+        <div class="section" style="border:1px solid rgba(255,215,0,0.08);background:rgba(255,215,0,0.01);">
+            <div class="section-title"><span class="emoji">💪</span> Why This Works - Motivation (5 Ads/Day)</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                <div style="text-align:center;padding:12px;background:rgba(255,255,255,0.02);border-radius:10px;border:1px solid rgba(255,255,255,0.04);">
+                    <div style="font-size:2em;">📈</div>
+                    <div style="font-weight:700;font-size:0.85em;margin:4px 0;">Scalable</div>
+                    <div style="font-size:0.65em;color:#888;">Grows with user base</div>
+                </div>
+                <div style="text-align:center;padding:12px;background:rgba(255,255,255,0.02);border-radius:10px;border:1px solid rgba(255,255,255,0.04);">
+                    <div style="font-size:2em;">💰</div>
+                    <div style="font-weight:700;font-size:0.85em;margin:4px 0;">Highly Profitable</div>
+                    <div style="font-size:0.65em;color:#888;">72% profit margin</div>
+                </div>
+                <div style="text-align:center;padding:12px;background:rgba(255,255,255,0.02);border-radius:10px;border:1px solid rgba(255,255,255,0.04);">
+                    <div style="font-size:2em;">🏆</div>
+                    <div style="font-weight:700;font-size:0.85em;margin:4px 0;">Impactful</div>
+                    <div style="font-size:0.65em;color:#888;">160 teams benefit greatly</div>
+                </div>
+            </div>
+
+            <div style="margin-top:12px;padding:14px;background:rgba(255,215,0,0.02);border-radius:8px;border:1px solid rgba(255,215,0,0.04);">
+                <div style="font-size:0.8em;color:#aaa;text-align:center;line-height:1.6;">
+                    <strong style="color:#ffd700;">Realistic Goal:</strong> 
+                    With 5,280 engaged players watching <span class="highlight-green">5 ads/day</span>, the ecosystem generates 
+                    <strong style="color:#81c784;">₦29,145,600/year</strong> in revenue, 
+                    with <strong style="color:#ffd700;">₦17,487,360</strong> going directly to teams.
+                    <br>
+                    <span style="color:#888;font-size:0.85em;">
+                        Each team earns <strong style="color:#4fc3f7;">₦109,296/year</strong> — <strong style="color:#81c784;">4× more</strong> than with 2 ads/day!
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div style="text-align:center;padding:20px 0 10px;border-top:1px solid rgba(255,255,255,0.03);">
+            <div style="font-size:0.65em;color:#555;">
+                📊 160 Teams · 33 Players Each · 5,280 Total Players · <span class="highlight-green">5 Ads/Day</span> · eCPM: $2.50 (₦4,000)
+            </div>
+            <div style="font-size:0.55em;color:#444;margin-top:4px;">
+                Exchange Rate: $1 USD = ₦1,600 NGN · All calculations based on industry-standard ad rates
+            </div>
+        </div>
+
+    </div><!-- end lang-en -->
+
+
+    <!-- ============================================================ -->
+    <!-- ===== HAUSA VERSION ===== -->
+    <!-- ============================================================ -->
+    <div class="lang-ha" id="lang-ha">
+
+        <!-- HEADER -->
+        <div class="header">
+            <h1>📊 'YAN WASA 5,280 · TALLACE-TALLACE 5/RANA · HASASHE NA GASKIYA</h1>
+            <div class="sub">Ƙungiyoyi 160 × 'Yan Wasa 33 — Tallace-tallacen Bidiyo 5 a Kowane 'Dan Wasa Mai Aiki Kullum</div>
+            <div>
+                <span class="badge">💰 Farashin Masana'antu · Babu Ƙari</span>
+                <span class="exchange-rate">💱 $1 USD = ₦1,600 NGN</span>
+                <span class="highlight-badge">📈 +150% Kuɗi vs Tallace-tallace 2/Rana</span>
+            </div>
+        </div>
+
+        <!-- COMPARISON BOX -->
+        <div class="comparison-box">
+            <div class="comparison-item">
+                <div class="label">Baya (Tallace-tallace 2/Rana)</div>
+                <div class="value old">$7,286</div>
+                <div class="sub">₦11,658,240 Shekara</div>
+            </div>
+            <div class="comparison-item" style="border-color:rgba(56,239,125,0.15);">
+                <div class="label">Yanzu (Tallace-tallace 5/Rana) 🚀</div>
+                <div class="value new">$18,216</div>
+                <div class="sub" style="color:#81c784;">₦29,145,600 Shekara</div>
+            </div>
+        </div>
+
+        <!-- METRIC CARDS -->
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="number gold">5,280</div>
+                <span class="label">Jimlar 'Yan Wasa</span>
+            </div>
+            <div class="metric-card">
+                <div class="number blue">160</div>
+                <span class="label">Ƙungiyoyi</span>
+            </div>
+            <div class="metric-card">
+                <div class="number green">33</div>
+                <span class="label">'Yan Wasa a Kowane Ƙungiya</span>
+            </div>
+            <div class="metric-card">
+                <div class="number purple">3,168</div>
+                <span class="label">'Yan Wasa Masu Aiki Kullum</span>
+                <span class="naira-label">(60% na duka)</span>
+            </div>
+        </div>
+
+        <!-- SECTION 1: AD REVENUE -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">📺</span> Lissafin Kuɗin Tallace-tallace na Gaskiya (Tallace-tallace 5/Rana)</div>
+            <div class="insight-box">
+                <div class="title">💡 Farashin Masana'antu (Najeriya)</div>
+                <div class="desc">
+                    <strong>eCPM (Farashin Kowane 1,000):</strong> $2.00 - $4.00 don tallace-tallacen bidiyo<br>
+                    <strong>Matsakaicin eCPM na Najeriya:</strong> ₦3,200 - ₦6,400 a kowane 1,000 kallo<br>
+                    <strong>Farashin USD da Aka Yi Amfani:</strong> $2.50 eCPM = ₦4,000 a kowane 1,000 kallo<br>
+                    <em style="color:#888;">* Bisa kan farashin canji na yanzu: $1 USD = ₦1,600</em>
+                    <br><br>
+                    <span class="highlight-green">🚀 Tallace-tallace 5 a kowane 'dan wasa mai aiki kullum — karin kuɗi 150% fiye da tallace-tallace 2/rana!</span>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Abin Auna</th>
+                            <th class="text-right">USD</th>
+                            <th class="text-right">₦ Naira</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>'Yan Wasa Masu Aiki Kullum (60% na 5,280)</td>
+                            <td class="text-right">3,168</td>
+                            <td class="text-right">3,168</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Kallon Tallace-tallace a Kowane 'Dan Wasa/Rana</strong></td>
+                            <td class="text-right"><strong style="color:#81c784;">5</strong></td>
+                            <td class="text-right"><strong style="color:#81c784;">5</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Jimlar Kallon Tallace-tallace Kullum</strong></td>
+                            <td class="text-right"><strong>15,840</strong></td>
+                            <td class="text-right"><strong>15,840</strong></td>
+                        </tr>
+                        <tr>
+                            <td>eCPM (Farashi)</td>
+                            <td class="text-right">$2.50</td>
+                            <td class="text-right">₦4,000</td>
+                        </tr>
+                        <tr>
+                            <td>Kuɗin da ake Samu a Kowane 1,000 Kallo</td>
+                            <td class="text-right">$2.50</td>
+                            <td class="text-right">₦4,000</td>
+                        </tr>
+                        <tr>
+                            <td>Kuɗin da ake Samu a Kowane Kallo</td>
+                            <td class="text-right">$0.0025</td>
+                            <td class="text-right">₦4.00</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Kuɗin Tallace-tallace Kullum</strong></td>
+                            <td class="text-right"><strong>$39.60</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦63,360</strong></td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Kuɗin Tallace-tallace Kowane Wata</strong></td>
+                            <td class="text-right"><strong>$1,188.00</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦1,900,800</strong></td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Kuɗin Tallace-tallace Kowane Shekara</strong></td>
+                            <td class="text-right"><strong>$14,256.00</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦22,809,600</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="currency-note">
+                📊 <strong>Zato:</strong> <span class="highlight">Tallace-tallacen bidiyo 5</span> a kowane 'dan wasa mai aiki kullum · eCPM: $2.50 (₦4,000)
+            </div>
+        </div>
+
+        <!-- SECTION 2: TOTAL REVENUE BREAKDOWN -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">💰</span> Rarraba Kuɗin da ake Samu</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+                <div style="background:rgba(255,215,0,0.03);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(255,215,0,0.05);">
+                    <div style="font-size:0.55em;color:#888;text-transform:uppercase;">Tallace-tallace</div>
+                    <div style="font-size:1.3em;font-weight:800;color:#ffd700;">$14,256</div>
+                    <div style="font-size:0.9em;font-weight:700;color:#00d4ff;">₦22,809,600</div>
+                    <div style="font-size:0.6em;color:#666;">Kowane Shekara</div>
+                </div>
+                <div style="background:rgba(79,195,247,0.03);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(79,195,247,0.05);">
+                    <div style="font-size:0.55em;color:#888;text-transform:uppercase;">Kuɗin IAP</div>
+                    <div style="font-size:1.3em;font-weight:800;color:#4fc3f7;">$3,960</div>
+                    <div style="font-size:0.9em;font-weight:700;color:#00d4ff;">₦6,336,000</div>
+                    <div style="font-size:0.6em;color:#666;">Kowane Shekara (5%)</div>
+                </div>
+                <div style="background:rgba(161,140,209,0.03);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(161,140,209,0.05);">
+                    <div style="font-size:0.55em;color:#888;text-transform:uppercase;">Jimlar Kuɗi</div>
+                    <div style="font-size:1.3em;font-weight:800;color:#a18cd1;">$18,216</div>
+                    <div style="font-size:0.9em;font-weight:700;color:#00d4ff;">₦29,145,600</div>
+                    <div style="font-size:0.6em;color:#666;">Kowane Shekara</div>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Madogarar Kuɗi</th>
+                            <th class="text-right">Shekara (USD)</th>
+                            <th class="text-right">Shekara (₦)</th>
+                            <th class="text-right">%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>📺 Tallace-tallace (5/rana)</td>
+                            <td class="text-right">$14,256.00</td>
+                            <td class="text-right text-naira">₦22,809,600</td>
+                            <td class="text-right">78.3%</td>
+                        </tr>
+                        <tr>
+                            <td>🛒 IAP (5% × 5,280 @ $15/yr)</td>
+                            <td class="text-right">$3,960.00</td>
+                            <td class="text-right text-naira">₦6,336,000</td>
+                            <td class="text-right">21.7%</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Jimlar Kuɗi</strong></td>
+                            <td class="text-right"><strong>$18,216.00</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦29,145,600</strong></td>
+                            <td class="text-right"><strong>100%</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="currency-note">
+                📊 <strong>Zaton IAP:</strong> 5% masu saye (saboda yawan tallace-tallace) · Matsakaicin saye: $15/shekara (₦24,000)
+            </div>
+        </div>
+
+        <!-- SECTION 3: DISTRIBUTION -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">📊</span> Rarraba Kuɗi</div>
+
+            <div class="distribution-grid">
+                <div>
+                    <div class="dist-item">
+                        <span class="dot" style="background:#ffd700;"></span>
+                        <span class="dist-label">Rukunin Ƙungiya (60%)</span>
+                        <span class="dist-value" style="color:#ffd700;">$10,929.60</span>
+                        <span class="dist-pct">60%</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;border-bottom:none;">
+                        <span style="font-size:0.65em;color:#888;flex:1;">A Naira</span>
+                        <span class="dist-value" style="color:#00d4ff;font-weight:700;">₦17,487,360</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;">
+                        <span style="font-size:0.65em;color:#888;">├── Aikin Wasa (50%)</span>
+                        <span class="dist-value" style="color:#888;font-size:0.7em;">₦8,743,680</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;">
+                        <span style="font-size:0.65em;color:#888;">├── Tallafin Magoya Baya (30%)</span>
+                        <span class="dist-value" style="color:#888;font-size:0.7em;">₦5,246,208</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;">
+                        <span style="font-size:0.65em;color:#888;">└── Isar da Sada zumunta (20%)</span>
+                        <span class="dist-value" style="color:#888;font-size:0.7em;">₦3,497,472</span>
+                    </div>
+
+                    <div class="dist-item" style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;">
+                        <span class="dot" style="background:#4fc3f7;"></span>
+                        <span class="dist-label">Kyautar Magoya Baya (20%)</span>
+                        <span class="dist-value" style="color:#4fc3f7;">$3,643.20</span>
+                        <span class="dist-pct">20%</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;border-bottom:none;">
+                        <span style="font-size:0.65em;color:#888;flex:1;">A Naira</span>
+                        <span class="dist-value" style="color:#00d4ff;font-weight:700;">₦5,829,120</span>
+                    </div>
+
+                    <div class="dist-item" style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;">
+                        <span class="dot" style="background:#81c784;"></span>
+                        <span class="dist-label">Ayyukan Gudanarwa (20%)</span>
+                        <span class="dist-value" style="color:#81c784;">$3,643.20</span>
+                        <span class="dist-pct">20%</span>
+                    </div>
+                    <div class="dist-item" style="padding-left:28px;border-bottom:none;">
+                        <span style="font-size:0.65em;color:#888;flex:1;">A Naira</span>
+                        <span class="dist-value" style="color:#00d4ff;font-weight:700;">₦5,829,120</span>
+                    </div>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.02);border-radius:10px;padding:14px;border:1px solid rgba(255,255,255,0.04);">
+                    <div style="font-weight:700;font-size:0.85em;margin-bottom:8px;">Kowane Ƙungiya a Shekara</div>
+                    <div class="stat-row">
+                        <span class="label">Jimlar Rukunin Ƙungiya</span>
+                        <span class="value gold">$10,929.60</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">A Naira</span>
+                        <span class="value cyan">₦17,487,360</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Kowane Ƙungiya (160)</span>
+                        <span class="value green">$68.31</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Kowane Ƙungiya a Naira</span>
+                        <span class="value cyan">₦109,296</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Kowane 'Dan Wasa (33)</span>
+                        <span class="value blue">$2.07</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">Kowane 'Dan Wasa a Naira</span>
+                        <span class="value cyan">₦3,312</span>
+                    </div>
+                    <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.04);">
+                        <div class="stat-row">
+                            <span class="label">Kowane Wata a Kowane Ƙungiya</span>
+                            <span class="value purple">$5.69</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="label">Kowane Wata a Naira</span>
+                            <span class="value cyan">₦9,108</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="label">Kowane Wata a Kowane 'Dan Wasa</span>
+                            <span class="value blue">$0.17</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="label">Kowane Wata a Naira</span>
+                            <span class="value cyan">₦276</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: PLAYER VALUE -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">👤</span> Ƙimar 'Dan Wasa da Haɗin Kai</div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Abin Auna</th>
+                            <th class="text-right">Kowane 'Dan Wasa (USD)</th>
+                            <th class="text-right">Kowane 'Dan Wasa (₦)</th>
+                            <th class="text-right">Jimlar (₦)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Kuɗin Shekara Kowane 'Dan Wasa Mai Aiki</td>
+                            <td class="text-right">$3.45</td>
+                            <td class="text-right text-naira">₦5,520</td>
+                            <td class="text-right text-naira">₦29,145,600</td>
+                        </tr>
+                        <tr>
+                            <td>Kallon Tallace-tallace Shekara Kowane 'Dan Wasa</td>
+                            <td class="text-right">1,825</td>
+                            <td class="text-right">1,825</td>
+                            <td class="text-right">9,636,000</td>
+                        </tr>
+                        <tr>
+                            <td>Kuɗin Tallace-tallace Shekara Kowane 'Dan Wasa</td>
+                            <td class="text-right">$2.70</td>
+                            <td class="text-right text-naira">₦4,320</td>
+                            <td class="text-right text-naira">₦22,809,600</td>
+                        </tr>
+                        <tr>
+                            <td>Kuɗin IAP Shekara Kowane 'Dan Wasa</td>
+                            <td class="text-right">$0.75</td>
+                            <td class="text-right text-naira">₦1,200</td>
+                            <td class="text-right text-naira">₦6,336,000</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td><strong>Ƙimar Rayuwa (Shekaru 2)</strong></td>
+                            <td class="text-right"><strong>$6.90</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦11,040</strong></td>
+                            <td class="text-right"><strong style="color:#00d4ff;">₦58,291,200</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="currency-note">
+                ⚽ <strong>Zaton Haɗin Kai:</strong> 60% masu aiki kullum · <span class="highlight">Tallace-tallacen bidiyo 5/rana</span> · 5% sayen IAP (saboda yawan aiki)
+            </div>
+
+            <div style="margin-top:14px;">
+                <div style="display:flex;justify-content:space-between;font-size:0.65em;color:#888;margin-bottom:4px;">
+                    <span>💰 Cimma Kuɗi (Tallace-tallace 5/Rana)</span>
+                    <span>₦29,145,600 / shekara</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="fill orange" style="width:100%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: SCALING -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">📈</span> Hasashen Faɗaɗawa (Tallace-tallace 5/Rana - ₦ Naira)</div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>'Yan Wasa</th>
+                            <th class="text-right">Kallon Tallace-tallace Kullum</th>
+                            <th class="text-right">Kuɗin Wata (₦)</th>
+                            <th class="text-right">Kuɗin Shekara (₦)</th>
+                            <th class="text-right">Rukunin Ƙungiya 60% (₦)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>5,280</strong> (Yanzu)</td>
+                            <td class="text-right">15,840</td>
+                            <td class="text-right text-naira">₦2,428,800</td>
+                            <td class="text-right text-naira">₦29,145,600</td>
+                            <td class="text-right text-naira">₦17,487,360</td>
+                        </tr>
+                        <tr>
+                            <td><strong>10,000</strong></td>
+                            <td class="text-right">30,000</td>
+                            <td class="text-right text-naira">₦4,600,000</td>
+                            <td class="text-right text-naira">₦55,200,000</td>
+                            <td class="text-right text-naira">₦33,120,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>25,000</strong></td>
+                            <td class="text-right">75,000</td>
+                            <td class="text-right text-naira">₦11,500,000</td>
+                            <td class="text-right text-naira">₦138,000,000</td>
+                            <td class="text-right text-naira">₦82,800,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>50,000</strong></td>
+                            <td class="text-right">150,000</td>
+                            <td class="text-right text-naira">₦23,000,000</td>
+                            <td class="text-right text-naira">₦276,000,000</td>
+                            <td class="text-right text-naira">₦165,600,000</td>
+                        </tr>
+                        <tr>
+                            <td><strong>100,000</strong></td>
+                            <td class="text-right">300,000</td>
+                            <td class="text-right text-naira">₦46,000,000</td>
+                            <td class="text-right text-naira">₦552,000,000</td>
+                            <td class="text-right text-naira">₦331,200,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="currency-note">
+                📈 <strong>Zato:</strong> 60% masu aiki kullum · <span class="highlight">Tallace-tallace 5 a kowane mai aiki/rana</span> · eCPM: ₦4,000 ($2.50)
+            </div>
+        </div>
+
+        <!-- SECTION 6: BREAK-EVEN -->
+        <div class="section">
+            <div class="section-title"><span class="emoji">⚖️</span> Binciken Daidaita Kuɗi na Gaskiya (Tallace-tallace 5/Rana - ₦)</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div style="background:rgba(255,107,107,0.03);border-radius:10px;padding:14px;border:1px solid rgba(255,107,107,0.05);">
+                    <div style="font-size:0.55em;color:#888;text-transform:uppercase;">Kuɗin Shekara</div>
+                    <div class="stat-row"><span class="label">Gidajen Yanar Gizo & Kayayyakin Aiki</span><span class="value red">$600</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">A Naira</span><span class="value cyan">₦960,000</span></div>
+                    <div class="stat-row"><span class="label">Ci Gaba & Gyara</span><span class="value red">$2,400</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">A Naira</span><span class="value cyan">₦3,840,000</span></div>
+                    <div class="stat-row"><span class="label">Tallace-tallace & Samun Masu Amfani</span><span class="value red">$1,200</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">A Naira</span><span class="value cyan">₦1,920,000</span></div>
+                    <div class="stat-row"><span class="label">Taimako & Ayyuka</span><span class="value red">$600</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">A Naira</span><span class="value cyan">₦960,000</span></div>
+                    <div class="stat-row"><span class="label">Doka & Gudanarwa</span><span class="value red">$300</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">A Naira</span><span class="value cyan">₦480,000</span></div>
+                    <div class="stat-row" style="border-top:2px solid rgba(255,107,107,0.1);padding-top:6px;margin-top:4px;">
+                        <span style="font-weight:700;">Jimlar Kuɗi</span>
+                        <span class="value red" style="font-weight:700;">$5,100</span>
+                    </div>
+                    <div class="stat-row" style="border-bottom:none;">
+                        <span style="font-weight:700;color:#888;font-size:0.8em;">Jimlar Kuɗi (₦)</span>
+                        <span class="value cyan" style="font-weight:700;font-size:1em;">₦8,160,000</span>
+                    </div>
+                </div>
+                <div style="background:rgba(56,239,125,0.03);border-radius:10px;padding:14px;border:1px solid rgba(56,239,125,0.05);">
+                    <div style="font-size:0.55em;color:#888;text-transform:uppercase;">Kuɗin Shekara da ake Samu</div>
+                    <div class="stat-row"><span class="label">Tallace-tallace (5/rana)</span><span class="value green">$14,256.00</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">A Naira</span><span class="value cyan">₦22,809,600</span></div>
+                    <div class="stat-row"><span class="label">Kuɗin IAP</span><span class="value green">$3,960.00</span></div>
+                    <div class="stat-row"><span class="label" style="padding-left:16px;font-size:0.8em;color:#666;">A Naira</span><span class="value cyan">₦6,336,000</span></div>
+                    <div class="stat-row" style="border-top:2px solid rgba(56,239,125,0.1);padding-top:6px;margin-top:4px;">
+                        <span style="font-weight:700;">Jimlar Kuɗin da ake Samu</span>
+                        <span class="value green" style="font-weight:700;">$18,216.00</span>
+                    </div>
+                    <div class="stat-row" style="border-bottom:none;">
+                        <span style="font-weight:700;color:#888;font-size:0.8em;">Jimlar Kuɗin da ake Samu (₦)</span>
+                        <span class="value cyan" style="font-weight:700;font-size:1em;">₦29,145,600</span>
+                    </div>
+                    <div class="stat-row" style="border-top:2px solid rgba(255,215,0,0.1);padding-top:6px;margin-top:4px;">
+                        <span style="font-weight:700;color:#ffd700;">Ribar da ake Samu</span>
+                        <span class="value gold" style="font-weight:700;font-size:1.1em;">$13,116.00</span>
+                    </div>
+                    <div class="stat-row" style="border-bottom:none;">
+                        <span style="font-weight:700;color:#888;font-size:0.8em;">Ribar da ake Samu (₦)</span>
+                        <span class="value gold" style="font-weight:700;font-size:1.1em;">₦20,985,600</span>
+                    </div>
+                    <div style="margin-top:4px;font-size:0.6em;color:#888;text-align:center;">
+                        📈 <strong>Ribar:</strong> 72% (vs 30% da tallace-tallace 2/rana)
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:12px;padding:12px;background:rgba(255,215,0,0.03);border-radius:8px;border:1px solid rgba(255,215,0,0.05);text-align:center;">
+                <div style="font-size:0.8em;color:#aaa;">
+                    <strong style="color:#ffd700;">Wurin Daidaita Kuɗi:</strong> 
+                    Kuɗin Shekara <strong style="color:#fff;">₦8,160,000</strong> · 
+                    Kuɗin da ake Samu ya fi kuɗin da ake kashewa da <strong style="color:#81c784;">₦20,985,600</strong> (<strong style="color:#81c784;">72% riba</strong>)
+                </div>
+                <div style="font-size:0.6em;color:#666;margin-top:4px;">
+                    📊 Bisa kan 'yan wasa 5,280 · 60% masu aiki kullum · <span class="highlight">Tallace-tallace 5/rana</span> · eCPM: ₦4,000
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 7: MOTIVATION -->
+        <div class="section" style="border:1px solid rgba(255,215,0,0.08);background:rgba(255,215,0,0.01);">
+            <div class="section-title"><span class="emoji">💪</span> Dalilin Da Yasa Wannan Ke Aiki - Ƙarfafawa (Tallace-tallace 5/Rana)</div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                <div style="text-align:center;padding:12px;background:rgba(255,255,255,0.02);border-radius:10px;border:1px solid rgba(255,255,255,0.04);">
+                    <div style="font-size:2em;">📈</div>
+                    <div style="font-weight:700;font-size:0.85em;margin:4px 0;">Ana iya Faɗaɗawa</div>
+                    <div style="font-size:0.65em;color:#888;">Yana girma da yawan masu amfani</div>
+                </div>
+                <div style="text-align:center;padding:12px;background:rgba(255,255,255,0.02);border-radius:10px;border:1px solid rgba(255,255,255,0.04);">
+                    <div style="font-size:2em;">💰</div>
+                    <div style="font-weight:700;font-size:0.85em;margin:4px 0;">Mai Ribar Gaske</div>
+                    <div style="font-size:0.65em;color:#888;">Ribar 72%</div>
+                </div>
+                <div style="text-align:center;padding:12px;background:rgba(255,255,255,0.02);border-radius:10px;border:1px solid rgba(255,255,255,0.04);">
+                    <div style="font-size:2em;">🏆</div>
+                    <div style="font-weight:700;font-size:0.85em;margin:4px 0;">Mai Tasiri</div>
+                    <div style="font-size:0.65em;color:#888;">Ƙungiyoyi 160 suna amfana sosai</div>
+                </div>
+            </div>
+
+            <div style="margin-top:12px;padding:14px;background:rgba(255,215,0,0.02);border-radius:8px;border:1px solid rgba(255,215,0,0.04);">
+                <div style="font-size:0.8em;color:#aaa;text-align:center;line-height:1.6;">
+                    <strong style="color:#ffd700;">Manufa ta Gaskiya:</strong> 
+                    Tare da 'yan wasa 5,280 masu aiki waɗanda ke kallon <span class="highlight-green">tallace-tallace 5/rana</span>, tsarin yana samar da 
+                    <strong style="color:#81c784;">₦29,145,600/shekara</strong> a cikin kuɗi, 
+                    tare da <strong style="color:#ffd700;">₦17,487,360</strong> yana tafiya kai tsaye ga ƙungiyoyi.
+                    <br>
+                    <span style="color:#888;font-size:0.85em;">
+                        Kowane ƙungiya yana samun <strong style="color:#4fc3f7;">₦109,296/shekara</strong> — <strong style="color:#81c784;">4× fiye da</strong> tallace-tallace 2/rana!
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div style="text-align:center;padding:20px 0 10px;border-top:1px solid rgba(255,255,255,0.03);">
+            <div style="font-size:0.65em;color:#555;">
+                📊 Ƙungiyoyi 160 · 'Yan Wasa 33 a Kowane · Jimlar 'Yan Wasa 5,280 · <span class="highlight-green">Tallace-tallace 5/Rana</span> · eCPM: $2.50 (₦4,000)
+            </div>
+            <div style="font-size:0.55em;color:#444;margin-top:4px;">
+                Farashin Canji: $1 USD = ₦1,600 NGN · Dukkan lissafi bisa kan farashin masana'antu na gaskiya
+            </div>
+        </div>
+
+    </div><!-- end lang-ha -->
+
+</div>
+
+<script>
+    // ============================================================
+    // LANGUAGE SWITCH
+    // ============================================================
+    function switchLang(lang) {
+        // Update buttons
+        document.querySelectorAll('.lang-toggle button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`.lang-toggle button[onclick="switchLang('${lang}')"]`).classList.add('active');
+
+        // Update content
+        document.querySelectorAll('.lang-en, .lang-ha').forEach(el => {
+            el.classList.remove('active');
+        });
+        document.getElementById(`lang-${lang}`).classList.add('active');
+    }
+</script>
+
+</body>
+</html>
